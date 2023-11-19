@@ -1,0 +1,20 @@
+{
+    "pages-Links": [
+        {
+            "pagename": "Products",
+            "link": "/products"
+        },
+        {
+            "pagename": "Customers",
+            "link": "/customers"
+        },
+        {
+            "pagename": "Purchases",
+            "link": "/purchases"
+        },
+        {
+            "pagename": "Users",
+            "link": "/users"
+        }
+    ]
+}
