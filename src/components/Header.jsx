@@ -7,6 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import shopLogo from '../assets/sw-open-shop-3.jpg';
 import pages from '../utils/nav-list-pages.json';
 import settings from '../utils/setting-links.json';
+import { useSelector, useDispatch } from "react-redux";
 
 function HeaderComp() {
     const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', accessToken: '' });
@@ -15,7 +16,8 @@ function HeaderComp() {
     const [anchorElLogin, setAnchorElLogin] = useState(null);
 
     const navigate = useNavigate();
-
+    const products = useSelector((state => state.products));
+    
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
