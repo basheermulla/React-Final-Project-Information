@@ -67,7 +67,6 @@ function PurchasesPageComp() {
             filterTable = originPurchasrs.filter((purchase) => {
                 const purchaseDate = moment(new Date(purchase.date)).format('DD/MM/YYYY');
                 const inputDate = moment(new Date(inputValue.dateInput['$d'])).format('DD/MM/YYYY');
-                console.log(inputValue);
                 return purchase.productName === inputValue.productName ||
                     purchase.customerName === inputValue.customerName ||
                     purchaseDate === inputDate

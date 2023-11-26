@@ -31,7 +31,7 @@ function ProductCardComp({ product }) {
                     <CardInfo>
                         <Typography variant="h5" gutterBottom component="div">
                             <LinkRouter
-                                to={'/products/edit-product'} state={{ product }}
+                                to={'/products/edit-product'} state={{ productID: product.id }}
                             >
                                 {product.name}
                             </LinkRouter>

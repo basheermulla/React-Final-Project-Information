@@ -15,7 +15,6 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                     onInputChange={(event, newInputValue, id) => {
                         console.log(event, newInputValue, id);
                         setInputValue(newInputValue);
-
                     }}
                     onChange={(e, value) => {
                         console.log(value)
@@ -32,7 +31,6 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                     }
                 />
                 :
-
                 <Autocomplete
                     disablePortal
                     onInputChange={(event, newInputValue) => {

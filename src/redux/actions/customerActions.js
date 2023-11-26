@@ -1,6 +1,7 @@
 import {
     LOAD_CUSTOMERS,
-    UPDATE_CUSTOMERS
+    UPDATE_CUSTOMER,
+    DELETE_CUSTOMER
 } from '../constants/customerConstants';
 
 export const getAllCustomers = (customers) => (dispatch) => {
@@ -8,5 +9,9 @@ export const getAllCustomers = (customers) => (dispatch) => {
 }
 
 export const updateCustomer = (customer) => (dispatch) => {
-    dispatch({ type: UPDATE_CUSTOMERS, payload: customer });
+    dispatch({ type: UPDATE_CUSTOMER, payload: customer });
+}
+
+export const deleteCustomer = (customerID) => (dispatch) => {
+    dispatch({ type: DELETE_CUSTOMER, payload: customerID });
 }

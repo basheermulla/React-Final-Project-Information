@@ -79,7 +79,7 @@ function HeaderComp() {
             const customers = querySnapshot.docs.map((doc) => {
                 return {
                     id: doc.id,
-                    status: 'UNCHANGED',
+                    // status: 'UNCHANGED',
                     ...doc.data()
                 }
             });
@@ -96,7 +96,7 @@ function HeaderComp() {
             const purchases = querySnapshot.docs.map((doc) => {
                 return {
                     id: doc.id,
-                    status: 'UNCHANGED',
+                    // status: 'UNCHANGED',
                     ...doc.data(),
                     date: doc.data().date.toDate()
                 }

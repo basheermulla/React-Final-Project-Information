@@ -1,18 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
     Avatar,
-    Box, Button, Card, CardContent, Container, Grid, Paper, Stack, Typography
+    Box, Button, CardContent, Container, Grid, Paper, Stack
 } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import AutoCompleteComp from '../components/AutoComplete';
-import { purple, blue, grey, cyan } from '@mui/material/colors';
-import { deepPurple } from '@mui/material/colors';
+import { blue, grey } from '@mui/material/colors';
 import { AddShoppingCart } from '@mui/icons-material';
-import { addDoc, collection, doc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import db from "../firebase/firebase";
-import { AddPurchase } from '../redux/actions/purchaseActions';
-import moment from 'moment';
+import { AddPurchase, getAllPurchase } from '../redux/actions/purchaseActions';
 
 function PurchaseProductNestedPageComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -25,7 +23,6 @@ function PurchaseProductNestedPageComp() {
     const navigate = useNavigate();
 
     const handleAddProduct = (value) => {
-        console.log(value);
         if (value === null) {
             setInputValue({ ...inputValue, productName: '', productID: '' });
         } else {
@@ -40,15 +37,20 @@ function PurchaseProductNestedPageComp() {
             date: new Date(),
             orderNumber: Math.max(...purchases.map(purchase => purchase.orderNumber)) + 1
         };
-        console.log(new_purchase_obj);
-        dispatch(AddPurchase(new_purchase_obj));
-        addDoc(collection(db, 'purchases'), new_purchase_obj);
+        //dispatch(AddPurchase(new_purchase_obj));
+        await addDoc(collection(db, 'purchases'), new_purchase_obj);
+        const querySnapshot = await getDocs(collection(db, "purchases"));
+        const purchasesFromDB = querySnapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                // status: 'UNCHANGED',
+                ...doc.data(),
+                date: doc.data().date.toDate()
+            }
+        });
+        dispatch(getAllPurchase(purchasesFromDB));
         navigate(-1);
     }
-
-    useEffect(() => {
-        console.log(inputValue);
-    }, [inputValue])
 
     return (
         <>
