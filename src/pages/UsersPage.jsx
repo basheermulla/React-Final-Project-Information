@@ -8,7 +8,7 @@ function UsersPageComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", height: '100vh' }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5 }}>
                 <Box xs={{ display: 'flex', justifyContent: "center" }} >
                     <Typography gutterBottom variant="h3" component="div"> Users Page Comp </Typography>
                 </Box>
