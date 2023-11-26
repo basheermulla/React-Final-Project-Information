@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Typography, Grid, TextField, Button, Paper, Stack, Avatar
+    Box, Grid, TextField, Button, Paper, Stack, Avatar
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { purple, blue, grey, cyan } from '@mui/material/colors';
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
+import { blue } from '@mui/material/colors';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import db from "../firebase/firebase";
 import { useSelector, useDispatch } from "react-redux";
-import { updateProduct } from '../redux/actions/productActions';
+import { deleteProduct, updateProduct } from '../redux/actions/productActions';
 import UpdateIcon from '@mui/icons-material/Update';
 import BasicTableComp from '../components/BasicTable';
+import { deletePurchase } from '../redux/actions/purchaseActions';
 
 function EditProductNestedPageComp() {
+    const products = useSelector((state => state.productReducer.products));
     const customers = useSelector((state => state.customerReducer.customers));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const dispatch = useDispatch();
 
-    const [product, setProduct] = useState(useLocation().state.product);
+    const [productID, setProductID] = useState(useLocation().state.productID);
+    const [pathName, setPathName] = useState(useLocation().pathname)
+    const [product, setProduct] = useState({});
 
     const navigate = useNavigate();
 
@@ -37,8 +41,50 @@ function EditProductNestedPageComp() {
         const updateProductDB = { ...product };
         delete updateProductDB['id'];
         await updateDoc(doc(db, 'products', product.id), updateProductDB);
-        navigate(-1);
+
+        if (pathName === '/customers/edit-product') {
+            navigate('/customers');
+        } else if (pathName === '/products/edit-product') {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
     }
+
+    const handleDalete = async () => {
+        // Delete product from productReducer
+        dispatch(deleteProduct(product.id));
+
+        // Delete product from firebase firestore DB
+        await deleteDoc(doc(db, 'products', product.id));
+
+        // Generate Purchased Arr to Delete
+        const toDelete_purchases = purchases.filter((purchase) => purchase.productID === productID);
+        let arr_purchaseID = []
+        toDelete_purchases.forEach(purchase => {
+            arr_purchaseID.push(purchase.id)
+        });
+
+        // Delete product's related data from the "Purchased" table in purchaseReducer
+        dispatch(deletePurchase(arr_purchaseID));
+
+        // Delete product's related data from the "Purchased" table in firebase firestore DB
+        const promises = toDelete_purchases.map((docId) => deleteDoc(doc(db, "purchases", docId.id)))
+        await Promise.all(promises);
+
+        if (pathName === '/customers/edit-product') {
+            navigate('/customers');
+        } else if (pathName === '/products/edit-product') {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+    }
+
+    useEffect(() => {
+        const desire_Product = products.find((product) => product.id === productID);
+        setProduct(desire_Product);
+    }, [productID]);
 
     return (
         <>
@@ -58,7 +104,7 @@ function EditProductNestedPageComp() {
                                 id="name"
                                 label="Name"
                                 name="name"
-                                defaultValue={product.name}
+                                value={product?.name || ''}
                                 autoFocus
                                 onChange={(e) => handleInput(e)}
                             />
@@ -71,7 +117,7 @@ function EditProductNestedPageComp() {
                                 id="price"
                                 label="Price"
                                 name="price"
-                                defaultValue={product.price}
+                                value={product?.price || ''}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -83,7 +129,7 @@ function EditProductNestedPageComp() {
                                 id="quantity"
                                 label="Quantity"
                                 name="quantity"
-                                defaultValue={product.quantity}
+                                value={product?.quantity || ''}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -95,7 +141,7 @@ function EditProductNestedPageComp() {
                                 id="description"
                                 label="Description"
                                 name="description"
-                                defaultValue={product.description}
+                                value={product?.description || ''}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -111,6 +157,16 @@ function EditProductNestedPageComp() {
                             Cancel
                         </Button>
                         <Button
+                            type="button"
+                            fullWidth
+                            variant="outlined"
+                            color='error'
+                            sx={{ m: 1, mt: 3 }}
+                            onClick={() => handleDalete()}
+                        >
+                            Delete
+                        </Button>
+                        <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -123,16 +179,17 @@ function EditProductNestedPageComp() {
                     </Grid>
                 </Box>
                 <Grid item xs={12} sm={8}>
-                <Box sx={{ display: 'flex', justifyContent: "center", mb: 3 }} >
-                    <BasicTableComp
-                        data={
-                            customers.filter((customer) =>
-                                purchases.find(purchase => purchase.productID === product.id) &&
-                                purchases.find(purchase => purchase.customerID === customer.id)
-                            )
-                        }
-                        model={'products'} />
-                </Box>
+                    <Box sx={{ display: 'flex', justifyContent: "center", mb: 3 }} >
+                        <BasicTableComp
+                            data={
+                                customers.filter((customer) =>
+                                    purchases.find(purchase =>
+                                        purchase.productID === productID &&
+                                        purchase.customerID === customer.id
+                                    ))
+                            }
+                            model={'products'} />
+                    </Box>
                 </Grid>
             </Grid>
         </>

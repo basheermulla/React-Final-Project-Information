@@ -1,31 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
-    Box, Typography, Card, CardMedia, CardContent, CardActions, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse
+    Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { cyan } from '@mui/material/colors';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import { AddShoppingCart } from '@mui/icons-material';
-import { purple, blue, grey } from '@mui/material/colors';
+import { blue, grey } from '@mui/material/colors';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useLocation, useNavigate, Link as LinkRouter } from 'react-router-dom';
+import { useNavigate, Link as LinkRouter } from 'react-router-dom';
 import moment from 'moment';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 function CollapsibleTableComp({ ID, customer, AddProduct }) {
     const products = useSelector((state => state.productReducer.products));
-    const purchases = useSelector((state => state.purchaseReducer.purchases));
 
     const [open, setOpen] = useState(false);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log(customer);
-    }, [customer])
 
     return (
         <>
@@ -49,7 +38,7 @@ function CollapsibleTableComp({ ID, customer, AddProduct }) {
                 </TableCell>
                 <TableCell align="center">
                     <LinkRouter
-                        to={'/customers/edit-customer'} state={{ customer: customer }}
+                        to={'/customers/edit-customer'} state={{ customerID: customer.id }}
                     >
                         {customer.firstName + ' ' + customer.lastName}
                     </LinkRouter>
@@ -60,7 +49,7 @@ function CollapsibleTableComp({ ID, customer, AddProduct }) {
                         variant="contained"
                         color="error"
                         onClick={() => {
-                            navigate('/products/purchase-product', { state: { customerID: customer.id } })
+                            navigate('/customers/purchase-product', { state: { customerID: customer.id } })
                         }}
                     >
                         Save

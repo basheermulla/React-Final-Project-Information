@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Typography, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, TableContainer, Container
+    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container
 } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { collection, getDocs } from 'firebase/firestore';
-import db from '../firebase/firebase';
 import CollapsibleTableComp from '../components/CollapsibleTable';
-import { cyan, blue } from '@mui/material/colors';
+import { blue } from '@mui/material/colors';
 
 function CustomersPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
 
-    const [rows, setRows] = useState([]);
     const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
     const dispatch = useDispatch();

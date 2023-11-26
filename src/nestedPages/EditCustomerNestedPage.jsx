@@ -1,22 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-    Box, Typography, Grid, Paper, Stack, Avatar, TextField, Button,
+    Box, Grid, Paper, Stack, Avatar, TextField, Button,
 } from '@mui/material';
-import { purple, blue, grey, cyan } from '@mui/material/colors';
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
+import { blue } from '@mui/material/colors';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import db from "../firebase/firebase";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { updateCustomer } from '../redux/actions/customerActions';
+import { updateCustomer, deleteCustomer } from '../redux/actions/customerActions';
 import UpdateIcon from '@mui/icons-material/Update';
 import BasicTableComp from '../components/BasicTable';
+import { deletePurchase } from '../redux/actions/purchaseActions';
 
 function EditCustomerNestedPageComp() {
+    const customers = useSelector((state => state.customerReducer.customers));
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const dispatch = useDispatch();
 
-    const [customer, setCustomer] = useState(useLocation().state.customer);
+    const [customerID, setCustomerID] = useState(useLocation().state.customerID);
+    const [pathName, setPathName] = useState(useLocation().pathname);
+    const [customer, setCustomer] = useState({});
 
     const navigate = useNavigate();
 
@@ -32,17 +36,47 @@ function EditCustomerNestedPageComp() {
             event.preventDefault();
             event.stopPropagation();
         }
-        const updateCustomerRedux = { ...customer };
-        delete updateCustomerRedux[['status']];
-        delete updateCustomerRedux[['otherData']];
-        dispatch(updateCustomer(updateCustomerRedux));
+        dispatch(updateCustomer(customer));
         const updateCustomerDB = { ...customer };
-        delete updateCustomerDB[['status']];
-        delete updateCustomerDB[['otherData']];
         delete updateCustomerDB[['id']];
         await updateDoc(doc(db, 'customers', customer.id), updateCustomerDB);
+        
+        if (pathName === '/products/edit-customer') {
+            navigate('/products');
+        } else if (pathName === '/customer/edit-customer') {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+    }
+
+    const handleDalete = async () => {
+        // Delete customer from customerReducer
+        dispatch(deleteCustomer(customer.id));
+
+        // Delete customer from firebase firestore DB
+        await deleteDoc(doc(db, 'customers', customer.id));
+
+        // Generate Purchased Arr to Delete
+        const toDelete_purchases = purchases.filter((purchase) => purchase.customerID === customerID);
+        let arr_purchaseID = []
+        toDelete_purchases.forEach(purchase => {
+            arr_purchaseID.push(purchase.id)
+        });
+
+        // Delete customer's related data from the "Purchased" table in purchaseReducer
+        dispatch(deletePurchase(arr_purchaseID));
+
+        // Delete customer's related data from the "Purchased" table in firebase firestore DB
+        const promises = toDelete_purchases.map((docId) => deleteDoc(doc(db, "purchases", docId.id)))
+        await Promise.all(promises);
         navigate(-1);
     }
+
+    useEffect(() => {
+        const desire_Customer = customers.find((customer) => customer.id === customerID);
+        setCustomer(desire_Customer);
+    }, [customerID]);
 
     return (
         <>
@@ -62,7 +96,7 @@ function EditCustomerNestedPageComp() {
                                 id="firstName"
                                 label="First Name"
                                 name="firstName"
-                                defaultValue={customer.firstName}
+                                value={customer.firstName || ''}
                                 autoFocus
                                 onChange={(e) => handleInput(e)}
                             />
@@ -75,7 +109,7 @@ function EditCustomerNestedPageComp() {
                                 id="lastName"
                                 label="Last Name"
                                 name="lastName"
-                                defaultValue={customer.lastName}
+                                value={customer.lastName || ''}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -87,7 +121,7 @@ function EditCustomerNestedPageComp() {
                                 id="city"
                                 label="City"
                                 name="city"
-                                defaultValue={customer.city}
+                                value={customer.city || ''}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -101,6 +135,16 @@ function EditCustomerNestedPageComp() {
                             onClick={() => navigate(-1)}
                         >
                             Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            fullWidth
+                            variant="outlined"
+                            color='error'
+                            sx={{ m: 1, mt: 3 }}
+                            onClick={() => handleDalete()}
+                        >
+                            Delete
                         </Button>
                         <Button
                             type="submit"
@@ -119,9 +163,10 @@ function EditCustomerNestedPageComp() {
                         <BasicTableComp
                             data={
                                 products.filter((product) =>
-                                    purchases.find(purchase => purchase.customerID === customer.id) &&
-                                    purchases.find(purchase => purchase.productID === product.id)
-                                )
+                                    purchases.find(purchase =>
+                                        purchase.customerID === customerID &&
+                                        purchase.productID === product.id
+                                    ))
                             }
                             model={'customers'} />
                     </Box>

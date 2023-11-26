@@ -1,11 +1,11 @@
-import { useState, useParams, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Avatar,
-    Box, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+    Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
-import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useNavigate } from 'react-router-dom';
-import { purple, blue, grey, cyan } from '@mui/material/colors';
+import { useSelector } from "react-redux";
+import { useLocation } from 'react-router-dom';
+import { blue } from '@mui/material/colors';
 import CollapsibleTableComp from '../components/CollapsibleTable';
 
 function BoughtCustomersNestedPageComp() {
@@ -24,21 +24,26 @@ function BoughtCustomersNestedPageComp() {
 
     useEffect(() => {
         // Filter purchases By productID and groupBy purchases By customerID
-        const filterByProductIDandgroupByCustomerID = purchases
-            .filter((pur) => pur.productID === productID)
-            .map((pur) => { return { ...pur, productName: products.find(prod => prod.id === pur.productID).name } })
-            .reduce((acc, ele) => {
-                acc[ele.customerID] = acc[ele.customerID] ? [...acc[ele.customerID], ele] : [ele];
+        const filterByProductIDAndGroupByCustomerID = purchases
+            .filter((purchase) => purchase.productID === productID)
+            .map((purchase) => { return { ...purchase, productName: products.find(prod => prod.id === purchase.productID).name } })
+            .reduce((acc, current) => {
+                acc[current.customerID] = acc[current.customerID] ? [...acc[current.customerID], current] : [current];
                 return acc
             }, {})
-        console.log(filterByProductIDandgroupByCustomerID);
+        console.log(filterByProductIDAndGroupByCustomerID);
+
         // Map customers with the otherData array [products purchsed, product Name]
-        const readyDataToDisplay = customers.map((customer) => {
-            return {
-                ...customer,
-                otherData: filterByProductIDandgroupByCustomerID[customer.id]
-            }
-        })
+        const readyDataToDisplay = customers
+            .filter((customer) => purchases.find(purchase =>
+                purchase.customerID === customer.id &&
+                purchase.productID === productID))
+            .map((customer) => {
+                return {
+                    ...customer,
+                    otherData: filterByProductIDAndGroupByCustomerID[customer.id]
+                }
+            })
         console.log(readyDataToDisplay);
         setCustomerRows(readyDataToDisplay);
     }, [productID]);
@@ -47,7 +52,7 @@ function BoughtCustomersNestedPageComp() {
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5 }}>
                 <Stack direction="row" spacing={2} m={3}>
-                    <Avatar sx={{  bgcolor: blue[200], color: 'black', width: 400, height: 60, fontSize: 18, fontWeight: 'bold' }} variant='square'>Customers who bought the product</Avatar>
+                    <Avatar sx={{ bgcolor: blue[200], color: 'black', width: 400, height: 60, fontSize: 18, fontWeight: 'bold' }} variant='square'>Customers who bought the product</Avatar>
                 </Stack>
                 <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }} >
                     <Table aria-label="collapsible table" sx={{ border: 0 }}>

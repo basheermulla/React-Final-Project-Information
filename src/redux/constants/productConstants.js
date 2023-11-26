@@ -1,2 +1,3 @@
 export const LOAD_PRODUCTS = 'LOAD_PRODUCTS';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
+export const DELETE_PRODUCT = 'DELETE_PRODUCT';

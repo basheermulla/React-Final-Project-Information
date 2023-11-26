@@ -1,27 +1,11 @@
-import { useEffect, useState } from 'react'
 import {
-    Typography, CardMedia, Button, Table, TableHead, TableRow, TableCell, TableBody, Stack, Avatar, TableContainer
+    CardMedia, Table, TableHead, TableRow, TableCell, TableBody, TableContainer
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { cyan } from '@mui/material/colors';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import { AddShoppingCart } from '@mui/icons-material';
-import { purple, blue, grey } from '@mui/material/colors';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useLocation, useNavigate, Link as LinkRouter } from 'react-router-dom';
-import moment from 'moment';
+import { blue } from '@mui/material/colors';
+import { Link as LinkRouter } from 'react-router-dom';
 
 function BasicTableComp({ data, model }) {
-
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log(data);
-    }, [data])
-
+    
     return (
         <>
             <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }} >
@@ -50,13 +34,13 @@ function BasicTableComp({ data, model }) {
                                     {model === 'customers'
                                         ?
                                         <LinkRouter
-                                            to={'/products/edit-product'} state={{ product: item }}
+                                            to={'/customers/edit-product'} state={{ productID: item.id }}
                                         >
                                             {item.name}
                                         </LinkRouter>
                                         :
                                         <LinkRouter
-                                            to={'/customers/edit-customer'} state={{ customer: item }}
+                                            to={'/products/edit-customer'} state={{ customerID: item.id }}
                                         >
                                             {item.firstName + ' ' + item.lastName}
                                         </LinkRouter>}
