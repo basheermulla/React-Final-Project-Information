@@ -1,61 +1,76 @@
 import { useEffect, useState } from 'react';
 import {
-    Box, Typography, Grid, Paper, Card, CardMedia, CardContent, CardActions, Button
+    Box, Typography, Grid, Paper, Card, CardMedia, CardContent, Container
 } from '@mui/material';
-import { Outlet } from 'react-router-dom';
-import { purple, blue, grey } from '@mui/material/colors';
-import { AddShoppingCart } from '@mui/icons-material';
-import imgCard from '../assets/TV_1.png';
+import { Outlet, Link as LinkRouter } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
 import db from "../firebase/firebase";
+import ProductCardComp from '../components/ProductCard';
+import SliderComp from '../components/Slider';
+import { purple, blue, grey } from '@mui/material/colors';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import { deepPurple } from '@mui/material/colors';
 
 function ProductsPageComp() {
     const products = useSelector((state => state.productReducer.products));
+    const purchases = useSelector((state => state.purchaseReducer.purchases));
+
+    const [selectedMovie, setSelectedMovie] = useState(-1);
+    const [totalPurchased, setTotalPurchased] = useState(0);
+    const [amountSale, setAmountSale] = useState(0);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "products"));
-            const products = querySnapshot.docs.map((doc) => {
-                return {
-                    id: doc.id,
-                    status: 'UNCHANGED',
-                    ...doc.data()
-                }
-            });
-            console.log(products);
-            dispatch({ type: 'LOAD_PRODUCTS', payload: products });
-        }
-        fetchData();
-    }, []);
+        // Group the Purchases based on their productID
+        console.log(purchases);
+        const groupByProductID = purchases.reduce((acc, current) => {
+            acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
+            return acc
+        }, {});
 
-    useEffect(() => {
-        console.log('products = ', products);
-    })
+        const total = purchases.length
+        setTotalPurchased(total)
+
+        const amount = products.filter((product) =>
+            purchases.find(purchase => purchase.productID === product.id))
+            .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
+        setAmountSale(amount)
+    }, [purchases])
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", height: '100vh' }}>
-                {
-                    products.map((product) => {
-                        return <Box key={product.id} xs={{ display: 'flex', justifyContent: "center" }} >
-                            <Card sx={{ maxWidth: 320, justifyContent: "center", alignItems: 'center', alignContent: 'center', m: 1 }}>
-                                <CardMedia sx={{ height: 140 }} image={product.src} title="green iguana" />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div"> {product.name} </Typography>
-                                    <Typography variant="h6" color={blue[500]}> Price: {product.price} </Typography>
-                                    <Typography variant="h6" color={purple[500]}> Quantity: {product.quantity} </Typography>
-                                    <Typography variant="p" color={grey[500]}> Description: {product.description} </Typography>
-                                </CardContent>
-                                <CardActions sx={{ justifyContent: "center" }}>
-                                    <Button variant="contained" color="error" size="small" startIcon={<AddShoppingCart />}>Add</Button>
-                                </CardActions>
-                            </Card>
-                        </Box>
-                    })
-                }
-                <Outlet />
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
+                <Container sx={{ display: 'flex', justifyContent: "center", height: 160 }} >
+                    <Card sx={{ maxWidth: 300, position: "relative", height: 160, mr: 10 }}>
+                        <Stack direction="row" spacing={2}>
+                            <Avatar sx={{ bgcolor: deepPurple[500], width: 300, height: 80, fontWeight: 'bold' }} variant='square'>Total Purchased Products</Avatar>
+                        </Stack>
+                        <CardContent>
+                            <Typography variant="h4" gutterBottom component="div" color={blue[500]} fontWeight='bold'>
+                                {totalPurchased}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                    <Card sx={{ maxWidth: 300, position: "relative", height: 160 }}>
+                        <Stack direction="row" spacing={2}>
+                            <Avatar sx={{ bgcolor: deepPurple[500], width: 300, height: 80, fontWeight: 'bold' }} variant='square'>Amount Of Sale</Avatar>
+                        </Stack>
+                        <CardContent>
+                            <Typography variant="h4" gutterBottom component="div" color={blue[500]} fontWeight='bold'>
+                                {amountSale} {' '} {String.fromCharCode(0x20aa)}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Container>
+                <Container sx={{ mt: 2 }} >
+                    {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} />}
+                </Container>
+                <Container sx={{ mt: 2 }} >
+                    <Outlet />
+                </Container>
             </Grid>
         </>
     )

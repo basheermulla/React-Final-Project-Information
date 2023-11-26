@@ -13,7 +13,7 @@ function HomePageComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", height: '100vh' }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5 }}>
                 <Box xs={{ display: 'flex', justifyContent: "center" }} >
                     <Card sx={{ maxWidth: 245, justifyContent: "center", alignItems: 'center', alignContent: 'center', m: 1 }}>
                         <CardMedia sx={{ height: 140 }} image={imgCard} title="green iguana" />

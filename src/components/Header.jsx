@@ -8,16 +8,24 @@ import shopLogo from '../assets/sw-open-shop-3.jpg';
 import pages from '../utils/nav-list-pages.json';
 import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
+import { collection, getDocs } from 'firebase/firestore';
+import db from "../firebase/firebase";
+import { getAllProducts } from '../redux/actions/productActions';
+import { getAllCustomers } from '../redux/actions/customerActions';
+import { getAllPurchase } from '../redux/actions/purchaseActions';
 
 function HeaderComp() {
+    const products = useSelector((state => state.productReducer.products));
+    const dispatch = useDispatch();
+
     const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', accessToken: '' });
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [anchorElLogin, setAnchorElLogin] = useState(null);
+    const [flagColor, setFlagColor] = useState('');
 
     const navigate = useNavigate();
-    const products = useSelector((state => state.products));
-    
+
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -26,9 +34,10 @@ function HeaderComp() {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = (path) => {
+    const handleCloseNavMenu = (path, id) => {
         setAnchorElNav(null);
-        navigate(path)
+        setFlagColor(id);
+        navigate(path);
     };
 
     const handleCloseUserMenu = () => {
@@ -45,9 +54,60 @@ function HeaderComp() {
         }
     }
 
-    // useEffect(() => {
-    //     console.log(pages);
-    // })
+    useEffect(() => {
+        const fetchProducts = async () => {
+            let products = [];
+            const querySnapshot = await getDocs(collection(db, "products"));
+            products = querySnapshot.docs.map((doc) => {
+                return {
+                    id: doc.id,
+                    //status: 'UNCHANGED',
+                    ...doc.data(),
+                    published: doc.data().published.toDate()
+                }
+            });
+            // console.log(products);
+            dispatch(getAllProducts(products));
+        }
+
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            const querySnapshot = await getDocs(collection(db, "customers"));
+            const customers = querySnapshot.docs.map((doc) => {
+                return {
+                    id: doc.id,
+                    status: 'UNCHANGED',
+                    ...doc.data()
+                }
+            });
+            // console.log(customers);
+            dispatch(getAllCustomers(customers));
+        }
+
+        fetchCustomers();
+    }, []);
+
+    useEffect(() => {
+        const fetchPurchases = async () => {
+            const querySnapshot = await getDocs(collection(db, "purchases"));
+            const purchases = querySnapshot.docs.map((doc) => {
+                return {
+                    id: doc.id,
+                    status: 'UNCHANGED',
+                    ...doc.data(),
+                    date: doc.data().date.toDate()
+                }
+            });
+            // console.log(purchases);
+            dispatch(getAllPurchase(purchases));
+        }
+
+        fetchPurchases();
+    }, []);
+
 
     return (
         <>
@@ -80,7 +140,7 @@ function HeaderComp() {
                             {/*anchorElLogin && */<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {
                                     pages['pages-Links'].map((page, index) => (
-                                        <Button key={index} onClick={() => handleCloseNavMenu(page.link)} sx={{ my: 2, color: 'white', display: 'block' }}>
+                                        <Button key={index} color={flagColor === index ? "primary" : "secondary"} onClick={() => handleCloseNavMenu(page.link, index)} sx={{ my: 2, color: 'white', display: 'block' }}>
                                             {page.pagename}
                                         </Button>
                                     ))
