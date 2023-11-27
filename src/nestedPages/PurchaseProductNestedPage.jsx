@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
     Avatar,
-    Box, Button, CardContent, Container, Grid, Paper, Stack
+    Box, Button, CardContent, Container, Grid, Paper, Stack, TableContainer, Icon
 } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,7 +10,8 @@ import { blue, grey } from '@mui/material/colors';
 import { AddShoppingCart } from '@mui/icons-material';
 import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import db from "../firebase/firebase";
-import { AddPurchase, getAllPurchase } from '../redux/actions/purchaseActions';
+import { AddPurchase, loadAllPurchase } from '../redux/actions/purchaseActions';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 function PurchaseProductNestedPageComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -20,6 +21,7 @@ function PurchaseProductNestedPageComp() {
     const [inputValue, setInputValue] = useState({ productName: '', productID: '' });
 
     const { state } = useLocation();
+    const { pathname } = useLocation();
     const navigate = useNavigate();
 
     const handleAddProduct = (value) => {
@@ -48,13 +50,27 @@ function PurchaseProductNestedPageComp() {
                 date: doc.data().date.toDate()
             }
         });
-        dispatch(getAllPurchase(purchasesFromDB));
+        dispatch(loadAllPurchase(purchasesFromDB));
+
         navigate(-1);
+    }
+
+    const handleClose = () => {
+        console.log(pathname);
+        if (pathname === '/customers/purchase-product') {
+            navigate('/customers');
+        } else {
+            navigate('/products');
+        }
+
     }
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", bgcolor: grey[0], mt: 5 }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", bgcolor: grey[0], mt: 5, p: 1 }}>
+                <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
+                    <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
+                </TableContainer>
                 <Container sx={{ display: 'flex', justifyContent: "center" }} >
                     <Box sx={{ maxWidth: 400, position: "relative", m: 3 }}>
                         <Stack direction="row" spacing={2}>

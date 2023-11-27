@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Grid, Paper, Stack, Avatar, TextField, Button,
+    Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -11,6 +11,7 @@ import { updateCustomer, deleteCustomer } from '../redux/actions/customerActions
 import UpdateIcon from '@mui/icons-material/Update';
 import BasicTableComp from '../components/BasicTable';
 import { deletePurchase } from '../redux/actions/purchaseActions';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 function EditCustomerNestedPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
@@ -40,17 +41,17 @@ function EditCustomerNestedPageComp() {
         const updateCustomerDB = { ...customer };
         delete updateCustomerDB[['id']];
         await updateDoc(doc(db, 'customers', customer.id), updateCustomerDB);
-        
+
         if (pathName === '/products/edit-customer') {
             navigate('/products');
-        } else if (pathName === '/customer/edit-customer') {
+        } else if (pathName === '/customers/edit-customer') {
             navigate(-1);
         } else {
             navigate('/');
         }
     }
 
-    const handleDalete = async () => {
+    const handleDelete = async () => {
         // Delete customer from customerReducer
         dispatch(deleteCustomer(customer.id));
 
@@ -73,6 +74,25 @@ function EditCustomerNestedPageComp() {
         navigate(-1);
     }
 
+    const handleCancel = () => {
+        console.log(pathName);
+        if (pathName === '/products/edit-customer') {
+            navigate('/products');
+        } else if (pathName === '/customers/edit-customer') {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+    }
+
+    const handleClose = () => {
+        if (pathName === '/customers/edit-customer' || pathName === '/customers/edit-product') {
+            navigate('/customers');
+        } else {
+            navigate('/products');
+        }
+    }
+
     useEffect(() => {
         const desire_Customer = customers.find((customer) => customer.id === customerID);
         setCustomer(desire_Customer);
@@ -81,6 +101,9 @@ function EditCustomerNestedPageComp() {
     return (
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
+                <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
+                    <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
+                </TableContainer>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={2} m={3} sx={{ justifyContent: "center" }} >
                         <Avatar sx={{ bgcolor: blue[200], color: 'black', width: 400, height: 60, fontWeight: 'bold' }} variant='square'>Edit Customer</Avatar>
@@ -132,7 +155,7 @@ function EditCustomerNestedPageComp() {
                             fullWidth
                             variant="contained"
                             sx={{ m: 1, mt: 3 }}
-                            onClick={() => navigate(-1)}
+                            onClick={() => handleCancel()}
                         >
                             Cancel
                         </Button>
@@ -142,7 +165,7 @@ function EditCustomerNestedPageComp() {
                             variant="outlined"
                             color='error'
                             sx={{ m: 1, mt: 3 }}
-                            onClick={() => handleDalete()}
+                            onClick={() => handleDelete()}
                         >
                             Delete
                         </Button>
@@ -168,7 +191,9 @@ function EditCustomerNestedPageComp() {
                                         purchase.productID === product.id
                                     ))
                             }
-                            model={'customers'} />
+
+                            modelTarget={pathName === '/customers/edit-customer' ? 'customers' : 'products'}
+                        />
                     </Box>
                 </Grid>
             </Grid>

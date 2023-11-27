@@ -10,6 +10,7 @@ import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
+import PageTitleComp from '../components/PageTitle';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -83,7 +84,7 @@ function PurchasesPageComp() {
         const mapPurchases = purchases.map((purchase) => {
             return {
                 ...purchase,
-                productName: products.find((product) => product.id === purchase.productID).name,
+                productName: products.find((product) => product.id === purchase.productID)?.name,
                 customerName: customers.find(customer => customer.id === purchase.customerID).firstName + ' ' +
                     customers.find(customer => customer.id === purchase.customerID).lastName,
             }
@@ -95,52 +96,53 @@ function PurchasesPageComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5, p: 1 }}>
-                    <Grid container justifyContent="center" alignItems="center">
-                        <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
-                        <AutoCompleteComp callbackLabelInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
-                        <Grid item xs={8} sm={3} sx={{ display: 'flex', justifyContent: "center" }}>
-                            <DateFieldComp callbackLabelInput={handleSearchDate} />
-                        </Grid>
-                        <Grid item xs={12} sm={12} mt={1}>
-                            <Button variant="contained" color="secondary" onClick={() => handleSearch()}>
-                                Search
-                            </Button>
-                        </Grid>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5, p: 2 }}>
+                <PageTitleComp titleName={'Purchases'} />
+                <Grid container justifyContent="center" alignItems="center">
+                    <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
+                    <AutoCompleteComp callbackLabelInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
+                    <Grid item xs={8} sm={3} sx={{ display: 'flex', justifyContent: "center" }}>
+                        <DateFieldComp callbackLabelInput={handleSearchDate} />
                     </Grid>
-                    <Grid container justifyContent="center" alignItems="center">
-                        <Table sx={{ minWidth: 400, width: 1000, mt: 5 }} aria-label="simple table">
-                            <TableHead>
-                                <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0, bgcolor: blue[100], fontWeight: 'bold' } }}>
-                                    <TableCell align='center'>Product</TableCell>
-                                    <TableCell align="center">Customer</TableCell>
-                                    <TableCell align="center">Order Number</TableCell>
-                                    <TableCell align="center">Purchased Date</TableCell>
-                                </StyledTableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    localPurchases.map((purchase) => (
-                                        <StyledTableRow
-                                            key={purchase.id}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                            hover
-                                        >
-                                            <TableCell component="th" scope="row" align="center">
-                                                {purchase.productName}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {purchase.customerName}
-                                            </TableCell>
-                                            <TableCell align="center">{purchase.orderNumber}</TableCell>
-                                            <TableCell align="center">{moment(new Date(purchase.date)).format('DD/MM/YYYY')}</TableCell>
-                                        </StyledTableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </Table>
+                    <Grid item xs={12} sm={12} mt={1}>
+                        <Button variant="contained" color="secondary" onClick={() => handleSearch()}>
+                            Search
+                        </Button>
                     </Grid>
-                
+                </Grid>
+                <Grid container justifyContent="center" alignItems="center">
+                    <Table sx={{ minWidth: 400, width: 1000, mt: 5 }} aria-label="simple table">
+                        <TableHead>
+                            <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0, bgcolor: blue[100], fontWeight: 'bold' } }}>
+                                <TableCell align='center'>Product</TableCell>
+                                <TableCell align="center">Customer</TableCell>
+                                <TableCell align="center">Order Number</TableCell>
+                                <TableCell align="center">Purchased Date</TableCell>
+                            </StyledTableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                localPurchases.map((purchase) => (
+                                    <StyledTableRow
+                                        key={purchase.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        hover
+                                    >
+                                        <TableCell component="th" scope="row" align="center">
+                                            {purchase.productName}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {purchase.customerName}
+                                        </TableCell>
+                                        <TableCell align="center">{purchase.orderNumber}</TableCell>
+                                        <TableCell align="center">{moment(new Date(purchase.date)).format('DD/MM/YYYY')}</TableCell>
+                                    </StyledTableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </Table>
+                </Grid>
+
             </Grid>
         </>
     )

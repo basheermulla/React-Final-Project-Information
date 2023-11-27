@@ -10,9 +10,23 @@ import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
 import db from "../firebase/firebase";
-import { getAllProducts } from '../redux/actions/productActions';
-import { getAllCustomers } from '../redux/actions/customerActions';
-import { getAllPurchase } from '../redux/actions/purchaseActions';
+import { loadAllProducts } from '../redux/actions/productActions';
+import { loadAllCustomers } from '../redux/actions/customerActions';
+import { loadAllPurchase } from '../redux/actions/purchaseActions';
+import { blue } from '@mui/material/colors';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            superLight: blue[50],
+            light: blue[200],
+            main: blue[500],
+            dark: blue[700],
+            darker: blue[900],
+        },
+    },
+});
 
 function HeaderComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -34,9 +48,9 @@ function HeaderComp() {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = (path, id) => {
+    const handleCloseNavMenu = (path, index) => {
         setAnchorElNav(null);
-        setFlagColor(id);
+        setFlagColor(index);
         navigate(path);
     };
 
@@ -55,6 +69,10 @@ function HeaderComp() {
     }
 
     useEffect(() => {
+        console.log(flagColor);
+    }, [flagColor])
+
+    useEffect(() => {
         const fetchProducts = async () => {
             let products = [];
             const querySnapshot = await getDocs(collection(db, "products"));
@@ -67,7 +85,7 @@ function HeaderComp() {
                 }
             });
             // console.log(products);
-            dispatch(getAllProducts(products));
+            dispatch(loadAllProducts(products));
         }
 
         fetchProducts();
@@ -84,7 +102,7 @@ function HeaderComp() {
                 }
             });
             // console.log(customers);
-            dispatch(getAllCustomers(customers));
+            dispatch(loadAllCustomers(customers));
         }
 
         fetchCustomers();
@@ -102,7 +120,7 @@ function HeaderComp() {
                 }
             });
             // console.log(purchases);
-            dispatch(getAllPurchase(purchases));
+            dispatch(loadAllPurchase(purchases));
         }
 
         fetchPurchases();
@@ -111,91 +129,106 @@ function HeaderComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6}>
-                <AppBar position="static">
-                    <Container maxWidth="xl">
-                        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                            <IconButton onClick={(e) => navigate('/')} sx={{ p: 0, mr: 1 }}>
-                                <Avatar alt="Remy Sharp" src={shopLogo} />
-                            </IconButton>
-                            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                                <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar"
-                                    aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit"
-                                >
-                                    <MenuIcon />
+            <ThemeProvider theme={theme}>
+                <Grid container component={Paper} elevation={6}>
+                    <AppBar position="static">
+                        <Container maxWidth="xl">
+                            <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+                                <IconButton onClick={(e) => navigate('/')} sx={{ p: 0, mr: 1 }}>
+                                    <Avatar alt="Remy Sharp" src={shopLogo} />
                                 </IconButton>
-                                <Menu
-                                    id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
-                                    keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left', }}
-                                    open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}
-                                    sx={{ display: { xs: 'block', md: 'none' }, }}
-                                >
-                                    {pages['pages-Links'].map((page, index) => (
-                                        <MenuItem key={index} onClick={handleCloseNavMenu}>
-                                            <Typography textAlign="center">{page.pagename}</Typography>
-                                        </MenuItem>
-                                    ))}
-                                </Menu>
-                            </Box>
-                            {/*anchorElLogin && */<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                                {
-                                    pages['pages-Links'].map((page, index) => (
-                                        <Button key={index} color={flagColor === index ? "primary" : "secondary"} onClick={() => handleCloseNavMenu(page.link, index)} sx={{ my: 2, color: 'white', display: 'block' }}>
-                                            {page.pagename}
-                                        </Button>
-                                    ))
-                                }
-                            </Box>
-                            }
-                            <Box sx={{ flexGrow: 0 }}>
-                                <Button
-                                    sx={{ m: 2, display: anchorElLogin ? 'none' : 'block' }}
-                                    variant="contained"
-                                    color="error"
-                                    onClick={(e) => navigate('login')}
-                                >
-                                    Login
-                                </Button>
-                                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                                    {anchorElLogin && <Typography
-                                        component="p"
-                                        variant="p"
-                                    > Hello, {userInfo?.firstName + ' ' + userInfo?.lastName}
-                                    </Typography>
-                                    }
-                                    {anchorElLogin && <Tooltip title="Open settings">
-                                        <IconButton onClick={handleOpenUserMenu} >
-                                            <Avatar
-                                                alt="Remy Sharp"
-                                                sx={{
-                                                    backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-                                                    backgroundRepeat: 'no-repeat',
-                                                    backgroundSize: 'cover',
-                                                    backgroundPosition: 'center',
-                                                }}
-                                            />
-                                        </IconButton>
-                                    </Tooltip>}
-
-                                    <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser}
-                                        anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted
-                                        transformOrigin={{ vertical: 'top', horizontal: 'right', }}
-                                        open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
+                                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                                    <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar"
+                                        aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit"
                                     >
-                                        {
-                                            settings['settings-Links'].map((setting, index) => (
-                                                <MenuItem key={index} onClick={handleCloseUserMenu}>
-                                                    <Typography textAlign="center" onClick={() => navigate(setting.link)}>{setting.settingname}</Typography>
-                                                </MenuItem>
-                                            ))
-                                        }
+                                        <MenuIcon />
+                                    </IconButton>
+                                    <Menu
+                                        id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+                                        keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left', }}
+                                        open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}
+                                        sx={{ display: { xs: 'block', md: 'none' }, }}
+                                    >
+                                        {pages['pages-Links'].map((page, index) => (
+                                            <MenuItem key={index} onClick={handleCloseNavMenu}>
+                                                <Typography textAlign="center">{page.pagename}</Typography>
+                                            </MenuItem>
+                                        ))}
                                     </Menu>
                                 </Box>
-                            </Box>
-                        </Toolbar>
-                    </Container>
-                </AppBar>
-            </Grid>
+                                {/*anchorElLogin && */<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                                    {
+                                        pages['pages-Links'].map((page, index) => (
+                                            <Button
+                                                key={index}
+                                                variant="raised"
+
+                                                onClick={() => handleCloseNavMenu(page.link, index)}
+                                                sx={{
+                                                    my: 2,
+                                                    bgcolor: flagColor === index ? 'primary.dark' : "primary.main",
+                                                    "&:hover": { bgcolor: 'primary.dark'},
+                                                    "&:focus": { outline: 'none' }, 
+                                                    color: 'white', 
+                                                    display: 'block'
+                                                }}
+                                            >
+                                                {page.pagename}
+                                            </Button>
+                                        ))
+                                    }
+                                </Box>
+                                }
+                                <Box sx={{ flexGrow: 0 }}>
+                                    <Button
+                                        sx={{ m: 2, display: anchorElLogin ? 'none' : 'block' }}
+                                        variant="contained"
+                                        color="error"
+                                        onClick={(e) => navigate('login')}
+                                    >
+                                        Login
+                                    </Button>
+                                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                                        {anchorElLogin && <Typography
+                                            component="p"
+                                            variant="p"
+                                        > Hello, {userInfo?.firstName + ' ' + userInfo?.lastName}
+                                        </Typography>
+                                        }
+                                        {anchorElLogin && <Tooltip title="Open settings">
+                                            <IconButton onClick={handleOpenUserMenu} >
+                                                <Avatar
+                                                    alt="Remy Sharp"
+                                                    sx={{
+                                                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+                                                        backgroundRepeat: 'no-repeat',
+                                                        backgroundSize: 'cover',
+                                                        backgroundPosition: 'center',
+                                                    }}
+                                                />
+                                            </IconButton>
+                                        </Tooltip>}
+
+                                        <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser}
+                                            anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted
+                                            transformOrigin={{ vertical: 'top', horizontal: 'right', }}
+                                            open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
+                                        >
+                                            {
+                                                settings['settings-Links'].map((setting, index) => (
+                                                    <MenuItem key={index} onClick={handleCloseUserMenu}>
+                                                        <Typography textAlign="center" onClick={() => navigate(setting.link)}>{setting.settingname}</Typography>
+                                                    </MenuItem>
+                                                ))
+                                            }
+                                        </Menu>
+                                    </Box>
+                                </Box>
+                            </Toolbar>
+                        </Container>
+                    </AppBar>
+                </Grid>
+            </ThemeProvider>
         </>
     )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Grid, TextField, Button, Paper, Stack, Avatar
+    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
@@ -11,6 +11,7 @@ import { deleteProduct, updateProduct } from '../redux/actions/productActions';
 import UpdateIcon from '@mui/icons-material/Update';
 import BasicTableComp from '../components/BasicTable';
 import { deletePurchase } from '../redux/actions/purchaseActions';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 function EditProductNestedPageComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -81,6 +82,25 @@ function EditProductNestedPageComp() {
         }
     }
 
+    const handleCancel = () => {
+        if (pathName === '/customers/edit-product') {
+            navigate('/customers');
+        } else if (pathName === '/products/edit-product') {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+
+    }
+
+    const handleClose = () => {
+        if (pathName === '/customers/edit-customer' || pathName === '/customers/edit-product') {
+            navigate('/customers');
+        } else {
+            navigate('/products');
+        }
+    }
+
     useEffect(() => {
         const desire_Product = products.find((product) => product.id === productID);
         setProduct(desire_Product);
@@ -89,6 +109,9 @@ function EditProductNestedPageComp() {
     return (
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
+                <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
+                    <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
+                </TableContainer>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={2} m={3} sx={{ justifyContent: "center" }}>
                         <Avatar sx={{ bgcolor: blue[200], color: 'black', width: 400, height: 60, fontWeight: 'bold' }} variant='square'>Edit Product</Avatar>
@@ -100,7 +123,7 @@ function EditProductNestedPageComp() {
                             <TextField
                                 required
                                 fullWidth
-                                autoComplete="sdsname"
+                                autoComplete="name"
                                 id="name"
                                 label="Name"
                                 name="name"
@@ -113,7 +136,7 @@ function EditProductNestedPageComp() {
                             <TextField
                                 required
                                 fullWidth
-                                autoComplete="sdsdprice"
+                                autoComplete="price"
                                 id="price"
                                 label="Price"
                                 name="price"
@@ -125,7 +148,7 @@ function EditProductNestedPageComp() {
                             <TextField
                                 required
                                 fullWidth
-                                autoComplete="sdsdquantity"
+                                autoComplete="quantity"
                                 id="quantity"
                                 label="Quantity"
                                 name="quantity"
@@ -137,7 +160,7 @@ function EditProductNestedPageComp() {
                             <TextField
                                 required
                                 fullWidth
-                                autoComplete="sdsddescription"
+                                autoComplete="description"
                                 id="description"
                                 label="Description"
                                 name="description"
@@ -152,7 +175,7 @@ function EditProductNestedPageComp() {
                             fullWidth
                             variant="contained"
                             sx={{ m: 1, mt: 3 }}
-                            onClick={() => navigate(-1)}
+                            onClick={() => handleCancel()}
                         >
                             Cancel
                         </Button>
@@ -188,7 +211,9 @@ function EditProductNestedPageComp() {
                                         purchase.customerID === customer.id
                                     ))
                             }
-                            model={'products'} />
+
+                            modelTarget={pathName === '/products/edit-product' ? 'products' : 'customers'}
+                        />
                     </Box>
                 </Grid>
             </Grid>

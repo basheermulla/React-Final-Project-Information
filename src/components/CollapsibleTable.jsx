@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
     Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse
 } from '@mui/material';
@@ -9,17 +9,17 @@ import { useNavigate, Link as LinkRouter } from 'react-router-dom';
 import moment from 'moment';
 import { useSelector } from "react-redux";
 
-function CollapsibleTableComp({ ID, customer, AddProduct }) {
+function CollapsibleTableComp({ ID, customer, modelTarget }) {
     const products = useSelector((state => state.productReducer.products));
 
     const [open, setOpen] = useState(false);
-
+    const tableRef = useRef(true); // Not work
     const navigate = useNavigate();
 
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: grey[100], fontSize: 16 } }}>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" tabIndex={0} ref={tableRef}>
                     <IconButton
                         aria-label="expand row"
                         size="small"
@@ -34,26 +34,47 @@ function CollapsibleTableComp({ ID, customer, AddProduct }) {
                         component="img"
                         sx={{ width: 72, height: 72, }} image={customer.src}
                         alt="Live from space album cover"
+
                     />
                 </TableCell>
                 <TableCell align="center">
-                    <LinkRouter
-                        to={'/customers/edit-customer'} state={{ customerID: customer.id }}
-                    >
-                        {customer.firstName + ' ' + customer.lastName}
-                    </LinkRouter>
+                    {modelTarget === 'customers' ?
+                        <LinkRouter
+                            to={'/customers/edit-customer'} state={{ customerID: customer.id }}
+                        >
+                            {customer.firstName + ' ' + customer.lastName}
+                        </LinkRouter>
+                        :
+                        <LinkRouter
+                            to={'/products/edit-customer'} state={{ customerID: customer.id }}
+                        >
+                            {customer.firstName + ' ' + customer.lastName}
+                        </LinkRouter>
+                    }
                 </TableCell>
                 <TableCell align="center"> {customer.city} </TableCell>
                 <TableCell align="center">
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                            navigate('/customers/purchase-product', { state: { customerID: customer.id } })
-                        }}
-                    >
-                        Save
-                    </Button>
+                    {modelTarget === 'customers' ?
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => {
+                                navigate('/customers/purchase-product', { state: { customerID: customer.id } })
+                            }}
+                        >
+                            Save
+                        </Button>
+                        :
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => {
+                                navigate('/products/purchase-product', { state: { customerID: customer.id } })
+                            }}
+                        >
+                            Save
+                        </Button>
+                    }
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -78,13 +99,23 @@ function CollapsibleTableComp({ ID, customer, AddProduct }) {
                                                 {otherDataCustomer.orderNumber}
                                             </TableCell>
                                             <TableCell align="center">
-                                                <LinkRouter
-                                                    to={'/products/edit-product'} state={{
-                                                        product: products.find((product) => product.id === otherDataCustomer.productID)
-                                                    }}
-                                                >
-                                                    {otherDataCustomer.productName}
-                                                </LinkRouter>
+                                                {modelTarget === 'customers' ?
+                                                    <LinkRouter
+                                                        to={'/customers/edit-product'} state={{
+                                                            productID: otherDataCustomer.productID
+                                                        }}
+                                                    >
+                                                        {otherDataCustomer.productName}
+                                                    </LinkRouter>
+                                                    :
+                                                    <LinkRouter
+                                                        to={'/products/edit-product'} state={{
+                                                            productID: otherDataCustomer.productID
+                                                        }}
+                                                    >
+                                                        {otherDataCustomer.productName}
+                                                    </LinkRouter>
+                                                }
                                             </TableCell>
                                             <TableCell align="center">
                                                 {moment(new Date(otherDataCustomer.date)).format('DD/MM/YYYY')}
