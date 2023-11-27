@@ -1,11 +1,13 @@
+import { useEffect, useState } from 'react'
 import {
     CardMedia, Table, TableHead, TableRow, TableCell, TableBody, TableContainer
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
-import { Link as LinkRouter } from 'react-router-dom';
+import { Link as LinkRouter, useLocation } from 'react-router-dom';
 
-function BasicTableComp({ data, model }) {
-    
+function BasicTableComp({ data, modelTarget }) {
+    const [pathName, setPathName] = useState(useLocation().pathname);
+
     return (
         <>
             <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }} >
@@ -30,8 +32,8 @@ function BasicTableComp({ data, model }) {
                                         alt="Live from space album cover"
                                     />
                                 </TableCell>
-                                <TableCell align="center">
-                                    {model === 'customers'
+                                {modelTarget === 'customers' && <TableCell align="center">
+                                    {pathName === '/customers/edit-customer'
                                         ?
                                         <LinkRouter
                                             to={'/customers/edit-product'} state={{ productID: item.id }}
@@ -39,12 +41,27 @@ function BasicTableComp({ data, model }) {
                                             {item.name}
                                         </LinkRouter>
                                         :
+                                        <p
+                                            to={'/customers/edit-product'} state={{ productID: item.id }}
+                                        >
+                                            {item.firstName + ' ' + item.lastName}
+                                        </p>}
+                                </TableCell>}
+                                {modelTarget === 'products' && <TableCell align="center">
+                                    {pathName === '/products/edit-product'
+                                        ?
                                         <LinkRouter
                                             to={'/products/edit-customer'} state={{ customerID: item.id }}
                                         >
                                             {item.firstName + ' ' + item.lastName}
-                                        </LinkRouter>}
-                                </TableCell>
+                                        </LinkRouter>
+                                        :
+                                        <p
+                /**  444   */ to={'/products/edit-customer'} state={{ customerID: item.id }}
+                                        >
+                                            {item.name}
+                                        </p>}
+                                </TableCell>}
                             </TableRow>
                         ))}
                     </TableBody>

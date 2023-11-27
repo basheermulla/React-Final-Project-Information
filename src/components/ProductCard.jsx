@@ -18,7 +18,7 @@ function ProductCardComp({ product }) {
     return (
         <>
             <Grid container sx={{ display: 'flex', justifyContent: "center", p: 2 }}>
-                <Card sx={{ maxWidth: 250, position: "relative" }}>
+                <Card sx={{ maxWidth: 250, minHeight: 520, position: "relative" }}>
                     <Box sx={{ position: 'relative' }}>
                         <CardMedia
                             component="img"

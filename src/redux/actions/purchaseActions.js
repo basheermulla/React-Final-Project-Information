@@ -4,7 +4,7 @@ import {
     DELETE_PURCHASE
 } from '../constants/purchaseConstants';
 
-export const getAllPurchase = (purchases) => (dispatch) => {
+export const loadAllPurchase = (purchases) => (dispatch) => {
     dispatch({ type: LOAD_PURCHASES, payload: purchases });
 }
 

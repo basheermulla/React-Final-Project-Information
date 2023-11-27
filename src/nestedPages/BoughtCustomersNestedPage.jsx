@@ -4,9 +4,10 @@ import {
     Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 import { useSelector } from "react-redux";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
 import CollapsibleTableComp from '../components/CollapsibleTable';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 function BoughtCustomersNestedPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
@@ -17,6 +18,11 @@ function BoughtCustomersNestedPageComp() {
     const [customerRows, setCustomerRows] = useState([]);
 
     const { state } = useLocation();
+    const navigate = useNavigate();
+
+    const handleClose = () => {
+        navigate('/products');
+    }
 
     useEffect(() => {
         setProductID(state.productID);
@@ -50,7 +56,10 @@ function BoughtCustomersNestedPageComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5 }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
+                <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
+                    <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
+                </TableContainer>
                 <Stack direction="row" spacing={2} m={3}>
                     <Avatar sx={{ bgcolor: blue[200], color: 'black', width: 400, height: 60, fontSize: 18, fontWeight: 'bold' }} variant='square'>Customers who bought the product</Avatar>
                 </Stack>
