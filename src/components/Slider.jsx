@@ -5,9 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector } from "react-redux";
 import ProductCardComp from './ProductCard';
 
-function SliderComp({ initialSlide = 0 }) {
-    const products = useSelector((state => state.productReducer.products));
-
+function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
     const [hasSetPosition, setHasSetPosition] = useState(false);
     
     const slider = useRef();
@@ -25,14 +23,15 @@ function SliderComp({ initialSlide = 0 }) {
             slider.current.slickGoTo(initialSlide);
             setHasSetPosition(true);
         }
-    }, [initialSlide, hasSetPosition, slider]);
+        console.log(sourcePage);
+    }, [initialSlide, hasSetPosition, slider, productsToSlide]);
 
     return (
         <>
             <Slider ref={slider} {...settings}>
                 {
-                    products.map((product) => {
-                        return <ProductCardComp key={product.id} product={product} />
+                    productsToSlide?.map((product) => {
+                        return <ProductCardComp key={product.id} product={product} sourcePage={sourcePage} />
                     })
                 }
             </Slider>

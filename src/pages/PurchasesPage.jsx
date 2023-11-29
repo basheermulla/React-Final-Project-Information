@@ -89,8 +89,9 @@ function PurchasesPageComp() {
                     customers.find(customer => customer.id === purchase.customerID).lastName,
             }
         });
-        setOriginPurchasrs(mapPurchases);
-        setLocalPurchases(mapPurchases);
+        const sortPurchases = mapPurchases.slice().sort((a, b) => b.orderNumber - a.orderNumber)
+        setOriginPurchasrs(sortPurchases);
+        setLocalPurchases(sortPurchases);
 
     }, [purchases])
 
@@ -114,6 +115,7 @@ function PurchasesPageComp() {
                     <Table sx={{ minWidth: 400, width: 1000, mt: 5 }} aria-label="simple table">
                         <TableHead>
                             <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0, bgcolor: blue[100], fontWeight: 'bold' } }}>
+                                <TableCell align='center'>ID</TableCell>
                                 <TableCell align='center'>Product</TableCell>
                                 <TableCell align="center">Customer</TableCell>
                                 <TableCell align="center">Order Number</TableCell>
@@ -122,13 +124,16 @@ function PurchasesPageComp() {
                         </TableHead>
                         <TableBody>
                             {
-                                localPurchases.map((purchase) => (
+                                localPurchases.map((purchase, index) => (
                                     <StyledTableRow
                                         key={purchase.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         hover
                                     >
                                         <TableCell component="th" scope="row" align="center">
+                                            {index +1}
+                                        </TableCell>
+                                        <TableCell align="center">
                                             {purchase.productName}
                                         </TableCell>
                                         <TableCell align="center">

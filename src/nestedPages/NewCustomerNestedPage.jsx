@@ -78,6 +78,9 @@ function NewCustomerNestedPageComp() {
                                 name="firstName"
                                 value={customer.firstName || ''}
                                 autoFocus
+                                inputProps={{
+                                    maxLength: 12
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -90,6 +93,9 @@ function NewCustomerNestedPageComp() {
                                 label="Last Name"
                                 name="lastName"
                                 value={customer.lastName || ''}
+                                inputProps={{
+                                    maxLength: 12
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -102,6 +108,9 @@ function NewCustomerNestedPageComp() {
                                 label="City"
                                 name="city"
                                 value={customer.city || ''}
+                                inputProps={{
+                                    maxLength: 24
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>

@@ -36,7 +36,7 @@ function HeaderComp() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [anchorElLogin, setAnchorElLogin] = useState(null);
-    const [flagColor, setFlagColor] = useState('');
+    const [flagColor, setFlagColor] = useState(0);
 
     const navigate = useNavigate();
 
@@ -134,7 +134,7 @@ function HeaderComp() {
                     <AppBar position="static">
                         <Container maxWidth="xl">
                             <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                                <IconButton onClick={(e) => navigate('/')} sx={{ p: 0, mr: 1 }}>
+                                <IconButton onClick={(e) => {navigate('/'), setFlagColor(0)}} sx={{ p: 0, mr: 1 }}>
                                     <Avatar alt="Remy Sharp" src={shopLogo} />
                                 </IconButton>
                                 <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

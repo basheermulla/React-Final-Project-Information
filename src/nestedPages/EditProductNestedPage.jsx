@@ -38,6 +38,7 @@ function EditProductNestedPageComp() {
             event.preventDefault();
             event.stopPropagation();
         }
+        console.log(product);
         dispatch(updateProduct(product));
         const updateProductDB = { ...product };
         delete updateProductDB['id'];
@@ -129,6 +130,9 @@ function EditProductNestedPageComp() {
                                 name="name"
                                 value={product?.name || ''}
                                 autoFocus
+                                inputProps={{
+                                    maxLength: 16
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -141,6 +145,9 @@ function EditProductNestedPageComp() {
                                 label="Price"
                                 name="price"
                                 value={product?.price || ''}
+                                inputProps={{
+                                    maxLength: 6
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -153,6 +160,9 @@ function EditProductNestedPageComp() {
                                 label="Quantity"
                                 name="quantity"
                                 value={product?.quantity || ''}
+                                inputProps={{
+                                    maxLength: 6
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -165,6 +175,9 @@ function EditProductNestedPageComp() {
                                 label="Description"
                                 name="description"
                                 value={product?.description || ''}
+                                inputProps={{
+                                    maxLength: 100
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
