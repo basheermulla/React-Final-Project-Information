@@ -23,7 +23,9 @@ function App() {
       <HeaderComp />
       <Routes>
         <Route>
-          <Route path='/' exact element={<HomePageComp />} />
+          <Route path='/' exact element={<HomePageComp />} >
+            <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
+          </Route>
           <Route path='/login' element={<LoginPageComp />} />
           <Route path='/products' element={<ProductsPageComp />} >
             <Route path='bought-customers' element={<BoughtCustomersNestedPageComp />} />

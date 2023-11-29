@@ -44,7 +44,7 @@ function CustomersPageComp() {
         })
 
         setCustomersWithOtherData(readyDataToDisplay);
-    }, []);
+    }, [customers, purchases]);
 
     return (
         <>

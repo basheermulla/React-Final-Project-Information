@@ -80,6 +80,9 @@ function NewProductNestedPageComp() {
                                 name="name"
                                 value={product?.name || ''}
                                 autoFocus
+                                inputProps={{
+                                    maxLength: 16
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -92,6 +95,9 @@ function NewProductNestedPageComp() {
                                 label="Price"
                                 name="price"
                                 value={product?.price || ''}
+                                inputProps={{
+                                    maxLength: 6
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -104,6 +110,9 @@ function NewProductNestedPageComp() {
                                 label="Quantity"
                                 name="quantity"
                                 value={product?.quantity || ''}
+                                inputProps={{
+                                    maxLength: 6
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>
@@ -116,6 +125,9 @@ function NewProductNestedPageComp() {
                                 label="Description"
                                 name="description"
                                 value={product?.description || ''}
+                                inputProps={{
+                                    maxLength: 100
+                                }}
                                 onChange={(e) => handleInput(e)}
                             />
                         </Grid>

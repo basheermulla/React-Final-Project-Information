@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
     Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse
 } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useNavigate, Link as LinkRouter } from 'react-router-dom';
+import { useNavigate, Link as LinkRouter, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import { useSelector } from "react-redux";
 
@@ -13,9 +13,13 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
     const products = useSelector((state => state.productReducer.products));
 
     const [open, setOpen] = useState(false);
-    const tableRef = useRef(true); // Not work
+
+    const tableRef = useRef(true);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        tableRef.current.focus();
+    }, [])
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: grey[100], fontSize: 16 } }}>

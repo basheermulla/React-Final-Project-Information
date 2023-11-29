@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-    Typography, Grid, Paper, Card, CardContent, Container, Icon
+    Typography, Grid, Paper, Card, CardContent, Container, Icon, Box, CardMedia, CardActions, Button
 } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
@@ -38,7 +38,7 @@ function ProductsPageComp() {
             purchases.find(purchase => purchase.productID === product.id))
             .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
         setAmountSale(amount)
-    }, [purchases])
+    }, [products, purchases])
 
     return (
         <>
@@ -51,7 +51,7 @@ function ProductsPageComp() {
                             <Avatar sx={{ bgcolor: deepPurple[500], width: 300, height: 80, fontWeight: 'bold' }} variant='square'>Total Purchased Products</Avatar>
                         </Stack>
                         <CardContent>
-                            <Typography variant="h4" gutterBottom component="div" color={blue[500]} fontWeight='bold'>
+                            <Typography variant="h4" gutterBottom component="div" color={blue[500]} fontWeight='bold' >
                                 {totalPurchased}
                             </Typography>
                         </CardContent>
@@ -66,7 +66,6 @@ function ProductsPageComp() {
                             </Typography>
                         </CardContent>
                     </Card>
-
                 </Container>
                 <Container sx={{ display: 'flex', justifyContent: "center", mt: 2 }} >
                     <Stack direction="row" spacing={6}>
@@ -74,7 +73,7 @@ function ProductsPageComp() {
                     </Stack>
                 </Container>
                 <Container sx={{ mt: 2 }} >
-                    {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} />}
+                    {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} productsToSlide={products} sourcePage={'products'} />}
                 </Container>
                 <Container sx={{ mt: 2 }} >
                     <Outlet />
