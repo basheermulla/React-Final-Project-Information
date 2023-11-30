@@ -5,7 +5,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import db from "../firebase/firebase";
+import { db } from '../firebase/firebase';
+// import db from "../firebase/firebase";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteProduct, updateProduct } from '../redux/actions/productActions';
 import UpdateIcon from '@mui/icons-material/Update';

@@ -1,19 +1,80 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import {
-    Box, Typography, Grid, Paper, Avatar, TextField, Button, Link, Alert, AlertTitle
+    Box, Typography, Grid, Paper, Avatar, TextField, Button, Link, Alert, AlertTitle, CircularProgress
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { auth, db } from '../firebase/firebase';
+// import db from "../firebase/firebase";
+import { getIdTokenResult, signInWithEmailAndPassword } from 'firebase/auth';
+import { collection, getDocs, getDoc, doc, query, where } from 'firebase/firestore';
+import { useSelector, useDispatch } from "react-redux";
+import { login, signInError, signInRequest } from '../redux/actions/userActions';
 
 const defaultTheme = createTheme();
 
 function LoginPageComp() {
-    const [errorSignIp, setErrorSignIp] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [userInput, setUserInput] = useState({ firstName: '', lastName: '', email: '', password: '', accessToken: '' });
+
+    const { loading, error, userLogin } = useSelector((state) => state.userLoginReducer);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleInput = (event) => {
+        let { name, value } = event.target
+        setUserInput({ ...userInput, [name]: value });
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const data = new FormData(event.currentTarget);
+
+        dispatch(signInRequest());
+
+        signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
+            .then(async (userCredential) => {
+                // Signed in 
+                const accessToken = userCredential.user.accessToken;
+                // Retrive user data from firestore ---> users collection
+                const q = query(collection(db, "users"), where("email", "==", data.get('email')));
+                const querySnapshot = await getDocs(q);
+                let obj_user = [];
+                if (querySnapshot.docs.length === 1) {
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        obj_user = {
+                            ...userInput,
+                            accessToken: accessToken,
+                            firstName: doc.data().firstName,
+                            lastName: doc.data().lastName
+                        }
+                        setUserInput(obj_user);
+                    });
+                    console.log(querySnapshot.docs[0].data());
+                    console.log(auth.currentUser);
+                    const currtUser = await getIdTokenResult(auth.currentUser)
+                    console.log(currtUser);
+                    console.log(currtUser.claims);
+                    // if (currtUser.claims) {
+                    //     currtUser.claims.admin = 'admin'
+                    // }
+                    // console.log(currtUser.claims);
+                    if (!!currtUser.claims.admin) {
+                        // Show admin UI.
+                        console.log('showAdminUI()');
+                    } else {
+                        // Show regular user UI.
+                        console.log('showRegularUI()');
+                    }
+                }
+                dispatch(login(obj_user));
+                navigate('/');
+            })
+            .catch((error) => {
+                dispatch(signInError(error));
+            });
     }
 
     return (
@@ -60,8 +121,18 @@ function LoginPageComp() {
                                     onChange={(e) => handleInput(e)}
                                 />
                                 <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign In </Button>
+                                <Grid container justifyContent="center" sx={{ mb: 2 }}>
+                                    <Grid item>
+                                        <RouterLink to="/register">
+                                            Don't have an account? Sign Up
+                                        </RouterLink>
+                                    </Grid>
+                                </Grid>
+                                {loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <CircularProgress />
+                                </Box>}
                                 {
-                                    errorSignIp && <Alert severity="error"> <AlertTitle >{errorMessage}</AlertTitle> </Alert>
+                                    error && <Alert severity="error"> <AlertTitle >{error}</AlertTitle> </Alert>
                                 }
                             </Box>
                         </Box>

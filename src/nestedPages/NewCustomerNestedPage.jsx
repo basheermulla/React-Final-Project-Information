@@ -7,7 +7,8 @@ import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import db from "../firebase/firebase";
+import { db } from '../firebase/firebase';
+// import db from "../firebase/firebase";
 import Icon from '@mui/material/Icon';
 import { addCustomer, loadAllCustomers } from '../redux/actions/customerActions';
 

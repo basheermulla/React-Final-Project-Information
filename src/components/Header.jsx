@@ -9,12 +9,13 @@ import pages from '../utils/nav-list-pages.json';
 import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
-import db from "../firebase/firebase";
+import { db } from '../firebase/firebase';
 import { loadAllProducts } from '../redux/actions/productActions';
 import { loadAllCustomers } from '../redux/actions/customerActions';
 import { loadAllPurchase } from '../redux/actions/purchaseActions';
 import { blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { logout } from '../redux/actions/userActions';
 
 const theme = createTheme({
     palette: {
@@ -30,6 +31,9 @@ const theme = createTheme({
 
 function HeaderComp() {
     const products = useSelector((state => state.productReducer.products));
+    const userLogin = useSelector((state) => state.userLoginReducer.userLogin);
+    // const userstate = useSelector((state) => state);
+    // console.log(userstate);
     const dispatch = useDispatch();
 
     const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', accessToken: '' });
@@ -58,19 +62,27 @@ function HeaderComp() {
         setAnchorElUser(null);
     };
 
-    const handleAuthLogin = () => {
-        setAnchorElLogin(true);
-    };
-
-    const handleClickSetting = (e) => {
+    const handleClickSetting = (e, path) => {
         if (e.target.innerText === 'Logout') {
-            console.log(e.target.innerText);
+            setAnchorElLogin(false)
+            dispatch(logout());
+            navigate(`${path}`);
         }
     }
 
     useEffect(() => {
         console.log(flagColor);
-    }, [flagColor])
+    }, [flagColor]);
+
+    useEffect(() => {
+        console.log(JSON.parse(localStorage.getItem('userInfo')));
+        if (userLogin?.email) {
+            setAnchorElLogin(true);
+        } else {
+            setAnchorElLogin(false)
+        }
+        setUserInfo(JSON.parse(localStorage.getItem('userInfo')))
+    }, [localStorage.getItem('userInfo')]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -88,8 +100,8 @@ function HeaderComp() {
             dispatch(loadAllProducts(products));
         }
 
-        fetchProducts();
-    }, []);
+        if (userLogin) { fetchProducts() };
+    }, [userLogin]);
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -105,8 +117,8 @@ function HeaderComp() {
             dispatch(loadAllCustomers(customers));
         }
 
-        fetchCustomers();
-    }, []);
+        if (userLogin) { fetchCustomers() };
+    }, [userLogin]);
 
     useEffect(() => {
         const fetchPurchases = async () => {
@@ -123,8 +135,8 @@ function HeaderComp() {
             dispatch(loadAllPurchase(purchases));
         }
 
-        fetchPurchases();
-    }, []);
+        if (userLogin) { fetchPurchases() };
+    }, [userLogin]);
 
 
     return (
@@ -134,7 +146,7 @@ function HeaderComp() {
                     <AppBar position="static">
                         <Container maxWidth="xl">
                             <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                                <IconButton onClick={(e) => {navigate('/'), setFlagColor(0)}} sx={{ p: 0, mr: 1 }}>
+                                <IconButton onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }} sx={{ p: 0, mr: 1 }}>
                                     <Avatar alt="Remy Sharp" src={shopLogo} />
                                 </IconButton>
                                 <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -156,7 +168,7 @@ function HeaderComp() {
                                         ))}
                                     </Menu>
                                 </Box>
-                                {/*anchorElLogin && */<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                                {anchorElLogin && <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                     {
                                         pages['pages-Links'].map((page, index) => (
                                             <Button
@@ -167,9 +179,9 @@ function HeaderComp() {
                                                 sx={{
                                                     my: 2,
                                                     bgcolor: flagColor === index ? 'primary.dark' : "primary.main",
-                                                    "&:hover": { bgcolor: 'primary.dark'},
-                                                    "&:focus": { outline: 'none' }, 
-                                                    color: 'white', 
+                                                    "&:hover": { bgcolor: 'primary.dark' },
+                                                    "&:focus": { outline: 'none' },
+                                                    color: 'white',
                                                     display: 'block'
                                                 }}
                                             >
@@ -217,7 +229,7 @@ function HeaderComp() {
                                             {
                                                 settings['settings-Links'].map((setting, index) => (
                                                     <MenuItem key={index} onClick={handleCloseUserMenu}>
-                                                        <Typography textAlign="center" onClick={() => navigate(setting.link)}>{setting.settingname}</Typography>
+                                                        <Typography textAlign="center" onClick={(e) => handleClickSetting(e, setting.link)}>{setting.settingname}</Typography>
                                                     </MenuItem>
                                                 ))
                                             }
