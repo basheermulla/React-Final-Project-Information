@@ -7,7 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import db from "../firebase/firebase";
+import { db } from '../firebase/firebase';
+// import db from "../firebase/firebase";
 import { addProduct, loadAllProducts } from '../redux/actions/productActions';
 import Icon from '@mui/material/Icon';
 

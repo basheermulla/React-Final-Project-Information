@@ -14,6 +14,7 @@ import EditCustomerNestedPageComp from './nestedPages/EditCustomerNestedPage';
 import NewCustomerNestedPageComp from './nestedPages/NewCustomerNestedPage';
 import PurchasesPageComp from './pages/PurchasesPage';
 import UsersPageComp from './pages/UsersPage';
+import RegisterPageComp from './pages/RegisterPage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -27,6 +28,7 @@ function App() {
             <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
           </Route>
           <Route path='/login' element={<LoginPageComp />} />
+          <Route path='/register' element={<RegisterPageComp />} />
           <Route path='/products' element={<ProductsPageComp />} >
             <Route path='bought-customers' element={<BoughtCustomersNestedPageComp />} />
             <Route path='edit-product' element={<EditProductNestedPageComp />} />

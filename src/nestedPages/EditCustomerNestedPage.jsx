@@ -4,7 +4,8 @@ import {
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import db from "../firebase/firebase";
+import { db } from '../firebase/firebase';
+// import db from "../firebase/firebase";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { updateCustomer, deleteCustomer } from '../redux/actions/customerActions';

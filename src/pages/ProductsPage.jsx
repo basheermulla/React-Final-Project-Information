@@ -14,7 +14,8 @@ import PageTitleComp from '../components/PageTitle';
 function ProductsPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
-
+    const { loading, error, userLogin } = useSelector((state) => state.userLoginReducer);
+    
     const [selectedMovie, setSelectedMovie] = useState(-1);
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
@@ -42,7 +43,6 @@ function ProductsPageComp() {
 
     return (
         <>
-
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
                 <PageTitleComp titleName={'Products'} />
                 <Container sx={{ display: 'flex', justifyContent: "center", height: 160 }} >

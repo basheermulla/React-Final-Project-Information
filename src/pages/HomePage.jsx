@@ -38,13 +38,13 @@ function HomePageComp() {
             return acc
         }, {});
 
-        const sortedProductsByNew = products.slice().sort((a, b) => b.published - a.published).slice(0,2);
+        const sortedProductsByNew = products.slice().sort((a, b) => b.published - a.published).slice(0, 2);
         setNewProducts(sortedProductsByNew);
 
-        const sortedProductsByTopCelling = products.slice().sort((a, b) => groupByProductID[b.id]?.length - groupByProductID[a.id]?.length).slice(0,2);
+        const sortedProductsByTopCelling = products.slice().sort((a, b) => groupByProductID[b.id]?.length - groupByProductID[a.id]?.length).slice(0, 2);
         setTopSellingProducts(sortedProductsByTopCelling);
         console.log(sortedProductsByTopCelling);
-    }, [products])
+    }, [products]);
 
     return (
         <>
