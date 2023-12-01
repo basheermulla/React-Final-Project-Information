@@ -8,6 +8,9 @@ import {
     USER_SIGNUP_SUCCESS,
     USER_SIGNUP_ERROR
 } from '../constants/userConstants';
+import { auth, db } from '../../firebase/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 //------------------ Sing Up ------------------------------
 

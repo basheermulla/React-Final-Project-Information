@@ -27,7 +27,8 @@ export const userLoginReducer = (state = initialState, action) => {
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName,
                 email: action.payload.email,
-                accessToken: action.payload.accessToken
+                accessToken: action.payload.accessToken,
+                role: action.payload.role
             }
             localStorage.setItem('userInfo', JSON.stringify(userLogin));
             return { ...state, loading: false, error: null, userLogin };

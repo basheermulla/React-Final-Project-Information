@@ -7,6 +7,7 @@ import { purple, blue, grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { Link as LinkRouter, useLocation, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import { useSelector } from 'react-redux';
 
 const CardInfo = styled(CardContent)(({ theme }) => ({
     '&:last-child': {
@@ -18,34 +19,42 @@ const CardInfo = styled(CardContent)(({ theme }) => ({
     }
 }));
 
-// const useStyles = styled((theme) => ({
-//     stretch: {
-//         height: 'calc(100% - 20px)'
-//     }, // Un-commenting this results in undesirable appearance 3 (see image 3 above)
-//     outline: { border: "1px solid red" }
-// }));
-
 function ProductCardComp({ product, sourcePage }) {
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
     const navigate = useNavigate();
 
     return (
         <>
             <Card sx={{ maxWidth: 250, minHeight: 520, display: 'flex', flexDirection: 'column', }}>
                 <Box sx={{ position: 'relative' }}>
-                    <CardMedia
-                        component="img"
-                        height='200px'
-                        image={product.src}
-                        alt={product.name}
-                        sx={{ cursor: () => sourcePage === 'products' ? 'pointer' : 'auto' }}
-                        onClick={(e) => sourcePage === 'products' ? navigate('bought-customers', { state: { productID: product.id } }) : null} />
+                    {sourcePage === 'products' ?
+                        <CardMedia
+                            component="img"
+                            height='200px'
+                            image={product.src}
+                            alt={product.name}
+                            sx={{ cursor: () => userLogin.role === 'admin' ? 'pointer' : 'auto' }}
+                            onClick={(e) => userLogin.role === 'admin' ? navigate('bought-customers', { state: { productID: product.id } }) : null}
+                        />
+                        :
+                        <CardMedia
+                            component="img"
+                            height='200px'
+                            image={product.src}
+                            alt={product.name}
+                        />
+                    }
                 </Box>
                 <Grid container display='grid' height='320px'
                 >
                     <CardContent sx={{ justifyContent: 'center' }}>
                         <Typography variant="h5" gutterBottom component="div" fontWeight='bold'>
                             {sourcePage === 'products' ?
-                                <LinkRouter to={'/products/edit-product'} state={{ productID: product.id }}>
+                                <LinkRouter
+                                    to={userLogin.role === 'admin' ? '/products/edit-product' : '#'}
+                                    state={{ productID: product.id }}
+                                    style={{ pointerEvents: userLogin.role === 'admin' ? '' : 'none' }}
+                                >
                                     <strong>{product.name}</strong>
                                 </LinkRouter>
                                 :
@@ -63,39 +72,40 @@ function ProductCardComp({ product, sourcePage }) {
                             {product.description}
                         </Typography>
                     </CardContent>
-                    <CardActions sx={{ justifyContent: 'center', alignItems: 'end' }}>
-                        {sourcePage === 'products' ?
-                            <Button
-                                disabled={product.quantity > 0 ? false : true}
-                                type="button"
-                                variant="contained"
-                                color='error'
-                                startIcon={<AddIcon />}
-                                sx={{ borderRadius: 5 }}
-                                onClick={() => {
-                                    navigate('/products/purchase-product', { state: { productID: product.id } })
-                                }}
-                            >
-                                Add
-                            </Button>
-                            :
-                            <Button
-                                disabled={product.quantity > 0 ? false : true}
-                                type="button"
-                                variant="contained"
-                                color='error'
-                                startIcon={<AddIcon />}
-                                sx={{ borderRadius: 5 }}
-                                onClick={() => {
-                                    navigate('/purchase-product', { state: { productID: product.id } })
-                                }}
-                            >
-                                Add
-                            </Button>
+                    {
+                        userLogin.role === 'admin' && <CardActions sx={{ justifyContent: 'center', alignItems: 'end' }}>
+                            {sourcePage === 'products' ?
+                                <Button
+                                    disabled={product.quantity > 0 ? false : true}
+                                    type="button"
+                                    variant="contained"
+                                    color='error'
+                                    startIcon={<AddIcon />}
+                                    sx={{ borderRadius: 5 }}
+                                    onClick={() => {
+                                        navigate('/products/purchase-product', { state: { productID: product.id } })
+                                    }}
+                                >
+                                    Add
+                                </Button>
+                                :
+                                <Button
+                                    disabled={product.quantity > 0 ? false : true}
+                                    type="button"
+                                    variant="contained"
+                                    color='error'
+                                    startIcon={<AddIcon />}
+                                    sx={{ borderRadius: 5 }}
+                                    onClick={() => {
+                                        navigate('/purchase-product', { state: { productID: product.id } })
+                                    }}
+                                >
+                                    Add
+                                </Button>
+                            }
 
-                        }
-
-                    </CardActions>
+                        </CardActions>
+                    }
                 </Grid>
             </Card>
         </>

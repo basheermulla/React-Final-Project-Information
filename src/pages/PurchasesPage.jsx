@@ -5,7 +5,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-// import db from "../firebase/firebase";
 import AutoCompleteComp from '../components/AutoComplete';
 import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';

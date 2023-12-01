@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
     Typography, Grid, Paper, Card, CardContent, Container, Icon, Box, CardMedia, CardActions, Button
 } from '@mui/material';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import SliderComp from '../components/Slider';
 import { blue, red } from '@mui/material/colors';
@@ -14,8 +14,8 @@ import PageTitleComp from '../components/PageTitle';
 function ProductsPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
-    const { loading, error, userLogin } = useSelector((state) => state.userLoginReducer);
-    
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
+
     const [selectedMovie, setSelectedMovie] = useState(-1);
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
@@ -23,6 +23,8 @@ function ProductsPageComp() {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location);
 
     useEffect(() => {
         // Group the Purchases based on their productID
@@ -34,7 +36,7 @@ function ProductsPageComp() {
 
         const total = purchases.length
         setTotalPurchased(total)
-
+        console.log(userLogin);
         const amount = products.filter((product) =>
             purchases.find(purchase => purchase.productID === product.id))
             .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
@@ -69,14 +71,14 @@ function ProductsPageComp() {
                 </Container>
                 <Container sx={{ display: 'flex', justifyContent: "center", mt: 2 }} >
                     <Stack direction="row" spacing={6}>
-                        <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>
+                        {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
                     </Stack>
                 </Container>
                 <Container sx={{ mt: 2 }} >
                     {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} productsToSlide={products} sourcePage={'products'} />}
                 </Container>
                 <Container sx={{ mt: 2 }} >
-                    <Outlet />
+                    {userLogin.role === 'admin' && <Outlet />}
                 </Container>
             </Grid>
         </>

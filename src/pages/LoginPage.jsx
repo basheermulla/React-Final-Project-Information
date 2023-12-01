@@ -1,21 +1,20 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
-    Box, Typography, Grid, Paper, Avatar, TextField, Button, Link, Alert, AlertTitle, CircularProgress
+    Box, Typography, Grid, Paper, Avatar, TextField, Button, Alert, AlertTitle, CircularProgress
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth, db } from '../firebase/firebase';
-// import db from "../firebase/firebase";
-import { getIdTokenResult, signInWithEmailAndPassword } from 'firebase/auth';
-import { collection, getDocs, getDoc, doc, query, where } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useSelector, useDispatch } from "react-redux";
 import { login, signInError, signInRequest } from '../redux/actions/userActions';
 
 const defaultTheme = createTheme();
 
 function LoginPageComp() {
-    const [userInput, setUserInput] = useState({ firstName: '', lastName: '', email: '', password: '', accessToken: '' });
+    const [userInput, setUserInput] = useState({ firstName: '', lastName: '', email: '', password: '', accessToken: '', role: '' });
 
     const { loading, error, userLogin } = useSelector((state) => state.userLoginReducer);
 
@@ -48,26 +47,11 @@ function LoginPageComp() {
                             ...userInput,
                             accessToken: accessToken,
                             firstName: doc.data().firstName,
-                            lastName: doc.data().lastName
+                            lastName: doc.data().lastName,
+                            role: doc.data().role
                         }
                         setUserInput(obj_user);
                     });
-                    console.log(querySnapshot.docs[0].data());
-                    console.log(auth.currentUser);
-                    const currtUser = await getIdTokenResult(auth.currentUser)
-                    console.log(currtUser);
-                    console.log(currtUser.claims);
-                    // if (currtUser.claims) {
-                    //     currtUser.claims.admin = 'admin'
-                    // }
-                    // console.log(currtUser.claims);
-                    if (!!currtUser.claims.admin) {
-                        // Show admin UI.
-                        console.log('showAdminUI()');
-                    } else {
-                        // Show regular user UI.
-                        console.log('showRegularUI()');
-                    }
                 }
                 dispatch(login(obj_user));
                 navigate('/');
@@ -128,9 +112,11 @@ function LoginPageComp() {
                                         </RouterLink>
                                     </Grid>
                                 </Grid>
-                                {loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    <CircularProgress />
-                                </Box>}
+                                {
+                                    loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                        <CircularProgress />
+                                    </Box>
+                                }
                                 {
                                     error && <Alert severity="error"> <AlertTitle >{error}</AlertTitle> </Alert>
                                 }

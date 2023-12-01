@@ -6,18 +6,15 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth, db } from '../firebase/firebase';
-// import db from "../firebase/firebase";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
 import { signUpSuccess, signUpError, signUpRequest } from '../redux/actions/userActions';
 
 const defaultTheme = createTheme();
 
 function RegisterPageComp() {
-  const [user, setUser] = useState({ firstName: '', lastName: '', email: '', password: '' });
-  const [errorSignUp, setErrorSignUp] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [user, setUser] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'regular' });
 
   const { loading, authError } = useSelector((state) => state.userRegisterReducer);
 
@@ -40,7 +37,8 @@ function RegisterPageComp() {
         const obj = {
           firstName: data.get('firstName'),
           lastName: data.get('lastName'),
-          email: data.get('email')
+          email: data.get('email'),
+          role: user.role
         };
         console.log(userCredential);
         await setDoc(doc(db, "users", userCredential.user.uid), obj); // Add a new document in collection "users"
@@ -137,9 +135,11 @@ function RegisterPageComp() {
                     </RouterLink>
                   </Grid>
                 </Grid>
-                {loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress />
-                </Box>}
+                {
+                  loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                  </Box>
+                }
                 {
                   authError && <Alert severity="error"> <AlertTitle >{authError}</AlertTitle> </Alert>
                 }

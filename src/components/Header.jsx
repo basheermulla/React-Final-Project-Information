@@ -9,7 +9,8 @@ import pages from '../utils/nav-list-pages.json';
 import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
+import { auth, db } from '../firebase/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { loadAllProducts } from '../redux/actions/productActions';
 import { loadAllCustomers } from '../redux/actions/customerActions';
 import { loadAllPurchase } from '../redux/actions/purchaseActions';
@@ -41,6 +42,8 @@ function HeaderComp() {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [anchorElLogin, setAnchorElLogin] = useState(null);
     const [flagColor, setFlagColor] = useState(0);
+    const [pagesToDiaplay, setPagesToDiaplay] = useState([]);
+    const [authState, setAuthState] = useState([])
 
     const navigate = useNavigate();
 
@@ -48,7 +51,6 @@ function HeaderComp() {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event) => {
-        console.log(event.currentTarget);
         setAnchorElUser(event.currentTarget);
     };
 
@@ -71,18 +73,30 @@ function HeaderComp() {
     }
 
     useEffect(() => {
-        console.log(flagColor);
-    }, [flagColor]);
-
-    useEffect(() => {
-        console.log(JSON.parse(localStorage.getItem('userInfo')));
         if (userLogin?.email) {
+            switch (userLogin.role) {
+                case 'admin':
+                    const showAllPagesItem = pages['pages-Links'];
+                    console.log(showAllPagesItem)
+                    setPagesToDiaplay(showAllPagesItem)
+                    break;
+                case 'regular':
+                    const matchPagesItem = pages['pages-Links'].filter((page) => page.pagename !== 'Users');
+                    console.log(matchPagesItem)
+                    setPagesToDiaplay(matchPagesItem)
+                    break;
+                default:
+                    const matchPagesItem2 = pages['pages-Links'].filter((page) => page.pagename !== 'Users');
+                    console.log(matchPagesItem2)
+                    setPagesToDiaplay(matchPagesItem2)
+                    break;
+            }
             setAnchorElLogin(true);
         } else {
             setAnchorElLogin(false)
         }
-        setUserInfo(JSON.parse(localStorage.getItem('userInfo')))
-    }, [localStorage.getItem('userInfo')]);
+        setUserInfo(userLogin);
+    }, [userLogin]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -161,7 +175,7 @@ function HeaderComp() {
                                         open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}
                                         sx={{ display: { xs: 'block', md: 'none' }, }}
                                     >
-                                        {pages['pages-Links'].map((page, index) => (
+                                        {pagesToDiaplay.map((page, index) => (
                                             <MenuItem key={index} onClick={handleCloseNavMenu}>
                                                 <Typography textAlign="center">{page.pagename}</Typography>
                                             </MenuItem>
@@ -170,7 +184,7 @@ function HeaderComp() {
                                 </Box>
                                 {anchorElLogin && <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                     {
-                                        pages['pages-Links'].map((page, index) => (
+                                        pagesToDiaplay.map((page, index) => (
                                             <Button
                                                 key={index}
                                                 variant="raised"
