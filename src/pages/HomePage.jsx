@@ -21,6 +21,7 @@ const input = [
 function HomePageComp() {
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
 
     const [selectedMovie, setSelectedMovie] = useState(-1);
     const [newProducts, setNewProducts] = useState([]);
@@ -58,7 +59,7 @@ function HomePageComp() {
                     {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} productsToSlide={topSellingProducts} sourcePage={'home'} />}
                 </Container>
                 <Container sx={{ mt: 2 }} >
-                    <Outlet />
+                    {userLogin.role === 'admin' && <Outlet />}
                 </Container>
             </Grid>
         </>

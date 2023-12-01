@@ -12,6 +12,7 @@ function CustomersPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
 
     const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
@@ -20,8 +21,6 @@ function CustomersPageComp() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(purchases);
-        console.log(products);
         const addProductNameToPurchases = purchases.map((pur) => {
             return {
                 ...pur,
@@ -52,7 +51,7 @@ function CustomersPageComp() {
                 <PageTitleComp titleName={'Customers'} />
                 <Container sx={{ display: 'flex', justifyContent: "center", mt: 2 }} >
                     <Stack direction="row" spacing={6}>
-                        <Icon onClick={() => navigate('/customers/new-customer')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>
+                        {userLogin.role === 'admin' && <Icon onClick={() => navigate('/customers/new-customer')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
                     </Stack>
                 </Container>
                 <Container sx={{ display: 'flex', justifyContent: "center", mt: 3 }}>
@@ -64,7 +63,7 @@ function CustomersPageComp() {
                                 <TableCell align="center" width='10%'> Icon </TableCell>
                                 <TableCell align="center" width='20%'> Name </TableCell>
                                 <TableCell align="center" width='30%'> City </TableCell>
-                                <TableCell align="center" width='20%'> Add Product </TableCell>
+                                {userLogin.role === 'admin' && <TableCell align="center" width='20%'> Add Product </TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -73,9 +72,9 @@ function CustomersPageComp() {
                             ))}
                         </TableBody>
                     </Table>
-                </Container>                
+                </Container>
                 <Container sx={{ mt: 2 }} >
-                    <Outlet />
+                    {userLogin.role === 'admin' && <Outlet />}
                 </Container>
             </Grid >
         </>

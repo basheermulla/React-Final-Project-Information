@@ -11,7 +11,8 @@ import { useSelector } from "react-redux";
 
 function CollapsibleTableComp({ ID, customer, modelTarget }) {
     const products = useSelector((state => state.productReducer.products));
-
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
+    
     const [open, setOpen] = useState(false);
 
     const tableRef = useRef(true);
@@ -57,7 +58,7 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
                     }
                 </TableCell>
                 <TableCell align="center"> {customer.city} </TableCell>
-                <TableCell align="center">
+                {userLogin.role === 'admin' &&<TableCell align="center">
                     {modelTarget === 'customers' ?
                         <Button
                             variant="contained"
@@ -79,7 +80,7 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
                             Save
                         </Button>
                     }
-                </TableCell>
+                </TableCell>}
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
