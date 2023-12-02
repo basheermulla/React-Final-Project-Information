@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    Button, Container, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid
-} from '@mui/material';
+import { Button, Container, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import shopLogo from '../assets/sw-open-shop-3.jpg';
 import pages from '../utils/nav-list-pages.json';
 import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
-import { auth, db } from '../firebase/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { db } from '../firebase/firebase';
 import { loadAllProducts } from '../redux/actions/productActions';
 import { loadAllCustomers } from '../redux/actions/customerActions';
 import { loadAllPurchase } from '../redux/actions/purchaseActions';
@@ -151,7 +148,6 @@ function HeaderComp() {
 
         if (userLogin) { fetchPurchases() };
     }, [userLogin]);
-
 
     return (
         <>

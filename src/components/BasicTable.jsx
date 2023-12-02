@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-    CardMedia, Table, TableHead, TableRow, TableCell, TableBody, TableContainer
-} from '@mui/material';
+import { CardMedia, Table, TableHead, TableRow, TableCell, TableBody, TableContainer } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { Link as LinkRouter, useLocation } from 'react-router-dom';
 
@@ -57,7 +55,7 @@ function BasicTableComp({ data, modelTarget }) {
                                         </LinkRouter>
                                         :
                                         <p
-                /**  444   */ to={'/products/edit-customer'} state={{ customerID: item.id }}
+                                            to={'/products/edit-customer'} state={{ customerID: item.id }}
                                         >
                                             {item.name}
                                         </p>}

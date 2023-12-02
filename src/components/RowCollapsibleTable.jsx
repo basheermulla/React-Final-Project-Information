@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
-import {
-    Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse
-} from '@mui/material';
+import { Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useNavigate, Link as LinkRouter, useLocation } from 'react-router-dom';
+import { useNavigate, Link as LinkRouter } from 'react-router-dom';
 import moment from 'moment';
 import { useSelector } from "react-redux";
 
-function CollapsibleTableComp({ ID, customer, modelTarget }) {
+function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
     const products = useSelector((state => state.productReducer.products));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
     
@@ -17,6 +15,11 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
 
     const tableRef = useRef(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log('Internal  customer = ', customer);
+        console.log('Internal  modelTarget = ', modelTarget);
+    }, [customer])
 
     useEffect(() => {
         tableRef.current.focus();
@@ -37,7 +40,7 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
                 <TableCell align="center" sx={{ display: 'flex', justifyContent: 'center' }}>
                     <CardMedia
                         component="img"
-                        sx={{ width: 72, height: 72, }} image={customer.src}
+                        sx={{ width: 72, height: 72, }} image={customer?.src}
                         alt="Live from space album cover"
 
                     />
@@ -47,24 +50,24 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
                         <LinkRouter
                             to={'/customers/edit-customer'} state={{ customerID: customer.id }}
                         >
-                            {customer.firstName + ' ' + customer.lastName}
+                            {customer?.firstName + ' ' + customer?.lastName}
                         </LinkRouter>
                         :
                         <LinkRouter
-                            to={'/products/edit-customer'} state={{ customerID: customer.id }}
+                            to={'/products/edit-customer'} state={{ customerID: customer?.id }}
                         >
-                            {customer.firstName + ' ' + customer.lastName}
+                            {customer?.firstName + ' ' + customer?.lastName}
                         </LinkRouter>
                     }
                 </TableCell>
-                <TableCell align="center"> {customer.city} </TableCell>
+                <TableCell align="center"> {customer?.city} </TableCell>
                 {userLogin.role === 'admin' &&<TableCell align="center">
                     {modelTarget === 'customers' ?
                         <Button
                             variant="contained"
                             color="error"
                             onClick={() => {
-                                navigate('/customers/purchase-product', { state: { customerID: customer.id } })
+                                navigate('/customers/purchase-product', { state: { customerID: customer?.id } })
                             }}
                         >
                             Save
@@ -74,7 +77,7 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
                             variant="contained"
                             color="error"
                             onClick={() => {
-                                navigate('/products/purchase-product', { state: { customerID: customer.id } })
+                                navigate('/products/purchase-product', { state: { customerID: customer?.id } })
                             }}
                         >
                             Save
@@ -137,4 +140,4 @@ function CollapsibleTableComp({ ID, customer, modelTarget }) {
     )
 }
 
-export default CollapsibleTableComp
+export default RowCollapsibleTableComp

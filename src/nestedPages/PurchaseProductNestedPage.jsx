@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react'
-import {
-    Avatar,
-    Box, Button, CardContent, Container, Grid, Paper, Stack, TableContainer, Icon
-} from '@mui/material';
+import { useState } from 'react'
+import { Avatar, Box, Button, CardContent, Container, Grid, Paper, Stack, TableContainer } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import AutoCompleteComp from '../components/AutoComplete';
 import { blue, grey } from '@mui/material/colors';
 import { AddShoppingCart } from '@mui/icons-material';
-import { addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-// import db from "../firebase/firebase";
-import { AddPurchase, loadAllPurchase } from '../redux/actions/purchaseActions';
+import { AddPurchase } from '../redux/actions/purchaseActions';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { updateProductQuantity } from '../redux/actions/productActions';
 
@@ -63,10 +59,10 @@ function PurchaseProductNestedPageComp() {
             };
             console.log(new_purchase_obj);
         }
-        
+
         dispatch(AddPurchase(new_purchase_obj));
         await addDoc(collection(db, 'purchases'), new_purchase_obj);
-        
+
         let product = {};
         if (state.productID) {
             product = products.find((product) => product.id === state.productID)

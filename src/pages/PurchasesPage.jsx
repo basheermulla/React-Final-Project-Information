@@ -1,16 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
-import {
-    Box, Typography, Grid, Paper, Table, TableHead, TableRow, TableCell, TableBody, Container, Button
-} from '@mui/material';
-import { useSelector, useDispatch } from "react-redux";
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
+import { useState, useEffect } from 'react'
+import { Grid, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { useSelector } from "react-redux";
 import AutoCompleteComp from '../components/AutoComplete';
 import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
-import PageTitleComp from '../components/PageTitle';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -36,8 +31,6 @@ function PurchasesPageComp() {
     const [originPurchasrs, setOriginPurchasrs] = useState(purchases);
     const [localPurchases, setLocalPurchases] = useState(purchases);
     const [inputValue, setInputValue] = useState({ productName: '', customerName: '', dateInput: '' });
-
-    const dispatch = useDispatch();
 
     const handleSearchProduct = (value) => {
         if (value === null) {
@@ -98,7 +91,6 @@ function PurchasesPageComp() {
     return (
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5, p: 2 }}>
-                <PageTitleComp titleName={'Purchases'} />
                 <Grid container justifyContent="center" alignItems="center">
                     <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
                     <AutoCompleteComp callbackLabelInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
@@ -131,7 +123,7 @@ function PurchasesPageComp() {
                                         hover
                                     >
                                         <TableCell component="th" scope="row" align="center">
-                                            {index +1}
+                                            {index + 1}
                                         </TableCell>
                                         <TableCell align="center">
                                             {purchase.productName}
