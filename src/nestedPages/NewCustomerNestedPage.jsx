@@ -1,14 +1,11 @@
 import { useState } from 'react'
-import {
-    Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer
-} from '@mui/material';
+import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-// import db from "../firebase/firebase";
 import Icon from '@mui/material/Icon';
 import { addCustomer, loadAllCustomers } from '../redux/actions/customerActions';
 

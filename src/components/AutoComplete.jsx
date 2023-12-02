@@ -1,7 +1,5 @@
-import {
-    Box, Button, Autocomplete, TextField, Grid
-} from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Autocomplete, TextField, Grid } from '@mui/material';
+import { useState } from 'react';
 
 function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
     const [inputValue, setInputValue] = useState('');
@@ -10,8 +8,7 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
         <>
             {modelTarget === 'products' ?
                 <Autocomplete
-                    disablePortal
-                    id={'id-ddd'}
+                    disablePortal                    
                     onInputChange={(event, newInputValue, id) => {
                         console.log(event, newInputValue, id);
                         setInputValue(newInputValue);
@@ -35,7 +32,6 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                 :
                 <Autocomplete
                     disablePortal
-
                     onInputChange={(event, newInputValue) => {
                         setInputValue(newInputValue);
                         callbackLabelInput(newInputValue)
@@ -55,7 +51,6 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                     }
                 />
             }
-
         </>
     )
 }

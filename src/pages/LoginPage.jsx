@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import {
-    Box, Typography, Grid, Paper, Avatar, TextField, Button, Alert, AlertTitle, CircularProgress
-} from '@mui/material';
+import { Box, Typography, Grid, Paper, Avatar, TextField, Button, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth, db } from '../firebase/firebase';

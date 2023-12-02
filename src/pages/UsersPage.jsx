@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import {
-    Box, Typography, Grid, Paper
-} from '@mui/material';
+import { Box, Typography, Grid, Paper } from '@mui/material';
 
 function UsersPageComp() {
     const [count, setCount] = useState(0)

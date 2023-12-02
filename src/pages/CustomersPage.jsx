@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import {
-    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Stack
-} from '@mui/material';
+import { Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Stack } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from "react-redux";
-import CollapsibleTableComp from '../components/CollapsibleTable';
+import { useSelector } from "react-redux";
+import RowCollapsibleTableComp from '../components/RowCollapsibleTable';
 import { blue, red } from '@mui/material/colors';
-import PageTitleComp from '../components/PageTitle';
 
 function CustomersPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
@@ -16,39 +13,28 @@ function CustomersPageComp() {
 
     const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
-    const dispatch = useDispatch();
-
     const navigate = useNavigate();
 
     useEffect(() => {
-        const addProductNameToPurchases = purchases.map((pur) => {
-            return {
-                ...pur,
-                productName: products.find(prod => prod.id === pur.productID)?.name
-            }
-        });
-
-        // Group the Purchases based on their customerID
-        var groupByCustomerID = addProductNameToPurchases.reduce((acc, ele) => {
-            acc[ele.customerID] = acc[ele.customerID] ? [...acc[ele.customerID], ele] : [ele];
-            return acc
-        }, {});
+        // Map Purchases with Product Name and Group the Purchases based on their customerID
+        const mapReduceToGroupPurchasesByCustomerID = purchases
+            .map((purchase) => { return { ...purchase, productName: products.find(prod => prod.id === purchase.productID)?.name } })
+            .reduce((acc, ele) => { acc[ele.customerID] = acc[ele.customerID] ? [...acc[ele.customerID], ele] : [ele]; return acc }, {})
 
         // Map customers with the otherData array [products purchsed, product Name]
         const readyDataToDisplay = customers.map((customer) => {
             return {
                 ...customer,
-                otherData: groupByCustomerID[customer.id]
+                otherData: mapReduceToGroupPurchasesByCustomerID[customer.id]
             }
         })
-
+        console.log(readyDataToDisplay);
         setCustomersWithOtherData(readyDataToDisplay);
     }, [customers, purchases]);
 
     return (
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
-                <PageTitleComp titleName={'Customers'} />
                 <Container sx={{ display: 'flex', justifyContent: "center", mt: 2 }} >
                     <Stack direction="row" spacing={6}>
                         {userLogin.role === 'admin' && <Icon onClick={() => navigate('/customers/new-customer')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
@@ -68,7 +54,7 @@ function CustomersPageComp() {
                         </TableHead>
                         <TableBody>
                             {customersWithOtherData.map((customer, index) => (
-                                <CollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} modelTarget={'customers'} />
+                                <RowCollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} modelTarget={'customers'} />
                             ))}
                         </TableBody>
                     </Table>

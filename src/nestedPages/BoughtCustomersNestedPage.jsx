@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react'
-import {
-    Avatar,
-    Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
-} from '@mui/material';
+import { Avatar, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
-import CollapsibleTableComp from '../components/CollapsibleTable';
+import RowCollapsibleTableComp from '../components/RowCollapsibleTable';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 function BoughtCustomersNestedPageComp() {
@@ -15,7 +12,7 @@ function BoughtCustomersNestedPageComp() {
     const purchases = useSelector((state => state.purchaseReducer.purchases));
 
     const [productID, setProductID] = useState()
-    const [customerRows, setCustomerRows] = useState([]);
+    const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
     const { state } = useLocation();
     const navigate = useNavigate();
@@ -29,15 +26,15 @@ function BoughtCustomersNestedPageComp() {
     }, [state])
 
     useEffect(() => {
-        // Filter purchases By productID and groupBy purchases By customerID
-        const filterByProductIDAndGroupByCustomerID = purchases
+        // Filter purchases By productID 
+        // Then, Map Purchases with Product Name and Group the Purchases based on their customerID filterMapReduceToGroupPurchasesByCustomerID
+        const filterMapReduceToGroupPurchasesByCustomerID = purchases
             .filter((purchase) => purchase.productID === productID)
             .map((purchase) => { return { ...purchase, productName: products.find(prod => prod.id === purchase.productID).name } })
             .reduce((acc, current) => {
                 acc[current.customerID] = acc[current.customerID] ? [...acc[current.customerID], current] : [current];
                 return acc
             }, {})
-        console.log(filterByProductIDAndGroupByCustomerID);
 
         // Map customers with the otherData array [products purchsed, product Name]
         const readyDataToDisplay = customers
@@ -47,11 +44,11 @@ function BoughtCustomersNestedPageComp() {
             .map((customer) => {
                 return {
                     ...customer,
-                    otherData: filterByProductIDAndGroupByCustomerID[customer.id]
+                    otherData: filterMapReduceToGroupPurchasesByCustomerID[customer.id]
                 }
-            })
-        console.log(readyDataToDisplay);
-        setCustomerRows(readyDataToDisplay);
+            });
+
+        setCustomersWithOtherData(readyDataToDisplay);
     }, [productID]);
 
     return (
@@ -76,8 +73,8 @@ function BoughtCustomersNestedPageComp() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {customerRows.map((row, index) => (
-                                <CollapsibleTableComp key={row.id} ID={index + 1} customer={row} AddProduct={true} />
+                            {customersWithOtherData.map((customer, index) => (
+                                <RowCollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} />
                             ))}
                         </TableBody>
                     </Table>

@@ -1,39 +1,21 @@
 import { useEffect, useState } from 'react'
-import {
-    Card, CardMedia, CardContent, Typography, Button, CardActions, Grid, Paper, Box, Container
-} from '@mui/material';
-import { red, purple } from '@mui/material/colors';
-import { AddShoppingCart } from '@mui/icons-material';
-import imgCard from '../assets/TV_1.png'
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from "react-redux";
+import { Grid, Paper } from '@mui/material';
+import { Outlet } from 'react-router-dom';
+import { useSelector } from "react-redux";
 import PageTitleComp from '../components/PageTitle';
 import SliderComp from '../components/Slider';
-
-const input = [
-    { id: 1, keyOne: "valueOne", keyTwo: "valueTwo" },
-    { id: 2, keyOne: "valueOn", keyTwo: "valueTw" },
-    { id: 3, keyOne: "valueO", keyTwo: "valueT" },
-    { id: 4, keyOne: "value", keyTwo: "value" }
-];
-
+import { gridSpacing } from '../utils/constant';
 
 function HomePageComp() {
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
 
-    const [selectedMovie, setSelectedMovie] = useState(-1);
     const [newProducts, setNewProducts] = useState([]);
     const [topSellingProducts, setTopSellingProducts] = useState([]);
 
-    const dispatch = useDispatch();
-
-    const navigate = useNavigate();
-
     useEffect(() => {
         // Group the Purchases based on their productID
-        console.log(purchases);
         const groupByProductID = purchases.reduce((acc, current) => {
             acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
             return acc
@@ -50,17 +32,25 @@ function HomePageComp() {
     return (
         <>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
-                <PageTitleComp titleName={'NEW PRODUCTS'} />
-                <Container sx={{ mt: 2, mb: 10 }} >
-                    {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} productsToSlide={newProducts} sourcePage={'home'} />}
-                </Container>
-                <PageTitleComp titleName={'TOP SELLING'} />
-                <Container sx={{ mt: 2 }} >
-                    {selectedMovie /*!== -1*/ && <SliderComp initialSlide={selectedMovie} productsToSlide={topSellingProducts} sourcePage={'home'} />}
-                </Container>
-                <Container sx={{ mt: 2 }} >
-                    {userLogin.role === 'admin' && <Outlet />}
-                </Container>
+                <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", p: 2 }}>
+                    <Grid item xs={12}>
+                        <PageTitleComp titleName={'New Products'} />
+                    </Grid>
+                    <Grid item xs={12} sx={{ mb: 10 }}>
+                        <SliderComp productsToSlide={newProducts} sourcePage={'home'} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <PageTitleComp titleName={'Top Selling'} />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <SliderComp productsToSlide={topSellingProducts} sourcePage={'home'} />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        {userLogin.role === 'admin' && <Outlet />}
+                    </Grid>
+                </Grid>
             </Grid>
         </>
     )
