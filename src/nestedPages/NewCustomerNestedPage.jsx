@@ -55,7 +55,7 @@ function NewCustomerNestedPageComp() {
 
     return (
         <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
+            <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
                 <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                     <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                 </TableContainer>

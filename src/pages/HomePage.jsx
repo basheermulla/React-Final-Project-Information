@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Grid, Paper } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Box, Grid, Paper } from '@mui/material';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import PageTitleComp from '../components/PageTitle';
 import SliderComp from '../components/Slider';
@@ -13,6 +13,9 @@ function HomePageComp() {
 
     const [newProducts, setNewProducts] = useState([]);
     const [topSellingProducts, setTopSellingProducts] = useState([]);
+    const [detectRender, setDetectRender] = useState(true);
+
+    const location = useLocation();
 
     useEffect(() => {
         // Group the Purchases based on their productID
@@ -29,30 +32,46 @@ function HomePageComp() {
         console.log(sortedProductsByTopCelling);
     }, [products]);
 
+    useEffect(() => {
+        if (location['pathname'] === '/') {
+            setDetectRender(false);
+        } else {
+            setDetectRender(true);
+        }
+        console.log('Location changed', location);
+    }, [location['pathname']]);
+
     return (
-        <>
+        <Box width={'100%'}>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
                 <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", p: 2 }}>
-                    <Grid item xs={12}>
-                        <PageTitleComp titleName={'New Products'} />
-                    </Grid>
-                    <Grid item xs={12} sx={{ mb: 10 }}>
-                        <SliderComp productsToSlide={newProducts} sourcePage={'home'} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <PageTitleComp titleName={'Top Selling'} />
-                    </Grid>
+                    {
+                        !detectRender && <>
+                            <Grid item xs={12}>
+                                <PageTitleComp titleName={'New Products'} />
+                            </Grid>
+                            <Grid item xs={12} sx={{ mb: 10 }}>
+                                <SliderComp productsToSlide={newProducts} sourcePage={'home'} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <PageTitleComp titleName={'Top Selling'} />
+                            </Grid>
 
-                    <Grid item xs={12}>
-                        <SliderComp productsToSlide={topSellingProducts} sourcePage={'home'} />
-                    </Grid>
+                            <Grid item xs={12}>
+                                <SliderComp productsToSlide={topSellingProducts} sourcePage={'home'} />
+                            </Grid>
+                        </>
+                    }
 
-                    <Grid item xs={12}>
-                        {userLogin.role === 'admin' && <Outlet />}
-                    </Grid>
+                    {
+                        detectRender && 
+                        <Grid item xs={12} sx={{ height: '100vh' }}>
+                            {userLogin.role === 'admin' && <Outlet />}
+                        </Grid>
+                    }
                 </Grid>
             </Grid>
-        </>
+        </Box>
     )
 }
 

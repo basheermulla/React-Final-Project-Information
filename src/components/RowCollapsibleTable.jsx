@@ -16,10 +16,10 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
     const tableRef = useRef(true);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log('Internal  customer = ', customer);
-        console.log('Internal  modelTarget = ', modelTarget);
-    }, [customer])
+    // useEffect(() => {
+    //     console.log('Internal  customer = ', customer);
+    //     console.log('Internal  modelTarget = ', modelTarget);
+    // }, [customer])
 
     useEffect(() => {
         tableRef.current.focus();

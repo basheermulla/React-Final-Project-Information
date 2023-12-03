@@ -150,7 +150,7 @@ function HeaderComp() {
     }, [userLogin]);
 
     return (
-        <>
+        <Box width={'100%'}>
             <ThemeProvider theme={theme}>
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
@@ -249,9 +249,9 @@ function HeaderComp() {
                             </Toolbar>
                         </Container>
                     </AppBar>
-                </Grid>
+                </Grid>               
             </ThemeProvider>
-        </>
+        </Box>
     )
 }
 

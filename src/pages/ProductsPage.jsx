@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Grid, Paper, Icon, useMediaQuery } from '@mui/material';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Grid, Paper, Icon, useMediaQuery, Box } from '@mui/material';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import SliderComp from '../components/Slider';
 import { red } from '@mui/material/colors';
@@ -18,8 +18,10 @@ function ProductsPageComp() {
 
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
+    const [detectRender, setDetectRender] = useState(true);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
@@ -48,41 +50,65 @@ function ProductsPageComp() {
         setAmountSale(amount)
     }, [products, purchases])
 
+    useEffect(() => {
+        if (location['pathname'] === '/products') {
+            setDetectRender(false);
+        } else {
+            setDetectRender(true);
+        }
+        console.log('Location changed', location);
+    }, [location['pathname']]);
+
     return (
-        <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
+        <Box width={'100%'}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5, height: '100vh' }}>
                 <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", p: 2 }}>
-                    <Grid item xs={12} lg={4} textAlign={'left'}>
-                        <RevenueCardComp
-                            primary="Revenue"
-                            secondary={amountSale}
-                            content="Depending on the purchase of products"
-                            iconPrimary={MonetizationOnTwoToneIcon}
-                            color={theme.palette.secondary.main}
-                            coin={String.fromCharCode(0x20aa)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={4} textAlign={'left'}>
-                        <RevenueCardComp
-                            primary="Orders Received"
-                            secondary={totalPurchased}
-                            content="20% Increase in the last month"
-                            iconPrimary={AccountCircleTwoTone}
-                            color={theme.palette.primary.main}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
-                    </Grid>
-                    <Grid item xs={12} sx={{ justifyContent: "center" }}>
-                        <SliderComp productsToSlide={products} sourcePage={'products'} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {userLogin.role === 'admin' && <Outlet />}
-                    </Grid>
+                    {
+                        !detectRender && <>
+                            <Grid item xs={12} lg={4} textAlign={'left'}>
+                                <RevenueCardComp
+                                    primary="Revenue"
+                                    secondary={amountSale}
+                                    content="Depending on the purchase of products"
+                                    iconPrimary={MonetizationOnTwoToneIcon}
+                                    color={theme.palette.secondary.main}
+                                    coin={String.fromCharCode(0x20aa)}
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={4} textAlign={'left'}>
+                                <RevenueCardComp
+                                    primary="Orders Received"
+                                    secondary={totalPurchased}
+                                    content="20% Increase in the last month"
+                                    iconPrimary={AccountCircleTwoTone}
+                                    color={theme.palette.primary.main}
+                                />
+                            </Grid>
+                        </>
+                    }
+                    {
+                        !detectRender &&
+                        <Grid item xs={12}>
+                            {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
+                        </Grid>
+                    }
+
+                    {
+                        !detectRender &&
+                        <Grid item xs={12} sx={{ justifyContent: "center" }}>
+                            <SliderComp productsToSlide={products} sourcePage={'products'} />
+                        </Grid>
+                    }
+
+                    {
+                        detectRender &&
+                        <Grid item xs={12}>
+                            {userLogin.role === 'admin' && <Outlet />}
+                        </Grid>
+                    }
                 </Grid>
             </Grid>
-        </>
+        </Box>
     )
 }
 

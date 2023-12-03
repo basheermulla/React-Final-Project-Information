@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Grid, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { Grid, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Box } from '@mui/material';
 import { useSelector } from "react-redux";
 import AutoCompleteComp from '../components/AutoComplete';
 import DateFieldComp from '../components/DateField';
@@ -31,7 +31,7 @@ function PurchasesPageComp() {
     const [originPurchasrs, setOriginPurchasrs] = useState(purchases);
     const [localPurchases, setLocalPurchases] = useState(purchases);
     const [inputValue, setInputValue] = useState({ productName: '', customerName: '', dateInput: '' });
-
+    
     const handleSearchProduct = (value) => {
         if (value === null) {
             setInputValue({ ...inputValue, productName: '' });
@@ -89,7 +89,7 @@ function PurchasesPageComp() {
     }, [purchases])
 
     return (
-        <>
+        <Box width={'100%'}>
             <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5, p: 2 }}>
                 <Grid container justifyContent="center" alignItems="center">
                     <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
@@ -141,7 +141,7 @@ function PurchasesPageComp() {
                 </Grid>
 
             </Grid>
-        </>
+        </Box>
     )
 }
 
