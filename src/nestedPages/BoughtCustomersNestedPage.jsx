@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Avatar, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Avatar, Box, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
@@ -10,7 +10,8 @@ function BoughtCustomersNestedPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
-
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
+    
     const [productID, setProductID] = useState()
     const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
@@ -51,9 +52,15 @@ function BoughtCustomersNestedPageComp() {
         setCustomersWithOtherData(readyDataToDisplay);
     }, [productID]);
 
+    useEffect(() => {
+        if (!userLogin) {
+            navigate('/login')
+         }
+    }, [])
+
     return (
-        <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", mt: 5, p: 1 }}>
+        <Box width={'100%'}>
+            <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                 <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                     <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                 </TableContainer>
@@ -80,7 +87,7 @@ function BoughtCustomersNestedPageComp() {
                     </Table>
                 </TableContainer>
             </Grid>
-        </>
+        </Box>
     )
 }
 

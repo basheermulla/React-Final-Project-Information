@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Grid, Paper, Icon, useMediaQuery } from '@mui/material';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import { Grid, Paper, Icon, useMediaQuery, Box, LinearProgress, Alert, AlertTitle, Button } from '@mui/material';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from "react-redux";
 import SliderComp from '../components/Slider';
 import { red } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
@@ -9,17 +9,22 @@ import RevenueCardComp from '../components/RevenueCard';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
 import { gridSpacing } from '../utils/constant';
+import { submitProductFail } from '../redux/actions/productActions';
 
 
 function ProductsPageComp() {
-    const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
+    const { loading: productsLoad, error: productsError, products } = useSelector((state) => state.productReducer);
+    const dispatch = useDispatch();
 
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
+    const [detectRender, setDetectRender] = useState(true);
+    const [pathName, setPathName] = useState(useLocation().pathname)
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
@@ -33,56 +38,138 @@ function ProductsPageComp() {
 
     useEffect(() => {
         // Group the Purchases based on their productID
-        const groupByProductID = purchases.reduce((acc, current) => {
+        const groupByProductID = purchases?.reduce((acc, current) => {
             acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
             return acc
         }, {});
 
-        const total = purchases.length
+        const total = purchases?.length
         setTotalPurchased(total)
 
-        const amount = products.filter((product) =>
-            purchases.find(purchase => purchase.productID === product.id))
+        const amount = products?.filter((product) =>
+            purchases?.find(purchase => purchase.productID === product.id))
             .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
 
         setAmountSale(amount)
     }, [products, purchases])
 
+    const handleSubmitError = () => {
+        console.log('Clock me');
+        dispatch(submitProductFail());
+        if (location['pathname'] === '/customers/edit-product' || location['pathname'] === '/customers/edit-product') {
+            navigate('/customers');
+        } else {
+            navigate('/products');
+        }
+    }
+
+    useEffect(() => {
+        if (location['pathname'] === '/products') {
+            setDetectRender(false);
+        } else {
+            setDetectRender(true);
+        }
+    }, [location['pathname']]);
+
+    useEffect(() => {
+        if (!userLogin) {
+            navigate('/login')
+        }
+    }, [])
+
     return (
-        <>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 2, pb: 5 }}>
-                <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", p: 2 }}>
-                    <Grid item xs={12} lg={4} textAlign={'left'}>
-                        <RevenueCardComp
-                            primary="Revenue"
-                            secondary={amountSale}
-                            content="Depending on the purchase of products"
-                            iconPrimary={MonetizationOnTwoToneIcon}
-                            color={theme.palette.secondary.main}
-                            coin={String.fromCharCode(0x20aa)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={4} textAlign={'left'}>
-                        <RevenueCardComp
-                            primary="Orders Received"
-                            secondary={totalPurchased}
-                            content="20% Increase in the last month"
-                            iconPrimary={AccountCircleTwoTone}
-                            color={theme.palette.primary.main}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
-                    </Grid>
-                    <Grid item xs={12} sx={{ justifyContent: "center" }}>
-                        <SliderComp productsToSlide={products} sourcePage={'products'} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {userLogin.role === 'admin' && <Outlet />}
-                    </Grid>
+        <Box width={'100%'}>
+            {
+                productsLoad
+                &&
+                <Box sx={{ width: '100%' }}>
+                    <LinearProgress />
+                </Box>
+            }
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 0, pb: 5 }}>
+                <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
+                    {
+                        productsError
+                        &&
+                        location['pathname'] === '/products'
+                        &&
+                        <Grid container sx={{ mt: 3 }}>
+                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
+                                <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
+                                    <Grid item xs={12}>
+                                        <AlertTitle sx={{ textAlign: 'left' }}>
+                                            <strong>Products Error</strong>
+                                        </AlertTitle>
+                                    </Grid>
+                                    <strong>{productsError}</strong>
+                                    <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
+                                        <Button
+                                            type="button"
+                                            variant="contained"
+                                            color="error"
+                                            sx={{ m: 1, mt: 3 }}
+                                            onClick={() => handleSubmitError()}
+                                        >
+                                            Return
+                                        </Button>
+                                    </Grid>
+                                </Alert>
+                            </Grid>
+                        </Grid>
+                    }
+                    {
+                        !detectRender
+                        &&
+                        !productsError
+                        &&
+                        <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", mt: 3 }}>
+                            <Grid item xs={12} lg={4} textAlign={'left'}>
+                                <RevenueCardComp
+                                    primary="Revenue"
+                                    secondary={amountSale}
+                                    content="Depending on the purchase of products"
+                                    iconPrimary={MonetizationOnTwoToneIcon}
+                                    color={theme.palette.secondary.main}
+                                    coin={String.fromCharCode(0x20aa)}
+                                />
+                            </Grid>
+                            <Grid item xs={12} lg={4} textAlign={'left'}>
+                                <RevenueCardComp
+                                    primary="Orders Received"
+                                    secondary={totalPurchased}
+                                    content="20% Increase in the last month"
+                                    iconPrimary={AccountCircleTwoTone}
+                                    color={theme.palette.primary.main}
+                                />
+                            </Grid>
+                        </Grid>
+                    }
+                    {
+                        !detectRender
+                        &&
+                        !productsError
+                        &&
+                        <Grid item xs={12}>
+                            {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
+                        </Grid>
+                    }
+
+                    {
+                        !detectRender
+                        &&
+                        !productsError
+                        &&
+                        <Grid item xs={12} sx={{ justifyContent: "center", p:5 }}>
+                            <SliderComp productsToSlide={products} sourcePage={'products'} />
+                        </Grid>
+                    }
+
+                    {
+                        detectRender && userLogin?.role === 'admin' && <Outlet />
+                    }
                 </Grid>
             </Grid>
-        </>
+        </Box>
     )
 }
 

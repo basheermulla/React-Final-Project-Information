@@ -49,7 +49,7 @@ function RegisterPageComp() {
   };
 
   return (
-    <>
+    <Box width={'100%'}>
       <ThemeProvider theme={defaultTheme}>
         <Grid container component={Paper} elevation={6} sx={{ height: '100vh' }}>
           <Container component="main" maxWidth="xs">
@@ -146,8 +146,7 @@ function RegisterPageComp() {
           </Container>
         </Grid>
       </ThemeProvider>
-
-    </>
+    </Box>
   )
 }
 

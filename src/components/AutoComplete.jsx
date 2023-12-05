@@ -46,7 +46,7 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                     sx={{ width: 300, m: 2 }}
                     renderInput={(params) =>
                         <Grid item xs={12} sm={12}>
-                            <TextField {...params} autoFocus label="Customer" />
+                            <TextField {...params} label="Customer" />
                         </Grid>
                     }
                 />

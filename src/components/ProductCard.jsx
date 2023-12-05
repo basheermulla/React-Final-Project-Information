@@ -4,10 +4,13 @@ import {
 import { AddShoppingCart } from '@mui/icons-material';
 import { purple, blue, grey } from '@mui/material/colors';
 import { Link as LinkRouter, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateProductRequest } from '../redux/actions/productActions';
 
 function ProductCardComp({ product, sourcePage }) {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
     return (
@@ -22,7 +25,12 @@ function ProductCardComp({ product, sourcePage }) {
                             image={product.src}
                             alt={product.name}
                             sx={{ cursor: () => userLogin.role === 'admin' ? 'pointer' : 'auto' }}
-                            onClick={(e) => userLogin.role === 'admin' ? navigate('bought-customers', { state: { productID: product.id } }) : null}
+                            onClick={(e) =>
+                                userLogin.role === 'admin' ?
+                                    navigate('bought-customers', { state: { productID: product.id } })
+                                    :
+                                    null
+                            }
                         />
                         :
                         <CardMedia
@@ -40,6 +48,7 @@ function ProductCardComp({ product, sourcePage }) {
                             sourcePage === 'products' ?
                                 <LinkRouter
                                     to={userLogin.role === 'admin' ? '/products/edit-product' : '#'}
+                                    
                                     state={{ productID: product.id }}
                                     style={{ pointerEvents: userLogin.role === 'admin' ? '' : 'none' }}
                                 >

@@ -3,19 +3,35 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductCardComp from './ProductCard';
-import { Box, Grid, IconButton } from '@mui/material';
+import { Box, Grid, IconButton, Paper } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { gridSpacing } from '../utils/constant';
 
+const styleObj = {
+    "&:hover": {
+        backgroundColor: blue[300]
+    },
+    "&:active": {
+        boxShadow: 1
+    },
+    "&:focus": {
+        outline: 'none',
+    },
+    boxShadow: 6,
+    backgroundColor: blue[100],
+    color: 'black'
+};
+
+
 function SampleNextArrow(props) {
     const { className, style, onClick } = props;
     return (
-        <Box>
+        <Box sx={{ height: 'fit-content' }}>
             <IconButton
-                style={{ ...style, background: blue[50] }}
-                sx={{ "&:focus": { outline: 'none' } }}
+                style={{ ...style }}
+                sx={styleObj}
                 onClick={onClick}
             >
                 <KeyboardArrowRight fontSize="large" color='info' />
@@ -27,10 +43,10 @@ function SampleNextArrow(props) {
 function SamplePrevArrow(props) {
     const { className, style, onClick } = props;
     return (
-        <Box>
+        <Box sx={{ height: 'fit-content' }}>
             <IconButton
-                style={{ ...style, background: blue[50] }}
-                sx={{ "&:focus": { outline: 'none' } }}
+                style={{ ...style }}
+                sx={styleObj}
                 onClick={onClick}
             >
                 <KeyboardArrowLeft fontSize="large" color='info' />
@@ -50,9 +66,9 @@ function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
         prevArrow: <SamplePrevArrow />,
         useCSS: true,
         dots: true,
-        infinite: false,
+        infinite: true,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: 4,
         slidesToScroll: 1,
         responsive: [
             {
