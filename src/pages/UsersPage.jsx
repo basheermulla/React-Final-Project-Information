@@ -1,8 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Typography, Grid, Paper } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function UsersPageComp() {
-    const [count, setCount] = useState(0)
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!userLogin) {
+            navigate('/login')
+         }
+    }, [])
 
     return (
         <Box width={'100%'}>

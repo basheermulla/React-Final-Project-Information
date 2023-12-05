@@ -6,6 +6,7 @@ import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -27,10 +28,13 @@ function PurchasesPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const customers = useSelector((state => state.customerReducer.customers));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
+    const { userLogin } = useSelector((state) => state.userLoginReducer);
 
     const [originPurchasrs, setOriginPurchasrs] = useState(purchases);
     const [localPurchases, setLocalPurchases] = useState(purchases);
     const [inputValue, setInputValue] = useState({ productName: '', customerName: '', dateInput: '' });
+
+    const navigate = useNavigate();
     
     const handleSearchProduct = (value) => {
         if (value === null) {
@@ -74,19 +78,25 @@ function PurchasesPageComp() {
 
     // Set the origin and local purchases every time that the (whenever the) purchased state changes
     useEffect(() => {
-        const mapPurchases = purchases.map((purchase) => {
+        const mapPurchases = purchases?.map((purchase) => {
             return {
                 ...purchase,
-                productName: products.find((product) => product.id === purchase.productID)?.name,
-                customerName: customers.find(customer => customer.id === purchase.customerID).firstName + ' ' +
-                    customers.find(customer => customer.id === purchase.customerID).lastName,
+                productName: products?.find((product) => product.id === purchase.productID)?.name,
+                customerName: customers?.find(customer => customer.id === purchase.customerID)?.firstName + ' ' +
+                    customers?.find(customer => customer.id === purchase.customerID)?.lastName,
             }
         });
-        const sortPurchases = mapPurchases.slice().sort((a, b) => b.orderNumber - a.orderNumber)
+        const sortPurchases = mapPurchases?.slice().sort((a, b) => b.orderNumber - a.orderNumber)
         setOriginPurchasrs(sortPurchases);
         setLocalPurchases(sortPurchases);
 
     }, [purchases])
+
+    useEffect(() => {
+        if (!userLogin) {
+            navigate('/login')
+         }
+    }, [])
 
     return (
         <Box width={'100%'}>
@@ -116,7 +126,7 @@ function PurchasesPageComp() {
                         </TableHead>
                         <TableBody>
                             {
-                                localPurchases.map((purchase, index) => (
+                                localPurchases?.map((purchase, index) => (
                                     <StyledTableRow
                                         key={purchase.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

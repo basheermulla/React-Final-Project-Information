@@ -23,6 +23,7 @@ export const userLoginReducer = (state = initialState, action) => {
             console.log('login request');
             return { ...state, loading: true, error: null };
         case USER_LOGIN_SUCCESS:
+            console.log('login success');
             const userLogin = {
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName,

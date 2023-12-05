@@ -21,7 +21,7 @@ function PageTitleComp({ titleName }) {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Grid container component={Paper} square variant="elevation" elevation={1} sx={{ display: 'flex', justifyContent: "center", bgcolor: 'primary.superLight', p: 2, mb: 2 }}>
+                <Grid container component={Paper} square variant="elevation" elevation={1} sx={{ display: 'flex', justifyContent: "center", bgcolor: 'primary.light', width: '98%', borderRadius: 9, p: 2, mb: 1 }}>
                     <Box xs={{ display: 'flex', justifyContent: "center" }} >
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12}>

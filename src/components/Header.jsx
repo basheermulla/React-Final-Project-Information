@@ -8,9 +8,9 @@ import settings from '../utils/setting-links.json';
 import { useSelector, useDispatch } from "react-redux";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { loadAllProducts } from '../redux/actions/productActions';
-import { loadAllCustomers } from '../redux/actions/customerActions';
-import { loadAllPurchase } from '../redux/actions/purchaseActions';
+import { loadProductsRequest, loadProductsSuccess, loadProductsFail } from '../redux/actions/productActions';
+import { loadCustomersRequest, loadCustomersSuccess, loadCustomersFail } from '../redux/actions/customerActions';
+import { loadPurchasesRequest, loadPurchasesSuccess, loadPurchasesFail } from '../redux/actions/purchaseActions';
 import { blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { logout } from '../redux/actions/userActions';
@@ -30,8 +30,10 @@ const theme = createTheme({
 function HeaderComp() {
     const products = useSelector((state => state.productReducer.products));
     const userLogin = useSelector((state) => state.userLoginReducer.userLogin);
+
     // const userstate = useSelector((state) => state);
     // console.log(userstate);
+
     const dispatch = useDispatch();
 
     const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', accessToken: '' });
@@ -74,17 +76,14 @@ function HeaderComp() {
             switch (userLogin.role) {
                 case 'admin':
                     const showAllPagesItem = pages['pages-Links'];
-                    console.log(showAllPagesItem)
                     setPagesToDiaplay(showAllPagesItem)
                     break;
                 case 'regular':
                     const matchPagesItem = pages['pages-Links'].filter((page) => page.pagename !== 'Users');
-                    console.log(matchPagesItem)
                     setPagesToDiaplay(matchPagesItem)
                     break;
                 default:
                     const matchPagesItem2 = pages['pages-Links'].filter((page) => page.pagename !== 'Users');
-                    console.log(matchPagesItem2)
                     setPagesToDiaplay(matchPagesItem2)
                     break;
             }
@@ -96,57 +95,78 @@ function HeaderComp() {
     }, [userLogin]);
 
     useEffect(() => {
+        dispatch(loadProductsRequest());
+        dispatch(loadCustomersRequest());
+        dispatch(loadPurchasesRequest());
         const fetchProducts = async () => {
             let products = [];
             const querySnapshot = await getDocs(collection(db, "products"));
             products = querySnapshot.docs.map((doc) => {
                 return {
                     id: doc.id,
-                    //status: 'UNCHANGED',
                     ...doc.data(),
                     published: doc.data().published.toDate()
                 }
             });
-            // console.log(products);
-            dispatch(loadAllProducts(products));
+            return products;
         }
 
-        if (userLogin) { fetchProducts() };
-    }, [userLogin]);
-
-    useEffect(() => {
+        // dispatch(signUpRequest());
         const fetchCustomers = async () => {
             const querySnapshot = await getDocs(collection(db, "customers"));
-            const customers = querySnapshot.docs.map((doc) => {
+            let customers = [];
+            customers = querySnapshot.docs.map((doc) => {
                 return {
                     id: doc.id,
-                    // status: 'UNCHANGED',
                     ...doc.data()
                 }
             });
-            // console.log(customers);
-            dispatch(loadAllCustomers(customers));
+            return customers;
         }
 
-        if (userLogin) { fetchCustomers() };
-    }, [userLogin]);
-
-    useEffect(() => {
+        // dispatch(signUpRequest());
         const fetchPurchases = async () => {
             const querySnapshot = await getDocs(collection(db, "purchases"));
-            const purchases = querySnapshot.docs.map((doc) => {
+            let purchases = [];
+            purchases = querySnapshot.docs.map((doc) => {
                 return {
                     id: doc.id,
-                    // status: 'UNCHANGED',
                     ...doc.data(),
                     date: doc.data().date.toDate()
                 }
             });
-            // console.log(purchases);
-            dispatch(loadAllPurchase(purchases));
+            return purchases;
         }
 
-        if (userLogin) { fetchPurchases() };
+        // Fetch All data [Products, Customers, Purchases] from firebase DB with Promise.all
+        if (userLogin) {
+            const func = async () => {
+                const [Products, Customers, Purchases] = await Promise.allSettled([fetchProducts(), fetchCustomers(), fetchPurchases()])
+                if (Products.status === 'fulfilled') {
+                    dispatch(loadProductsSuccess(Products.value));
+                } else {
+                    console.log(Products.reason);
+                    dispatch(loadProductsFail(Products.reason));
+                }
+
+                if (Customers.status === 'fulfilled') {
+                    dispatch(loadCustomersSuccess(Customers.value));
+                } else {
+                    console.log(Products.reason);
+                    dispatch(loadCustomersFail(Customers.reason));
+                }
+
+                if (Purchases.status === 'fulfilled') {
+                    dispatch(loadPurchasesSuccess(Purchases.value));
+                } else {
+                    console.log(Purchases.reason);
+                    dispatch(loadPurchasesFail(Purchases.reason));
+                }
+            }
+
+            func()
+        }
+
     }, [userLogin]);
 
     return (
@@ -154,31 +174,34 @@ function HeaderComp() {
             <ThemeProvider theme={theme}>
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
-                        <Container maxWidth="xl">
-                            <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                                <IconButton onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }} sx={{ p: 0, mr: 1 }}>
-                                    <Avatar alt="Remy Sharp" src={shopLogo} />
+                        <Toolbar disableGutters sx={{ justifyContent: 'space-between', bgcolor: 'primary.dark' }}>
+                            <IconButton onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }} sx={{ p: 1, mr: 0 }}>
+                                <Avatar alt="Remy Sharp" src={shopLogo} />
+                            </IconButton>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                                <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar"
+                                    aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit"
+                                >
+                                    <MenuIcon />
                                 </IconButton>
-                                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                                    <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar"
-                                        aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit"
-                                    >
-                                        <MenuIcon />
-                                    </IconButton>
-                                    <Menu
-                                        id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
-                                        keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left', }}
-                                        open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}
-                                        sx={{ display: { xs: 'block', md: 'none' }, }}
-                                    >
-                                        {pagesToDiaplay.map((page, index) => (
+                                <Menu
+                                    id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+                                    keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left', }}
+                                    open={Boolean(anchorElNav)} onClose={handleCloseNavMenu}
+                                    sx={{ display: { xs: 'block', md: 'none' }, }}
+                                >
+                                    {
+                                        pagesToDiaplay.map((page, index) => (
                                             <MenuItem key={index} onClick={handleCloseNavMenu}>
                                                 <Typography textAlign="center">{page.pagename}</Typography>
                                             </MenuItem>
                                         ))}
-                                    </Menu>
-                                </Box>
-                                {anchorElLogin && <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                                </Menu>
+                            </Box>
+                            {
+                                anchorElLogin
+                                &&
+                                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                     {
                                         pagesToDiaplay.map((page, index) => (
                                             <Button
@@ -187,9 +210,8 @@ function HeaderComp() {
 
                                                 onClick={() => handleCloseNavMenu(page.link, index)}
                                                 sx={{
-                                                    my: 2,
-                                                    bgcolor: flagColor === index ? 'primary.dark' : "primary.main",
-                                                    "&:hover": { bgcolor: 'primary.dark' },
+                                                    bgcolor: flagColor === index ? 'primary.darker' : "primary.dark",
+                                                    "&:hover": { bgcolor: 'primary.darker' },
                                                     "&:focus": { outline: 'none' },
                                                     color: 'white',
                                                     display: 'block'
@@ -200,24 +222,30 @@ function HeaderComp() {
                                         ))
                                     }
                                 </Box>
-                                }
-                                <Box sx={{ flexGrow: 0 }}>
-                                    <Button
-                                        sx={{ m: 2, display: anchorElLogin ? 'none' : 'block' }}
-                                        variant="contained"
-                                        color="error"
-                                        onClick={(e) => navigate('login')}
-                                    >
-                                        Login
-                                    </Button>
-                                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                                        {anchorElLogin && <Typography
+                            }
+                            <Box sx={{ flexGrow: 0 }}>
+                                <Button
+                                    sx={{ display: anchorElLogin ? 'none' : 'block', mr: 1 }}
+                                    variant="contained"
+                                    color="error"
+                                    onClick={(e) => navigate('login')}
+                                >
+                                    Login
+                                </Button>
+                                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                                    {
+                                        anchorElLogin
+                                        &&
+                                        <Typography
                                             component="p"
                                             variant="p"
                                         > Hello, {userInfo?.firstName + ' ' + userInfo?.lastName}
                                         </Typography>
-                                        }
-                                        {anchorElLogin && <Tooltip title="Open settings">
+                                    }
+                                    {
+                                        anchorElLogin
+                                        &&
+                                        <Tooltip title="Open settings">
                                             <IconButton onClick={handleOpenUserMenu} >
                                                 <Avatar
                                                     alt="Remy Sharp"
@@ -231,25 +259,24 @@ function HeaderComp() {
                                             </IconButton>
                                         </Tooltip>}
 
-                                        <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser}
-                                            anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted
-                                            transformOrigin={{ vertical: 'top', horizontal: 'right', }}
-                                            open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
-                                        >
-                                            {
-                                                settings['settings-Links'].map((setting, index) => (
-                                                    <MenuItem key={index} onClick={handleCloseUserMenu}>
-                                                        <Typography textAlign="center" onClick={(e) => handleClickSetting(e, setting.link)}>{setting.settingname}</Typography>
-                                                    </MenuItem>
-                                                ))
-                                            }
-                                        </Menu>
-                                    </Box>
+                                    <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser}
+                                        anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted
+                                        transformOrigin={{ vertical: 'top', horizontal: 'right', }}
+                                        open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
+                                    >
+                                        {
+                                            settings['settings-Links'].map((setting, index) => (
+                                                <MenuItem key={index} onClick={handleCloseUserMenu}>
+                                                    <Typography textAlign="center" onClick={(e) => handleClickSetting(e, setting.link)}>{setting.settingname}</Typography>
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Menu>
                                 </Box>
-                            </Toolbar>
-                        </Container>
+                            </Box>
+                        </Toolbar>
                     </AppBar>
-                </Grid>               
+                </Grid>
             </ThemeProvider>
         </Box>
     )
