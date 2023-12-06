@@ -11,6 +11,7 @@ import { db } from '../firebase/firebase';
 import { loadProductsRequest, loadProductsSuccess, loadProductsFail } from '../redux/actions/productActions';
 import { loadCustomersRequest, loadCustomersSuccess, loadCustomersFail } from '../redux/actions/customerActions';
 import { loadPurchasesRequest, loadPurchasesSuccess, loadPurchasesFail } from '../redux/actions/purchaseActions';
+import { loadUsersRequest, loadUsersSuccess, loadUsersFail } from '../redux/actions/userActions';
 import { blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { logout } from '../redux/actions/userActions';
@@ -98,6 +99,7 @@ function HeaderComp() {
         dispatch(loadProductsRequest());
         dispatch(loadCustomersRequest());
         dispatch(loadPurchasesRequest());
+        if (userLogin?.role) { dispatch(loadUsersRequest()); }
         const fetchProducts = async () => {
             let products = [];
             const querySnapshot = await getDocs(collection(db, "products"));
@@ -111,7 +113,6 @@ function HeaderComp() {
             return products;
         }
 
-        // dispatch(signUpRequest());
         const fetchCustomers = async () => {
             const querySnapshot = await getDocs(collection(db, "customers"));
             let customers = [];
@@ -124,7 +125,6 @@ function HeaderComp() {
             return customers;
         }
 
-        // dispatch(signUpRequest());
         const fetchPurchases = async () => {
             const querySnapshot = await getDocs(collection(db, "purchases"));
             let purchases = [];
@@ -138,33 +138,81 @@ function HeaderComp() {
             return purchases;
         }
 
+        const fetchUsers = async () => {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            const users = querySnapshot.docs.map((doc) => {
+                return {
+                    id: doc.id,
+                    ...doc.data()
+                }
+            });
+            return users;
+        }
+
         // Fetch All data [Products, Customers, Purchases] from firebase DB with Promise.all
+        // If the an admin ---> Fetch users data
         if (userLogin) {
-            const func = async () => {
-                const [Products, Customers, Purchases] = await Promise.allSettled([fetchProducts(), fetchCustomers(), fetchPurchases()])
-                if (Products.status === 'fulfilled') {
-                    dispatch(loadProductsSuccess(Products.value));
-                } else {
-                    console.log(Products.reason);
-                    dispatch(loadProductsFail(Products.reason));
+            if (userLogin.role === 'admin') {
+                const getData = async () => {
+                    const [Products, Customers, Purchases, Users] = await Promise.allSettled([fetchProducts(), fetchCustomers(), fetchPurchases(), fetchUsers()])
+                    if (Products.status === 'fulfilled') {
+                        dispatch(loadProductsSuccess(Products.value));
+                    } else {
+                        console.log(Products.reason);
+                        dispatch(loadProductsFail(Products.reason));
+                    }
+
+                    if (Customers.status === 'fulfilled') {
+                        dispatch(loadCustomersSuccess(Customers.value));
+                    } else {
+                        console.log(Products.reason);
+                        dispatch(loadCustomersFail(Customers.reason));
+                    }
+
+                    if (Purchases.status === 'fulfilled') {
+                        dispatch(loadPurchasesSuccess(Purchases.value));
+                    } else {
+                        console.log(Purchases.reason);
+                        dispatch(loadPurchasesFail(Purchases.reason));
+                    }
+
+                    if (Users.status === 'fulfilled') {
+                        dispatch(loadUsersSuccess(Users.value));
+                    } else {
+                        console.log(Users.reason);
+                        dispatch(loadUsersFail(Users.reason));
+                    }
                 }
 
-                if (Customers.status === 'fulfilled') {
-                    dispatch(loadCustomersSuccess(Customers.value));
-                } else {
-                    console.log(Products.reason);
-                    dispatch(loadCustomersFail(Customers.reason));
+                getData();
+            } else {
+                const getData = async () => {
+                    const [Products, Customers, Purchases] = await Promise.allSettled([fetchProducts(), fetchCustomers(), fetchPurchases()])
+                    if (Products.status === 'fulfilled') {
+                        dispatch(loadProductsSuccess(Products.value));
+                    } else {
+                        console.log(Products.reason);
+                        dispatch(loadProductsFail(Products.reason));
+                    }
+
+                    if (Customers.status === 'fulfilled') {
+                        dispatch(loadCustomersSuccess(Customers.value));
+                    } else {
+                        console.log(Products.reason);
+                        dispatch(loadCustomersFail(Customers.reason));
+                    }
+
+                    if (Purchases.status === 'fulfilled') {
+                        dispatch(loadPurchasesSuccess(Purchases.value));
+                    } else {
+                        console.log(Purchases.reason);
+                        dispatch(loadPurchasesFail(Purchases.reason));
+                    }
                 }
 
-                if (Purchases.status === 'fulfilled') {
-                    dispatch(loadPurchasesSuccess(Purchases.value));
-                } else {
-                    console.log(Purchases.reason);
-                    dispatch(loadPurchasesFail(Purchases.reason));
-                }
+                getData();
             }
 
-            func()
         }
 
     }, [userLogin]);

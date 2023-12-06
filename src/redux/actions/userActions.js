@@ -6,11 +6,14 @@ import {
 
     USER_SIGNUP_REQUEST,
     USER_SIGNUP_SUCCESS,
-    USER_SIGNUP_ERROR
+    USER_SIGNUP_ERROR,
+
+    LOAD_USERS_REQUEST,
+    LOAD_USERS_SECCESS,
+    LOAD_USERS_FAIL,
+
+    SET_ROLE_SECCESS
 } from '../constants/userConstants';
-import { auth, db } from '../../firebase/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 
 //------------------ Sing Up ------------------------------
 
@@ -55,4 +58,24 @@ export const signInError = (error) => (dispatch) => {
 export const logout = () => (dispatch) => {
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
+}
+
+//------------------ Get[load] All Users Actions ------------------------------
+
+export const loadUsersRequest = () => (dispatch) => {
+    dispatch({ type: LOAD_USERS_REQUEST });
+}
+
+export const loadUsersSuccess = (users) => (dispatch) => {
+    dispatch({ type: LOAD_USERS_SECCESS, payload: users });
+}
+
+export const loadUsersFail = (message) => (dispatch) => {
+    dispatch({ type: LOAD_USERS_FAIL, payload: message });
+}
+
+//------------------ Set User Role Actions ------------------------------
+
+export const setRole = (userId) => (dispatch) => {
+    dispatch({ type: SET_ROLE_SECCESS, payload: userId });
 }
