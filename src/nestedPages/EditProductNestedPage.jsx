@@ -51,7 +51,7 @@ function EditProductNestedPageComp() {
         const firestoreUpdateDoc = async () => {
             const updateProductDB = { ...product };
             delete updateProductDB['id'];
-            await updateDoc(doc(db, 'product', product.id), updateProductDB);
+            await updateDoc(doc(db, 'products', product.id), updateProductDB);
         }
 
         const [result] = await Promise.allSettled([firestoreUpdateDoc()])

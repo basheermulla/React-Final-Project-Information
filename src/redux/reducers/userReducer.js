@@ -6,7 +6,13 @@ import {
 
     USER_SIGNUP_REQUEST,
     USER_SIGNUP_SUCCESS,
-    USER_SIGNUP_ERROR
+    USER_SIGNUP_ERROR,
+
+    LOAD_USERS_REQUEST,
+    LOAD_USERS_SECCESS,
+    LOAD_USERS_FAIL,
+
+    SET_ROLE_SECCESS
 } from '../constants/userConstants';
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
@@ -100,6 +106,39 @@ export const userRegisterReducer = (state = initialState, action) => {
                     break;
             }
             return { ...state, loading: false, authError: errorMessage };
+        default:
+            return state;
+    }
+}
+
+const initialUsersState = {
+    users: []
+};
+
+export const userReducer = (state = initialUsersState, action) => {
+    switch (action.type) {
+
+        // ---------------- Load ----------------------
+        case LOAD_USERS_REQUEST:
+            console.log('LOAD_USERS_REQUEST = ', action.payload);
+            return { ...state, loading: true };
+        case LOAD_USERS_SECCESS:
+            console.log('LOAD_USERS_SECCESS = ', action.payload);
+            return { ...state, loading: false, error: null, users: action.payload };
+        case LOAD_USERS_FAIL:
+            console.log('LOAD_USERS_FAIL = ', action.payload);
+            let str_load = new String(action.payload);
+            const messege_load = str_load.valueOf();
+            return { ...state, loading: false, error: messege_load };
+
+        // ---------------- Set Role ----------------------
+        case SET_ROLE_SECCESS:
+            console.log('SET_ROLE_SECCESS = ', action.payload);
+            const update_users = state.users.map((user) => {
+                return user.id === action.payload ? { ...user, role: user.role === 'admin' ? 'regular' : 'admin' } : user
+            });
+            return { ...state, users: update_users };
+
         default:
             return state;
     }

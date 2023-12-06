@@ -62,7 +62,7 @@ function LoginPageComp() {
     return (
         <Box width={'100%'}>
             <ThemeProvider theme={defaultTheme}>
-                <Grid container component={Paper} elevation={6} sx={{ height: '84vh', height: '100vh' }}>
+                <Grid container component={Paper} elevation={6} sx={{ height: '84vh' }}>
                     <Grid item xs={false} sm={4} md={7}
                         sx={{
                             backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',

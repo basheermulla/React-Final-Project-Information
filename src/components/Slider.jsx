@@ -66,7 +66,7 @@ function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
         prevArrow: <SamplePrevArrow />,
         useCSS: true,
         dots: true,
-        infinite: true,
+        infinite: sourcePage === 'products' ? true : false,
         speed: 500,
         slidesToShow: 4,
         slidesToScroll: 1,
