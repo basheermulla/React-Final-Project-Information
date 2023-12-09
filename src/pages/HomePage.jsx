@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Alert, AlertTitle, Box, Button, CircularProgress, Grid, LinearProgress, Paper } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react'
+import { Alert, AlertTitle, Box, Button, Grid, LinearProgress, Paper } from '@mui/material';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import PageTitleComp from '../components/PageTitle';
 import SliderComp from '../components/Slider';
-import { gridSpacing } from '../utils/constant';
 import { submitProductFail } from '../redux/actions/productActions';
 import { submitCustomerFail } from '../redux/actions/customerActions';
 import { submitPurchaseFail } from '../redux/actions/purchaseActions';
@@ -17,8 +16,6 @@ function HomePageComp() {
     const { loading: purchasesLoad, error: purchasesError, purchases } = useSelector((state) => state.purchaseReducer);
     const dispatch = useDispatch();
 
-    const [newProducts, setNewProducts] = useState([]);
-    const [topSellingProducts, setTopSellingProducts] = useState([]);
     const [detectRender, setDetectRender] = useState(true);
 
     const navigate = useNavigate()
@@ -30,27 +27,39 @@ function HomePageComp() {
         dispatch(submitPurchaseFail());
         navigate('/');
     }
+    // Sorte By New Products 
+    const new_products = useMemo(() => {
+        const sortByNewProducts = products
+            ?.slice()
+            .sort((a, b) => b.published - a.published)
+            .slice(0, 4);
+        return sortByNewProducts
+    }
+        , [products]
+    )
 
-    useEffect(() => {
+    // Sorte By Top Selling 
+    const top_selling = useMemo(() => {
         // Group the Purchases based on their productID
         let groupByProductID = [];
         if (purchases) {
-            groupByProductID = purchases.reduce((acc, current) => {
+            groupByProductID = purchases?.reduce((acc, current) => {
                 acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
                 return acc
             }, {});
         }
-
         if (products) {
-            // Sorte By New Products 
-            const sortByNewProducts = products.slice().sort((a, b) => b.published - a.published).slice(0, 2);
-            setNewProducts(sortByNewProducts);
+            const sortByTopSelling = products
+            .filter((product) => groupByProductID[product.id])
+            .slice()
+            .sort((a, b) => groupByProductID[b.id]?.length - groupByProductID[a.id]?.length)
+            .slice(0, 4);
 
-            // Sorte By Top Selling 
-            const sortByTopSelling = products.slice().sort((a, b) => groupByProductID[b.id]?.length - groupByProductID[a.id]?.length).slice(0, 2);
-            setTopSellingProducts(sortByTopSelling);
+        return sortByTopSelling
         }
-    }, [products]);
+    }
+        , [products]
+    )
 
     useEffect(() => {
         if (location['pathname'] === '/') {
@@ -68,6 +77,7 @@ function HomePageComp() {
 
     return (
         <Box width={'100%'}>
+            {console.log('Home page')}
             {
                 (productsLoad || customersLoad || purchasesLoad)
                 &&
@@ -75,7 +85,7 @@ function HomePageComp() {
                     <LinearProgress />
                 </Box>
             }
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 0, pb: 5 }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
                 <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
                     {
                         (productsError || customersError || purchasesError)
@@ -114,19 +124,25 @@ function HomePageComp() {
                         !purchasesError
                         &&
                         <>
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", pt: 1 }}>
-                                <PageTitleComp titleName={'New Products'} />
-                            </Grid>
+                            <Grid container sx={{ width: '95%' }}>
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", pt: 2 }}>
+                                    <PageTitleComp titleName={'New Products'} />
+                                </Grid>
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", mb: 10 }}>
+                                    <Box sx={{ width: '90%', pt: 1 }}>
+                                        <SliderComp productsToSlide={new_products} sourcePage={'Home'} />
+                                    </Box>
+                                </Grid>
 
-                            <Grid item xs={12} sx={{ mb: 10 }}>
-                                <SliderComp productsToSlide={newProducts} sourcePage={'home'} />
-                            </Grid>
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center" }}>
-                                <PageTitleComp titleName={'Top Selling'} />
-                            </Grid>
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center" }}>
+                                    <PageTitleComp titleName={'Top Selling'} />
+                                </Grid>
 
-                            <Grid item xs={12}>
-                                <SliderComp productsToSlide={topSellingProducts} sourcePage={'home'} />
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", mb: 10 }}>
+                                    <Box sx={{ width: '90%', pt: 1 }}>
+                                        <SliderComp productsToSlide={top_selling} sourcePage={'Home'} />
+                                    </Box>
+                                </Grid>
                             </Grid>
                         </>
                     }

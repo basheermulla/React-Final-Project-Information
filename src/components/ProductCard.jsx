@@ -4,21 +4,20 @@ import {
 import { AddShoppingCart } from '@mui/icons-material';
 import { purple, blue, grey } from '@mui/material/colors';
 import { Link as LinkRouter, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateProductRequest } from '../redux/actions/productActions';
+import { useSelector } from 'react-redux';
+import { memo, useEffect, useState } from 'react';
 
 function ProductCardComp({ product, sourcePage }) {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
-    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
     return (
         <Card sx={{ position: 'relative' }}>
+            {console.log('ProductCardComp page')}
             <Box sx={{ position: 'relative' }}>
                 {
                     sourcePage === 'products' ?
-
                         <CardMedia
                             component="img"
                             height='200px'
@@ -41,14 +40,14 @@ function ProductCardComp({ product, sourcePage }) {
                         />
                 }
             </Box>
-            <Grid container display='grid' height='350px'>
+            <Grid container display='grid' height='400px' overflow="auto">
                 <CardContent sx={{ justifyContent: 'center' }}>
                     <Typography variant="h5" gutterBottom component="div" fontWeight='bold'>
                         {
                             sourcePage === 'products' ?
                                 <LinkRouter
                                     to={userLogin.role === 'admin' ? '/products/edit-product' : '#'}
-                                    
+
                                     state={{ productID: product.id }}
                                     style={{ pointerEvents: userLogin.role === 'admin' ? '' : 'none' }}
                                 >
@@ -69,7 +68,9 @@ function ProductCardComp({ product, sourcePage }) {
                     </Typography>
                 </CardContent>
                 {
-                    userLogin.role === 'admin' && <CardActions sx={{ justifyContent: 'center', alignItems: 'end', pb: 5 }}>
+                    userLogin.role === 'admin'
+                    &&
+                    <CardActions sx={{ justifyContent: 'center', alignItems: 'end', pb: 5 }}>
                         {sourcePage === 'products' ?
                             <Button
                                 disabled={product.quantity > 0 ? false : true}

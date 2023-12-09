@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Grid, Paper, Icon, useMediaQuery, Box, LinearProgress, Alert, AlertTitle, Button } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
@@ -7,6 +7,7 @@ import { red } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 import RevenueCardComp from '../components/RevenueCard';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
+import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
 import { gridSpacing } from '../utils/constant';
 import { submitProductFail } from '../redux/actions/productActions';
@@ -16,12 +17,13 @@ function ProductsPageComp() {
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
     const { loading: productsLoad, error: productsError, products } = useSelector((state) => state.productReducer);
+
     const dispatch = useDispatch();
 
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
     const [detectRender, setDetectRender] = useState(true);
-    const [pathName, setPathName] = useState(useLocation().pathname)
+    const [countS, setCountS] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,23 +38,6 @@ function ProductsPageComp() {
         borderBottomColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200]
     };
 
-    useEffect(() => {
-        // Group the Purchases based on their productID
-        const groupByProductID = purchases?.reduce((acc, current) => {
-            acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
-            return acc
-        }, {});
-
-        const total = purchases?.length
-        setTotalPurchased(total)
-
-        const amount = products?.filter((product) =>
-            purchases?.find(purchase => purchase.productID === product.id))
-            .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
-
-        setAmountSale(amount)
-    }, [products, purchases])
-
     const handleSubmitError = () => {
         console.log('Clock me');
         dispatch(submitProductFail());
@@ -62,6 +47,26 @@ function ProductsPageComp() {
             navigate('/products');
         }
     }
+
+    const handleCount = () => {
+        setCountS(countS + 1)
+    }
+
+    useEffect(() => {
+        // Group the Purchases based on their productID
+        const groupByProductID = purchases?.reduce((acc, current) => {
+            acc[current.productID] = acc[current.productID] ? [...acc[current.productID], current] : [current];
+            return acc
+        }, {});
+        const total = purchases?.length
+        setTotalPurchased(total)
+        console.log('useEffect = ', total);
+        const amount = products?.filter((product) =>
+            purchases?.find(purchase => purchase.productID === product.id))
+            .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
+
+        setAmountSale(amount)
+    }, [products, purchases])
 
     useEffect(() => {
         if (location['pathname'] === '/products') {
@@ -79,6 +84,7 @@ function ProductsPageComp() {
 
     return (
         <Box width={'100%'}>
+            {console.log('Products page')}
             {
                 productsLoad
                 &&
@@ -86,7 +92,7 @@ function ProductsPageComp() {
                     <LinearProgress />
                 </Box>
             }
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", p: 0, pb: 5 }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
                 <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
                     {
                         productsError
@@ -122,7 +128,7 @@ function ProductsPageComp() {
                         &&
                         !productsError
                         &&
-                        <Grid container spacing={gridSpacing} sx={{ display: 'flex', justifyContent: "center", mt: 3 }}>
+                        <Grid container sx={{ display: 'flex', justifyContent: "center", mt: 1, pl: 3, pr: 3 }}>
                             <Grid item xs={12} lg={4} textAlign={'left'}>
                                 <RevenueCardComp
                                     primary="Revenue"
@@ -142,6 +148,15 @@ function ProductsPageComp() {
                                     color={theme.palette.primary.main}
                                 />
                             </Grid>
+                            <Grid item xs={12} lg={4} textAlign={'left'}>
+                                <RevenueCardComp
+                                    primary="Number Of Products"
+                                    secondary={products.length}
+                                    content="20% Increase in the last month"
+                                    iconPrimary={CategoryIcon}
+                                    color={theme.palette.warning.main}
+                                />
+                            </Grid>
                         </Grid>
                     }
                     {
@@ -151,6 +166,15 @@ function ProductsPageComp() {
                         &&
                         <Grid item xs={12}>
                             {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
+                            <Grid item xs={12} sm={12} mt={1}>
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() => handleCount()}
+                                >
+                                    Check Memo Work
+                                </Button>
+                            </Grid>
                         </Grid>
                     }
 
@@ -159,13 +183,19 @@ function ProductsPageComp() {
                         &&
                         !productsError
                         &&
-                        <Grid item xs={12} sx={{ justifyContent: "center", p:5 }}>
-                            <SliderComp productsToSlide={products} sourcePage={'products'} />
+                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", mb: 10 }}>
+                            <Box sx={{ width: '90%', pt: 1 }}>
+                                <SliderComp productsToSlide={products} sourcePage={'products'} />
+                            </Box>
                         </Grid>
                     }
 
                     {
-                        detectRender && userLogin?.role === 'admin' && <Outlet />
+                        detectRender
+                        &&
+                        userLogin?.role === 'admin'
+                        &&
+                        <Outlet />
                     }
                 </Grid>
             </Grid>

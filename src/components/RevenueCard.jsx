@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Typography, Grid, Card, CardContent, Container, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
@@ -12,13 +12,13 @@ function RevenueCardComp({ primary, secondary, content, iconPrimary, color, coin
 
     return (
         <>
-            <Card sx={{ background: color, position: 'relative', color: '#fff' }}>
+            <Card sx={{ background: color, position: 'relative', color: '#fff', m: 2}}>
+            {console.log('RevenueCardComp page')}
                 <CardContent>
                     <Typography
                         variant="body2"
                         sx={{
                             position: 'absolute',
-
                             right: 13,
                             top: 36,
                             color: '#fff',
@@ -63,4 +63,4 @@ RevenueCardComp.propTypes = {
     coin: PropTypes.string
 };
 
-export default RevenueCardComp
+export default memo(RevenueCardComp)

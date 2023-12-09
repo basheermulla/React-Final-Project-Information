@@ -8,7 +8,8 @@ function BasicTableComp({ data, modelTarget }) {
 
     return (
         <>
-            <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }} >
+            <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }}>
+            {console.log('BasicTableComp page')}
                 <Table aria-label="collapsible table" sx={{ border: 0 }}>
                     <TableHead>
                         <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: blue[100], fontSize: 15, fontWeight: 'bold' } }}>

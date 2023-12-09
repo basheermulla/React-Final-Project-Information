@@ -1,5 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
-import { Box, Typography, CardMedia, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody, Collapse } from '@mui/material';
+import { useState, useRef, useEffect, memo } from 'react'
+import {
+    Box, Typography, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody,
+    Collapse, Avatar
+} from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -10,24 +13,16 @@ import { useSelector } from "react-redux";
 function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
     const products = useSelector((state => state.productReducer.products));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
-    
+
     const [open, setOpen] = useState(false);
 
-    const tableRef = useRef(true);
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     console.log('Internal  customer = ', customer);
-    //     console.log('Internal  modelTarget = ', modelTarget);
-    // }, [customer])
-
-    useEffect(() => {
-        tableRef.current.focus();
-    }, [])
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: grey[100], fontSize: 16 } }}>
-                <TableCell component="th" scope="row" tabIndex={0} ref={tableRef}>
+                {console.log('RowCollapsibleTableComp page')}
+                <TableCell component="th" scope="row">
                     <IconButton
                         aria-label="expand row"
                         size="small"
@@ -38,11 +33,15 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                 </TableCell>
                 <TableCell align="center"> {ID} </TableCell>
                 <TableCell align="center" sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <CardMedia
-                        component="img"
-                        sx={{ width: 72, height: 72, }} image={customer?.src}
-                        alt="Live from space album cover"
-
+                    <Avatar
+                        sx={{
+                            height: 64,
+                            width: 64,                            
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}
+                        src={customer?.src}
                     />
                 </TableCell>
                 <TableCell align="center">
@@ -61,7 +60,7 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                     }
                 </TableCell>
                 <TableCell align="center"> {customer?.city} </TableCell>
-                {userLogin.role === 'admin' &&<TableCell align="center">
+                {userLogin.role === 'admin' && <TableCell align="center">
                     {modelTarget === 'customers' ?
                         <Button
                             variant="contained"
@@ -140,4 +139,4 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
     )
 }
 
-export default RowCollapsibleTableComp
+export default memo(RowCollapsibleTableComp)

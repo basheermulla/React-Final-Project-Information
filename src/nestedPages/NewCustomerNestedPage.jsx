@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle } from '@mui/material';
+import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle, Snackbar } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
@@ -16,6 +16,7 @@ function NewCustomerNestedPageComp() {
     const dispatch = useDispatch();
 
     const [customer, setCustomer] = useState({});
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const navigate = useNavigate();
 
@@ -23,6 +24,18 @@ function NewCustomerNestedPageComp() {
         let { name, value } = event.target;
         setCustomer({ ...customer, [name]: value })
     }
+
+    const handleSnackOpen = () => {
+        setOpenSnackbar(true);
+    };
+
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+        navigate('/customers');
+    };
 
     const handleSubmit = async (event) => {
         dispatch(addCustomerRequest())
@@ -43,8 +56,8 @@ function NewCustomerNestedPageComp() {
         const [result] = await Promise.allSettled([firestoreAddDoc()])
         if (result.status === 'fulfilled') {
             console.log(result);
+            handleSnackOpen();
             dispatch(addCustomerSuccess({ ...customer, id: result.value }));
-            navigate('/customers');
         } else {
             console.log(result.reason);
             dispatch(addCustomerFail(result.reason));
@@ -52,11 +65,11 @@ function NewCustomerNestedPageComp() {
     }
 
     const handleCancel = () => {
-        navigate('/customers');
+        navigate(-1);
     }
 
     const handleClose = () => {
-        navigate('/customers');
+        navigate(-1);
     }
 
     const handleSubmitError = () => {
@@ -72,7 +85,8 @@ function NewCustomerNestedPageComp() {
     }, [])
 
     return (
-        <Box>
+        <Box width={'100%'} mr={1} ml={1}>
+            {console.log('NewCustomerNestedPageComp page')}
             {
                 loading
                 &&
@@ -110,7 +124,7 @@ function NewCustomerNestedPageComp() {
             {
                 !showError_AddCustomer
                 &&
-                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>
@@ -202,6 +216,11 @@ function NewCustomerNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
+                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
+                            The customer was added successfully !
+                        </Alert>
+                    </Snackbar>
                 </Grid>
             }
         </Box>
