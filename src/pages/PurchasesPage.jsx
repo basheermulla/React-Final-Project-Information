@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Grid, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Box } from '@mui/material';
 import { useSelector } from "react-redux";
 import AutoCompleteComp from '../components/AutoComplete';
@@ -36,26 +36,34 @@ function PurchasesPageComp() {
 
     const navigate = useNavigate();
 
-    const handleSearchProduct = (value) => {
-        if (value === null) {
-            setInputValue({ ...inputValue, productName: '' });
-        } else {
-            setInputValue({ ...inputValue, productName: value.label });
-        }
-    }
+    const handleSearchProduct = useCallback(
+        (value) => {
+            if (value === null) {
+                setInputValue({ ...inputValue, productName: '' });
+            } else {
+                setInputValue({ ...inputValue, productName: value.label });
+            }
+        }, [inputValue.productName]
+    )
 
-    const handleSearchCustomer = (value) => {
-        if (value === null) {
-            setInputValue({ ...inputValue, customerName: '' });
-        } else {
-            setInputValue({ ...inputValue, customerName: value.label });
-        }
-    }
+    const handleSearchCustomer = useCallback(
+        (value) => {
+            if (value === null) {
+                setInputValue({ ...inputValue, customerName: '' });
+            } else {
+                setInputValue({ ...inputValue, customerName: value.label });
+            }
+        },
+        [inputValue.customerName]
+    )
 
-    const handleSearchDate = (dateInput) => {
-        setInputValue({ ...inputValue, dateInput });
-    }
-
+    const handleSearchDate = useCallback(
+        (dateInput) => {
+            setInputValue({ ...inputValue, dateInput });
+        },
+      [inputValue.dateInput]
+    )
+    
     const handleSearch = () => {
         let filterTable = originPurchasrs;
         if (inputValue.dateInput === null) {
@@ -100,12 +108,13 @@ function PurchasesPageComp() {
 
     return (
         <Box width={'100%'}>
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", pb: 5, p: 2 }}>
+            {console.log('Purchases page')}
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', pb: 5, p: 2 }}>
                 <Grid container justifyContent="center" alignItems="center">
                     <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
                     <AutoCompleteComp callbackLabelInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
                     <Grid item xs={8} sm={3} sx={{ display: 'flex', justifyContent: "center" }}>
-                        <DateFieldComp callbackLabelInput={handleSearchDate} />
+                        <DateFieldComp callbackDateInput={handleSearchDate} />
                     </Grid>
                     <Grid item xs={12} sm={12} mt={1}>
                         <Button variant="contained" color="secondary" onClick={() => handleSearch()}>

@@ -61,6 +61,7 @@ function LoginPageComp() {
 
     return (
         <Box width={'100%'}>
+            {console.log('Login page')}
             <ThemeProvider theme={defaultTheme}>
                 <Grid container component={Paper} elevation={6} sx={{ height: '84vh' }}>
                     <Grid item xs={false} sm={4} md={7}

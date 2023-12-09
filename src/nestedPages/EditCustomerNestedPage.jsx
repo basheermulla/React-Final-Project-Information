@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle } from '@mui/material';
+import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Snackbar } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { doc, updateDoc, deleteDoc, addDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
@@ -27,8 +27,9 @@ function EditCustomerNestedPageComp() {
     const dispatch = useDispatch();
 
     const [customerID, setCustomerID] = useState(useLocation().state.customerID);
-    const [pathName, setPathName] = useState(useLocation().pathname);
     const [customer, setCustomer] = useState({});
+    const [open, setOpen] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -37,6 +38,26 @@ function EditCustomerNestedPageComp() {
         let { name, value } = event.target;
         setCustomer({ ...customer, [name]: value })
     }
+
+    const handleSnackOpen = () => {
+        setOpenSnackbar(true);
+    };
+
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+        navigate(-1);
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClickClose = () => {
+        setOpen(false);
+    };
 
     const handleSubmit = async (event) => {
         dispatch(updateCustomerRequest())
@@ -56,14 +77,8 @@ function EditCustomerNestedPageComp() {
         const [result] = await Promise.allSettled([firestoreUpdateDoc()])
         if (result.status === 'fulfilled') {
             console.log(result);
+            handleSnackOpen();
             dispatch(updateCustomerSuccess(customer));
-            if (pathName === '/products/edit-customer') {
-                navigate('/products');
-            } else if (pathName === '/customers/edit-customer') {
-                navigate(-1);
-            } else {
-                navigate('/');
-            }
         } else {
             console.log(result.reason);
             dispatch(updateCustomerFail(result.reason));
@@ -107,13 +122,7 @@ function EditCustomerNestedPageComp() {
                 arr_purchaseID.push(purchase.id)
             });
             dispatch(deletePurchaseSuccess(arr_purchaseID));
-            if (pathName === '/products/edit-customer') {
-                navigate('/products');
-            } else if (pathName === '/customers/edit-customer') {
-                navigate(-1);
-            } else {
-                navigate('/');
-            }
+            navigate(-1);
         } else if (res_DeleteCustomer.status === 'fulfilled') {
             console.log(res_All);
             // We add the customer again after deleting him, 
@@ -139,34 +148,16 @@ function EditCustomerNestedPageComp() {
     }
 
     const handleCancel = () => {
-        if (pathName === '/products/edit-customer') {
-            navigate('/products');
-        } else if (pathName === '/customers/edit-customer') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     const handleClose = () => {
-        if (pathName === '/products/edit-customer') {
-            navigate('/products');
-        } else if (pathName === '/customers/edit-customer') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     const handleSubmitError = () => {
         dispatch(submitCustomerFail());
-        if (pathName === '/products/edit-customer') {
-            navigate('/products');
-        } else if (pathName === '/customers/edit-customer') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     useEffect(() => {
@@ -181,7 +172,8 @@ function EditCustomerNestedPageComp() {
     }, [])
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', mr: 1, ml: 1 }}>
+            {console.log('EditCustomerNestedPageComp page')}
             {
                 loading
                 &&
@@ -219,7 +211,7 @@ function EditCustomerNestedPageComp() {
             {
                 !showError_UpdateCustomer
                 &&
-                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>
@@ -238,7 +230,7 @@ function EditCustomerNestedPageComp() {
                                     id="firstName"
                                     label="First Name"
                                     name="firstName"
-                                    value={customer.firstName || ''}
+                                    value={customer?.firstName || ''}
                                     autoFocus
                                     inputProps={{
                                         maxLength: 12
@@ -254,7 +246,7 @@ function EditCustomerNestedPageComp() {
                                     id="lastName"
                                     label="Last Name"
                                     name="lastName"
-                                    value={customer.lastName || ''}
+                                    value={customer?.lastName || ''}
                                     inputProps={{
                                         maxLength: 12
                                     }}
@@ -269,7 +261,7 @@ function EditCustomerNestedPageComp() {
                                     id="city"
                                     label="City"
                                     name="city"
-                                    value={customer.city || ''}
+                                    value={customer?.city || ''}
                                     inputProps={{
                                         maxLength: 24
                                     }}
@@ -293,7 +285,7 @@ function EditCustomerNestedPageComp() {
                                 variant="outlined"
                                 color='error'
                                 sx={{ m: 1, mt: 3 }}
-                                onClick={() => handleDelete()}
+                                onClick={handleClickOpen}
                             >
                                 Delete
                             </Button>
@@ -309,6 +301,38 @@ function EditCustomerNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
+                    <Dialog
+                        open={open}
+                        onClose={handleClickClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            {"Are you sure you want to delete this customer?"}
+                        </DialogTitle>
+                        <DialogActions>
+                            <Button
+                                variant="contained"
+                                color='primary'
+                                onClick={handleClickClose}
+                            >
+                                Disagree
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color='error'
+                                onClick={handleDelete}
+                                autoFocus
+                            >
+                                Agree
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
+                            The information was updated successfully !
+                        </Alert>
+                    </Snackbar>
                     <Grid item xs={12} sm={8}>
                         <Box sx={{ display: 'flex', justifyContent: "center", mb: 3 }} >
                             <BasicTableComp
@@ -320,7 +344,7 @@ function EditCustomerNestedPageComp() {
                                         ))
                                 }
 
-                                modelTarget={pathName === '/customers/edit-customer' ? 'customers' : 'products'}
+                                modelTarget={location.pathname === '/customers/edit-customer' ? 'customers' : 'products'}
                             />
                         </Box>
                     </Grid>

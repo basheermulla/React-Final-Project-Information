@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo, useMemo } from 'react'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -55,11 +55,7 @@ function SamplePrevArrow(props) {
     );
 }
 
-function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
-    const [hasSetPosition, setHasSetPosition] = useState(false);
-
-    const slider = useRef();
-
+const SliderComp = ({ productsToSlide, sourcePage }) => {
     const settings = {
         autoplay: true,
         nextArrow: <SampleNextArrow />,
@@ -78,32 +74,27 @@ function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
                 }
             },
             {
-                breakpoint: 600,
+                breakpoint: 850,
                 settings: {
                     slidesToShow: 2
                 }
             },
             {
-                breakpoint: 480,
+                breakpoint: 650,
                 settings: {
                     slidesToShow: 1
                 }
             }
         ]
-    };
+    }
 
-    useEffect(() => {
-        if (slider.current && !hasSetPosition) {
-            slider.current.slickGoTo(initialSlide);
-            setHasSetPosition(true);
-        }
-    }, [initialSlide, hasSetPosition, slider, productsToSlide]);
 
     return (
         <>
-            <Slider ref={slider} {...settings} style={{ display: 'flex' }}>
+            <Slider {...settings} style={{ display: 'flex' }}>
+                {console.log('Slider page')}
                 {
-                    productsToSlide?.map((product, i) => {
+                    productsToSlide.map((product, i) => {
                         return <Grid key={i} container direction="column" alignItems="center" spacing={gridSpacing} textAlign="center">
                             <Grid item >
                                 <ProductCardComp key={product.id} product={product} sourcePage={sourcePage} />
@@ -116,4 +107,4 @@ function SliderComp({ initialSlide = 0, productsToSlide, sourcePage }) {
     )
 }
 
-export default SliderComp
+export default memo(SliderComp)

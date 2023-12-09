@@ -12,7 +12,8 @@ import {
     DELETE_PURCHASE_SECCESS,
     DELETE_PURCHASE_FAIL,
 
-    SUBMIT_PURCHASE_FAIL
+    SUBMIT_PURCHASE_FAIL,
+    SUBMIT_ADD_PURCHASE_FAIL
 } from '../constants/purchaseConstants';
 
 const initialState = {
@@ -42,12 +43,16 @@ const purchaseReducer = (state = initialState, action) => {
             return { ...state, loading: true };
         case ADD_PURCHASE_SECCESS:
             console.log('ADD_PURCHASE_SECCESS = ', action.payload);
-            return { ...state, loading: false, error: null, purchases: [...state.purchases, action.payload] };
+            return { ...state, loading: false, error_add_purchase: null, purchases: [...state.purchases, action.payload] };
         case ADD_PURCHASE_FAIL:
             console.log('ADD_PURCHASE_FAIL = ', action.payload);
             let str_add = new String(action.payload);
             const messege_add = str_add.valueOf();
-            return { ...state, loading: false, error: messege_add };
+            const show_messege_add = messege_add
+                .substring(messege_add.indexOf('Function'), messege_add.indexOf('purchases/'))
+                // .replaceAll('-', ' ');
+                console.log(show_messege_add);
+            return { ...state, loading: false, error_add_purchase: show_messege_add + ')' };
 
         // ---------------- Delete ----------------------
         case DELETE_PURCHASE_REQUEST:
@@ -68,6 +73,9 @@ const purchaseReducer = (state = initialState, action) => {
         case SUBMIT_PURCHASE_FAIL:
             console.log('SUBMIT_PURCHASE_FAIL = ', action.payload);
             return { ...state, loading: false, error: null };
+        case SUBMIT_ADD_PURCHASE_FAIL:
+            console.log('SUBMIT_ADD_PURCHASE_FAIL = ', action.payload);
+            return { ...state, loading: false, error_add_purchase: null };
 
         default:
             return state;

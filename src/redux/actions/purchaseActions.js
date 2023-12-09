@@ -11,7 +11,8 @@ import {
     DELETE_PURCHASE_SECCESS,
     DELETE_PURCHASE_FAIL,
 
-    SUBMIT_PURCHASE_FAIL
+    SUBMIT_PURCHASE_FAIL,
+    SUBMIT_ADD_PURCHASE_FAIL
 } from '../constants/purchaseConstants';
 
 //------------------ Get[load] All Customers Actions ------------------------------
@@ -59,4 +60,8 @@ export const deletePurchaseFail = (message) => (dispatch) => {
 
 export const submitPurchaseFail = () => (dispatch) => {
     dispatch({ type: SUBMIT_PURCHASE_FAIL });
+}
+
+export const submitAddPurchaseFail = () => (dispatch) => {
+    dispatch({ type: SUBMIT_ADD_PURCHASE_FAIL });
 }

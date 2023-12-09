@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -29,32 +29,27 @@ const theme = createTheme({
 });
 
 function HeaderComp() {
-    const products = useSelector((state => state.productReducer.products));
     const userLogin = useSelector((state) => state.userLoginReducer.userLogin);
-
-    // const userstate = useSelector((state) => state);
-    // console.log(userstate);
 
     const dispatch = useDispatch();
 
-    const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', accessToken: '' });
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [anchorElLogin, setAnchorElLogin] = useState(null);
     const [flagColor, setFlagColor] = useState(0);
     const [pagesToDiaplay, setPagesToDiaplay] = useState([]);
-    const [authState, setAuthState] = useState([])
 
     const navigate = useNavigate();
-
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event) => {
+
         setAnchorElUser(event.currentTarget);
     };
 
     const handleCloseNavMenu = (path, index) => {
+
         setAnchorElNav(null);
         setFlagColor(index);
         navigate(path);
@@ -92,7 +87,6 @@ function HeaderComp() {
         } else {
             setAnchorElLogin(false)
         }
-        setUserInfo(userLogin);
     }, [userLogin]);
 
     useEffect(() => {
@@ -219,6 +213,7 @@ function HeaderComp() {
 
     return (
         <Box width={'100%'}>
+            {console.log('Header')}
             <ThemeProvider theme={theme}>
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
@@ -240,7 +235,7 @@ function HeaderComp() {
                                 >
                                     {
                                         pagesToDiaplay.map((page, index) => (
-                                            <MenuItem key={index} onClick={handleCloseNavMenu}>
+                                            <MenuItem key={index} onClick={handleCloseNavMenu/*handleCloseNavMenu(page.link, index)*/}>
                                                 <Typography textAlign="center">{page.pagename}</Typography>
                                             </MenuItem>
                                         ))}
@@ -287,7 +282,7 @@ function HeaderComp() {
                                         <Typography
                                             component="p"
                                             variant="p"
-                                        > Hello, {userInfo?.firstName + ' ' + userInfo?.lastName}
+                                        > Hello, {userLogin?.firstName + ' ' + userLogin?.lastName}
                                         </Typography>
                                     }
                                     {
@@ -330,4 +325,4 @@ function HeaderComp() {
     )
 }
 
-export default HeaderComp
+export default memo(HeaderComp)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, CircularProgress, Alert, AlertTitle } from '@mui/material';
+import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, CircularProgress, Alert, AlertTitle, Dialog, DialogTitle, DialogActions, Snackbar } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
 import { deleteDoc, doc, updateDoc, setDoc } from 'firebase/firestore';
@@ -27,9 +27,10 @@ function EditProductNestedPageComp() {
     const dispatch = useDispatch();
 
     const [productID, setProductID] = useState(useLocation().state.productID);
-    const [pathName, setPathName] = useState(useLocation().pathname)
     const [product, setProduct] = useState({});
-
+    const [open, setOpen] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -38,6 +39,26 @@ function EditProductNestedPageComp() {
         value = isNaN(value) ? value : +value;
         setProduct({ ...product, [name]: value })
     }
+
+    const handleSnackOpen = () => {
+        setOpenSnackbar(true);
+    };
+
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+        navigate(-1);
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClickClose = () => {
+        setOpen(false);
+    };
 
     const handleSubmit = async (event) => {
         dispatch(updateProductRequest())
@@ -57,14 +78,8 @@ function EditProductNestedPageComp() {
         const [result] = await Promise.allSettled([firestoreUpdateDoc()])
         if (result.status === 'fulfilled') {
             console.log(result);
-            dispatch(updateProductSuccess(product));
-            if (pathName === '/customers/edit-product') {
-                navigate('/customers');
-            } else if (pathName === '/products/edit-product') {
-                navigate(-1);
-            } else {
-                navigate('/');
-            }
+            handleSnackOpen();
+            dispatch(updateProductSuccess(product));            
         } else {
             console.log(result.reason);
             dispatch(updateProductFail(result.reason));
@@ -109,13 +124,7 @@ function EditProductNestedPageComp() {
                 arr_purchaseID.push(purchase.id)
             });
             dispatch(deletePurchaseSuccess(arr_purchaseID));
-            if (pathName === '/customers/edit-product') {
-                navigate('/customers');
-            } else if (pathName === '/products/edit-product') {
-                navigate(-1);
-            } else {
-                navigate('/');
-            }
+            navigate(-1);
         } else if (res_DeleteProduct.status === 'fulfilled') {
             console.log(res_All);
             // We add the product again after deleting him, 
@@ -141,34 +150,16 @@ function EditProductNestedPageComp() {
     }
 
     const handleCancel = () => {
-        if (pathName === '/customers/edit-product') {
-            navigate('/customers');
-        } else if (pathName === '/products/edit-product') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     const handleClose = () => {
-        if (pathName === '/customers/edit-product') {
-            navigate('/customers');
-        } else if (pathName === '/products/edit-product') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     const handleSubmitError = () => {
         dispatch(submitProductFail());
-        if (pathName === '/customers/edit-product') {
-            navigate('/customers');
-        } else if (pathName === '/products/edit-product') {
-            navigate(-1);
-        } else {
-            navigate('/');
-        }
+        navigate(-1);
     }
 
     useEffect(() => {
@@ -183,7 +174,8 @@ function EditProductNestedPageComp() {
     }, [])
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', mr: 1, ml: 1 }}>
+            {console.log('EditProductNestedPageComp page')}
             {
                 loading
                 &&
@@ -221,7 +213,7 @@ function EditProductNestedPageComp() {
             {
                 !showError_UpdateProduct
                 &&
-                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>
@@ -310,7 +302,7 @@ function EditProductNestedPageComp() {
                                 variant="outlined"
                                 color='error'
                                 sx={{ m: 1, mt: 3 }}
-                                onClick={() => handleDelete()}
+                                onClick={handleClickOpen}
                             >
                                 Delete
                             </Button>
@@ -326,7 +318,38 @@ function EditProductNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
-
+                    <Dialog
+                        open={open}
+                        onClose={handleClickClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            {"Are you sure you want to delete this product?"}
+                        </DialogTitle>
+                        <DialogActions>
+                            <Button
+                                variant="contained"
+                                color='primary'
+                                onClick={handleClickClose}
+                            >
+                                Disagree
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color='error'
+                                onClick={handleDelete}
+                                autoFocus
+                            >
+                                Agree
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
+                            The information was updated successfully !
+                        </Alert>
+                    </Snackbar>
                     <Grid item xs={12} sm={8}>
                         <Box sx={{ display: 'flex', justifyContent: "center", mb: 3 }} >
                             <BasicTableComp
@@ -338,11 +361,10 @@ function EditProductNestedPageComp() {
                                         ))
                                 }
 
-                                modelTarget={pathName === '/products/edit-product' ? 'products' : 'customers'}
+                                modelTarget={location.pathname === '/products/edit-product' ? 'products' : 'customers'}
                             />
                         </Box>
                     </Grid>
-
                 </Grid>
             }
         </Box>

@@ -1,20 +1,15 @@
 import { Autocomplete, TextField, Grid } from '@mui/material';
-import { useState } from 'react';
+import { memo } from 'react';
 
 function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
-    const [inputValue, setInputValue] = useState('');
 
     return (
         <>
+            {console.log('AutoCompleteComp page')}
             {modelTarget === 'products' ?
                 <Autocomplete
-                    disablePortal                    
-                    onInputChange={(event, newInputValue, id) => {
-                        console.log(event, newInputValue, id);
-                        setInputValue(newInputValue);
-                    }}
+                    disablePortal
                     onChange={(e, value) => {
-                        console.log(value)
                         callbackLabelInput(value)
                     }}
                     defaultChecked={''}
@@ -32,12 +27,7 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
                 :
                 <Autocomplete
                     disablePortal
-                    onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue);
-                        callbackLabelInput(newInputValue)
-                    }}
                     onChange={(e, value) => {
-                        console.log(value)
                         callbackLabelInput(value)
                     }}
                     defaultChecked={''}
@@ -55,4 +45,4 @@ function AutoCompleteComp({ callbackLabelInput, modelTarget, data }) {
     )
 }
 
-export default AutoCompleteComp
+export default memo(AutoCompleteComp)

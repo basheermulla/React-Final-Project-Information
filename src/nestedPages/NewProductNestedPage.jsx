@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, Alert, AlertTitle } from '@mui/material';
+import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, Alert, AlertTitle, Snackbar } from '@mui/material';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ function NewProductNestedPageComp() {
     const dispatch = useDispatch();
 
     const [product, setProduct] = useState({ published: new Date() });
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const navigate = useNavigate();
 
@@ -24,6 +25,18 @@ function NewProductNestedPageComp() {
         value = isNaN(value) ? value : +value;
         setProduct({ ...product, [name]: value })
     }
+
+    const handleSnackOpen = () => {
+        setOpenSnackbar(true);
+    };
+
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+        navigate('/products');
+    };
 
     const handleSubmit = async (event) => {
         dispatch(addProductRequest())
@@ -45,8 +58,8 @@ function NewProductNestedPageComp() {
         const [result] = await Promise.allSettled([firestoreAddDoc()])
         if (result.status === 'fulfilled') {
             console.log(result);
+            handleSnackOpen();
             dispatch(addProductSuccess({ ...product, id: result.value }));
-            navigate('/products');
         } else {
             console.log(result.reason);
             dispatch(addProductFail(result.reason));
@@ -54,11 +67,11 @@ function NewProductNestedPageComp() {
     }
 
     const handleCancel = () => {
-        navigate('/products');
+        navigate(-1);
     }
 
     const handleClose = () => {
-        navigate('/products');
+        navigate(-1);
     }
 
     const handleSubmitError = () => {
@@ -73,7 +86,8 @@ function NewProductNestedPageComp() {
     }, [])
 
     return (
-        <Box width={'100%'}>
+        <Box width={'100%'} mr={1} ml={1}>
+            {console.log('NewProductNestedPageComp page')}
             {
                 loading
                 &&
@@ -111,7 +125,7 @@ function NewProductNestedPageComp() {
             {
                 !showError_AddProduct
                 &&
-                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>
@@ -218,6 +232,11 @@ function NewProductNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
+                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
+                            The product was added successfully !
+                        </Alert>
+                    </Snackbar>
                 </Grid>
             }
         </Box>
