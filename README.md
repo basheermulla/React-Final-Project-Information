@@ -10,5 +10,7 @@ Currently, two official plugins are available:
 # Store management system
 ## A general description
 ---------------------------
+
 ### Work Plan
----------------------------
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/8a64163d-10f8-4201-a067-bedcef2e48ba)
+
