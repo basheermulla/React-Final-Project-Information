@@ -14,3 +14,17 @@ Currently, two official plugins are available:
 
 ### Designing a Firestore schemas
 ![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/53471f83-8df3-43e7-a141-abd954658daa)
+
+### Initial Data
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/e45b3336-886a-4d3c-889d-397664d398c1)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/194f9270-329b-4e67-b2c1-907bda0feb29)
+
+### Screen design planning before development
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/94a4e446-3cad-4b1c-af4e-19db5e767745)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/dbd5caa9-ffa6-4467-bd3a-472ba2805795)
+
+
+
+
