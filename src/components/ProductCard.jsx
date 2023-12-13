@@ -5,7 +5,6 @@ import { AddShoppingCart } from '@mui/icons-material';
 import { purple, blue, grey } from '@mui/material/colors';
 import { Link as LinkRouter, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { memo, useEffect, useState } from 'react';
 
 function ProductCardComp({ product, sourcePage }) {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
@@ -14,7 +13,6 @@ function ProductCardComp({ product, sourcePage }) {
 
     return (
         <Card sx={{ position: 'relative' }}>
-            {console.log('ProductCardComp page')}
             <Box sx={{ position: 'relative' }}>
                 {
                     sourcePage === 'products' ?

@@ -102,15 +102,8 @@ function UsersPageComp() {
         }
     }
 
-    useEffect(() => {
-        if (!userLogin) {
-            navigate('/login')
-        }
-    }, [])
-
     return (
         <Box width={'100%'}>
-            {console.log('Users page')}
             {
                 progress
                 &&

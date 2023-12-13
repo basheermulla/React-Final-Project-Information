@@ -39,7 +39,6 @@ function ProductsPageComp() {
     };
 
     const handleSubmitError = () => {
-        console.log('Clock me');
         dispatch(submitProductFail());
         if (location['pathname'] === '/customers/edit-product' || location['pathname'] === '/customers/edit-product') {
             navigate('/customers');
@@ -60,7 +59,6 @@ function ProductsPageComp() {
         }, {});
         const total = purchases?.length
         setTotalPurchased(total)
-        console.log('useEffect = ', total);
         const amount = products?.filter((product) =>
             purchases?.find(purchase => purchase.productID === product.id))
             .reduce((acc, current) => (acc + groupByProductID[current.id].length * current.price), 0);
@@ -76,15 +74,8 @@ function ProductsPageComp() {
         }
     }, [location['pathname']]);
 
-    useEffect(() => {
-        if (!userLogin) {
-            navigate('/login')
-        }
-    }, [])
-
     return (
         <Box width={'100%'}>
-            {console.log('Products page')}
             {
                 productsLoad
                 &&
@@ -152,7 +143,7 @@ function ProductsPageComp() {
                                 <RevenueCardComp
                                     primary="Number Of Products"
                                     secondary={products.length}
-                                    content="20% Increase in the last month"
+                                    content="Products on store"
                                     iconPrimary={CategoryIcon}
                                     color={theme.palette.warning.main}
                                 />

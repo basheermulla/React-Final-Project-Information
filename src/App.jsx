@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
 import HeaderComp from './components/Header';
@@ -15,35 +14,61 @@ import NewCustomerNestedPageComp from './nestedPages/NewCustomerNestedPage';
 import PurchasesPageComp from './pages/PurchasesPage';
 import UsersPageComp from './pages/UsersPage';
 import RegisterPageComp from './pages/RegisterPage';
+import ErrorPageComp from './pages/ErrorPage';
+import PrivateRoutesLayoutComp from './nestedPages/PrivateRoutesLayout';
+import { useSelector } from "react-redux";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { userLogin } = useSelector((state) => state.userLoginReducer);
 
   return (
     <>
       <HeaderComp />
       <Routes>
         <Route>
-          <Route path='/' exact element={<HomePageComp />} >
-            <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
-          </Route>
+
+          {/* public pages */}
           <Route path='/login' element={<LoginPageComp />} />
           <Route path='/register' element={<RegisterPageComp />} />
-          <Route path='/products' element={<ProductsPageComp />} >
-            <Route path='bought-customers' element={<BoughtCustomersNestedPageComp />} />
-            <Route path='edit-product' element={<EditProductNestedPageComp />} />
-            <Route path='new-product' element={<NewProductNestedPageComp />} />
-            <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
-            <Route path='edit-customer' element={<EditCustomerNestedPageComp />} />
+          <Route path='*' element={<ErrorPageComp />} />
+
+          {/* private pages */}
+          <Route element={<PrivateRoutesLayoutComp />}>
+            <Route path='/' exact element={<HomePageComp />} >
+              {
+                userLogin?.role === 'admin' && <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
+              }
+            </Route>
+            <Route path='/products' element={<ProductsPageComp />} >
+              {
+                userLogin?.role === 'admin' && <Route path='bought-customers' element={<BoughtCustomersNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='edit-product' element={<EditProductNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='new-product' element={<NewProductNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='edit-customer' element={<EditCustomerNestedPageComp />} />
+              }
+            </Route>
+            <Route path='/customers' element={<CustomersPageComp />} >
+              {
+                userLogin?.role === 'admin' && <Route path='edit-customer' element={<EditCustomerNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='new-customer' element={<NewCustomerNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='edit-product' element={<EditProductNestedPageComp />} />
+              }{
+                userLogin?.role === 'admin' && <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
+              }
+            </Route>
+            <Route path='/purchases' element={<PurchasesPageComp />} />
+            {
+              userLogin?.role === 'admin' && <Route path='/users' element={<UsersPageComp />} />
+            }
           </Route>
-          <Route path='/customers' element={<CustomersPageComp />} >
-            <Route path='edit-customer' element={<EditCustomerNestedPageComp />} />
-            <Route path='new-customer' element={<NewCustomerNestedPageComp />} />
-            <Route path='edit-product' element={<EditProductNestedPageComp />} />
-            <Route path='purchase-product' element={<PurchaseProductNestedPageComp />} />
-          </Route>
-          <Route path='/purchases' element={<PurchasesPageComp />} />
-          <Route path='/users' element={<UsersPageComp />} />
         </Route>
       </Routes >
     </>

@@ -98,13 +98,10 @@ function PurchaseProductNestedPageComp() {
         );
         const res_All = [res_AddPurchase, res_UpdateQuentityProduct]
         const isPromiseRejected = res_All.find((promise) => promise.status === 'rejected');
-        console.log(isPromiseRejected);
 
         if (!isPromiseRejected) {
-            console.log(res_AddPurchase);
             handleSnackOpen();
             dispatch(AddPurchaseSuccess({ ...new_purchase_obj, id: res_AddPurchase.value }));
-            console.log(res_UpdateQuentityProduct);
             const obj_Redux = { id: product.id, quantity: product.quantity - 1 };
             dispatch(updateProductQuantitySuccess(obj_Redux));
 
@@ -132,7 +129,6 @@ function PurchaseProductNestedPageComp() {
 
     const handleSubmitError = () => {
         dispatch(submitAddPurchaseFail());
-        console.log(pathname);
         if (pathname === '/products/purchase-product') {
             navigate('/products');
         } else if (pathname === '/customers/purchase-product') {
@@ -161,7 +157,6 @@ function PurchaseProductNestedPageComp() {
 
     return (
         <Box width={'100%'} mr={1} ml={1}>
-            {console.log('PurchaseProductNestedPageComp page')}
             {
                 loading
                 &&
@@ -199,7 +194,7 @@ function PurchaseProductNestedPageComp() {
             {
                 !showError_Addpurchase
                 &&
-                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", bgcolor: grey[0], p: 1, mt: 1 }}>
+                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", bgcolor: grey[0], p: 1, mt: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={() => handleClose()} />
                     </TableContainer>
@@ -223,9 +218,9 @@ function PurchaseProductNestedPageComp() {
                             </Grid>
                             <Grid item xs={12} sm={12} sx={{ display: 'inline-flex', justifyContent: "center" }}>
                                 {state.productID ?
-                                    <AutoCompleteComp callbackLabelInput={handleAddCustomer} modelTarget={'customers'} data={customers} />
+                                    <AutoCompleteComp callbackLabelCustomerInput={handleAddCustomer} modelTarget={'customers'} data={customers} />
                                     :
-                                    <AutoCompleteComp callbackLabelInput={handleAddProduct} modelTarget={'products'} data={products} />
+                                    <AutoCompleteComp callbackLabelProductInput ={handleAddProduct} modelTarget={'products'} data={products} />
                                 }
                             </Grid>
                             <Grid item xs={12} sm={8} sx={{ display: 'inline-flex', justifyContent: "center" }}>

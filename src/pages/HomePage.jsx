@@ -7,6 +7,7 @@ import SliderComp from '../components/Slider';
 import { submitProductFail } from '../redux/actions/productActions';
 import { submitCustomerFail } from '../redux/actions/customerActions';
 import { submitPurchaseFail } from '../redux/actions/purchaseActions';
+import { auth } from '../firebase/firebase';
 
 function HomePageComp() {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
@@ -15,7 +16,7 @@ function HomePageComp() {
     const { loading: customersLoad, error: customersError, customers } = useSelector((state) => state.customerReducer);
     const { loading: purchasesLoad, error: purchasesError, purchases } = useSelector((state) => state.purchaseReducer);
     const dispatch = useDispatch();
-
+    
     const [detectRender, setDetectRender] = useState(true);
 
     const navigate = useNavigate()
@@ -69,15 +70,8 @@ function HomePageComp() {
         }
     }, [location['pathname']]);
 
-    useEffect(() => {
-        if (!userLogin) {
-            navigate('/login')
-        }
-    }, [])
-
     return (
         <Box width={'100%'}>
-            {console.log('Home page')}
             {
                 (productsLoad || customersLoad || purchasesLoad)
                 &&

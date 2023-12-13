@@ -12,7 +12,6 @@ function DateFieldComp({ callbackDateInput }) {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {console.log('DateFieldComp page')}
             <DemoContainer components={['DateField']} sx={{ p: 0 }}>
                 <DateField label="Input Purchased Date" onChange={handleDate} />
             </DemoContainer>
