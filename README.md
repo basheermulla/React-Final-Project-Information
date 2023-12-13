@@ -13,4 +13,4 @@ Currently, two official plugins are available:
 ![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/8a64163d-10f8-4201-a067-bedcef2e48ba)
 
 ### Designing a Firestore schemas
-![Uploading image.png…]()
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/53471f83-8df3-43e7-a141-abd954658daa)
