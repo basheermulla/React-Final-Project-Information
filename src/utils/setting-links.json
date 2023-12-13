@@ -1,10 +1,6 @@
 {
     "settings-Links": [
         {
-            "settingname": "Profile",
-            "link": "/"
-        },
-        {
             "settingname": "Logout",
             "link": "/login"
         }

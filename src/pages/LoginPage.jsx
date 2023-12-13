@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import { Box, Typography, Grid, Paper, Avatar, TextField, Button, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useSelector, useDispatch } from "react-redux";
 import { login, signInError, signInRequest } from '../redux/actions/userActions';
+import { utilUserLogin } from '../utils/userAuthAndLogin';
 
 const defaultTheme = createTheme();
 
@@ -27,41 +28,26 @@ function LoginPageComp() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
         dispatch(signInRequest());
-
-        signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
-            .then(async (userCredential) => {
-                // Signed in 
-                const accessToken = userCredential.user.accessToken;
-                // Retrive user data from firestore ---> users collection
-                const q = query(collection(db, "users"), where("email", "==", data.get('email')));
-                const querySnapshot = await getDocs(q);
-                let obj_user = [];
-                if (querySnapshot.docs.length === 1) {
-                    querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        obj_user = {
-                            ...userInput,
-                            accessToken: accessToken,
-                            firstName: doc.data().firstName,
-                            lastName: doc.data().lastName,
-                            role: doc.data().role
-                        }
-                        setUserInput(obj_user);
-                    });
-                }
-                dispatch(login(obj_user));
-                navigate('/');
-            })
-            .catch((error) => {
-                dispatch(signInError(error));
-            });
+        const { user, error } = await utilUserLogin(data.get('email'), data.get('password'));
+        if (error) {
+            dispatch(signInError(error));
+        } else {
+            const obj_user = { ...userInput, ...user };
+            setUserInput(obj_user);
+            dispatch(login(obj_user));
+            navigate('/');
+        }
     }
+
+    useEffect(() => {
+        if (userLogin) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <Box width={'100%'}>
-            {console.log('Login page')}
             <ThemeProvider theme={defaultTheme}>
                 <Grid container component={Paper} elevation={6} sx={{ height: '84vh' }}>
                     <Grid item xs={false} sm={4} md={7}

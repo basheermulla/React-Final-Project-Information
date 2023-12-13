@@ -16,7 +16,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
         border: 1
     },
     '&:hover': {
-        border: `1px solid ${cyan[100]}`,
+        border: `2px solid ${cyan[100]}`,
     },
     [`&.${Table.root}`]: {
         borderRadius: "100px"
@@ -30,8 +30,8 @@ function PurchasesPageComp() {
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
 
-    const [originPurchasrs, setOriginPurchasrs] = useState(purchases);
-    const [localPurchases, setLocalPurchases] = useState(purchases);
+    const [originPurchasrs, setOriginPurchasrs] = useState([]);
+    const [localPurchases, setLocalPurchases] = useState([]);
     const [inputValue, setInputValue] = useState({ productName: '', customerName: '', dateInput: '' });
 
     const navigate = useNavigate();
@@ -43,7 +43,7 @@ function PurchasesPageComp() {
             } else {
                 setInputValue({ ...inputValue, productName: value.label });
             }
-        }, [inputValue.productName]
+        }, [inputValue]
     )
 
     const handleSearchCustomer = useCallback(
@@ -54,17 +54,18 @@ function PurchasesPageComp() {
                 setInputValue({ ...inputValue, customerName: value.label });
             }
         },
-        [inputValue.customerName]
+        [inputValue]
     )
 
     const handleSearchDate = useCallback(
         (dateInput) => {
             setInputValue({ ...inputValue, dateInput });
         },
-      [inputValue.dateInput]
+      [inputValue]
     )
     
     const handleSearch = () => {
+        console.log('inputValue = ', inputValue);
         let filterTable = originPurchasrs;
         if (inputValue.dateInput === null) {
             setInputValue({ ...inputValue, dateInput: '' })
@@ -100,19 +101,12 @@ function PurchasesPageComp() {
 
     }, [purchases])
 
-    useEffect(() => {
-        if (!userLogin) {
-            navigate('/login')
-        }
-    }, [])
-
     return (
         <Box width={'100%'}>
-            {console.log('Purchases page')}
             <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', pb: 5, p: 2 }}>
                 <Grid container justifyContent="center" alignItems="center">
-                    <AutoCompleteComp callbackLabelInput={handleSearchProduct} modelTarget={'products'} data={products} />
-                    <AutoCompleteComp callbackLabelInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
+                    <AutoCompleteComp callbackLabelProductInput={handleSearchProduct} modelTarget={'products'} data={products} />
+                    <AutoCompleteComp callbackLabelCustomerInput={handleSearchCustomer} modelTarget={'customers'} data={customers} />
                     <Grid item xs={8} sm={3} sx={{ display: 'flex', justifyContent: "center" }}>
                         <DateFieldComp callbackDateInput={handleSearchDate} />
                     </Grid>

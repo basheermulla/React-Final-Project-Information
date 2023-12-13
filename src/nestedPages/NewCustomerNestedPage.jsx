@@ -86,7 +86,6 @@ function NewCustomerNestedPageComp() {
 
     return (
         <Box width={'100%'} mr={1} ml={1}>
-            {console.log('NewCustomerNestedPageComp page')}
             {
                 loading
                 &&
@@ -124,7 +123,7 @@ function NewCustomerNestedPageComp() {
             {
                 !showError_AddCustomer
                 &&
-                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>

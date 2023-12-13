@@ -21,7 +21,6 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: grey[100], fontSize: 16 } }}>
-                {console.log('RowCollapsibleTableComp page')}
                 <TableCell component="th" scope="row">
                     <IconButton
                         aria-label="expand row"
@@ -36,7 +35,7 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                     <Avatar
                         sx={{
                             height: 64,
-                            width: 64,                            
+                            width: 64,
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
@@ -46,11 +45,14 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                 </TableCell>
                 <TableCell align="center">
                     {modelTarget === 'customers' ?
-                        <LinkRouter
-                            to={'/customers/edit-customer'} state={{ customerID: customer.id }}
-                        >
-                            {customer?.firstName + ' ' + customer?.lastName}
-                        </LinkRouter>
+                        userLogin.role === 'admin' ?
+                            <LinkRouter
+                                to={'/customers/edit-customer'} state={{ customerID: customer.id }}
+                            >
+                                {customer?.firstName + ' ' + customer?.lastName}
+                            </LinkRouter>
+                            :
+                            customer?.firstName + ' ' + customer?.lastName
                         :
                         <LinkRouter
                             to={'/products/edit-customer'} state={{ customerID: customer?.id }}
@@ -60,29 +62,33 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                     }
                 </TableCell>
                 <TableCell align="center"> {customer?.city} </TableCell>
-                {userLogin.role === 'admin' && <TableCell align="center">
-                    {modelTarget === 'customers' ?
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => {
-                                navigate('/customers/purchase-product', { state: { customerID: customer?.id } })
-                            }}
-                        >
-                            Save
-                        </Button>
-                        :
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => {
-                                navigate('/products/purchase-product', { state: { customerID: customer?.id } })
-                            }}
-                        >
-                            Save
-                        </Button>
-                    }
-                </TableCell>}
+                {
+                    userLogin.role === 'admin'
+                    &&
+                    <TableCell align="center">
+                        {
+                            modelTarget === 'customers' ?
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => {
+                                        navigate('/customers/purchase-product', { state: { customerID: customer?.id } })
+                                    }}
+                                >
+                                    Save
+                                </Button>
+                                :
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => {
+                                        navigate('/products/purchase-product', { state: { customerID: customer?.id } })
+                                    }}
+                                >
+                                    Save
+                                </Button>
+                        }
+                    </TableCell>}
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -106,22 +112,26 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                                                 {otherDataCustomer.orderNumber}
                                             </TableCell>
                                             <TableCell align="center">
-                                                {modelTarget === 'customers' ?
-                                                    <LinkRouter
-                                                        to={'/customers/edit-product'} state={{
-                                                            productID: otherDataCustomer.productID
-                                                        }}
-                                                    >
-                                                        {otherDataCustomer.productName}
-                                                    </LinkRouter>
-                                                    :
-                                                    <LinkRouter
-                                                        to={'/products/edit-product'} state={{
-                                                            productID: otherDataCustomer.productID
-                                                        }}
-                                                    >
-                                                        {otherDataCustomer.productName}
-                                                    </LinkRouter>
+                                                {
+                                                    modelTarget === 'customers' ?
+                                                        userLogin.role === 'admin' ?
+                                                            <LinkRouter
+                                                                to={'/customers/edit-product'} state={{
+                                                                    productID: otherDataCustomer.productID
+                                                                }}
+                                                            >
+                                                                {otherDataCustomer.productName}
+                                                            </LinkRouter>
+                                                            :
+                                                            otherDataCustomer.productName
+                                                        :
+                                                        <LinkRouter
+                                                            to={'/products/edit-product'} state={{
+                                                                productID: otherDataCustomer.productID
+                                                            }}
+                                                        >
+                                                            {otherDataCustomer.productName}
+                                                        </LinkRouter>
                                                 }
                                             </TableCell>
                                             <TableCell align="center">

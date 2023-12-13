@@ -45,7 +45,6 @@ function CustomersPageComp() {
 
 
     const handleSubmitError = () => {
-        console.log('Clock me');
         dispatch(submitCustomerFail());
         if (location['pathname'] === '/customers/edit-product' || location['pathname'] === '/customers/edit-product') {
             navigate('/customers');
@@ -115,7 +114,7 @@ function CustomersPageComp() {
             const numOfPurchases = customersToDisplay.map((customer) => {
                 return {
                     name: customer.firstName + ' ' + customer.lastName,
-                    value: customer.otherData.length
+                    value: customer.otherData?.length
                 }
             });
             const maxPurchases = numOfPurchases.map((price) => price['value']);
@@ -123,10 +122,10 @@ function CustomersPageComp() {
             const getMaxPurchasesCustomer = numOfPurchases.filter((customer) => customer.value === max_1)
             setTotalHighestPurchased(...getMaxPurchasesCustomer)
 
-            const revenuePurchases = customersToDisplay.map((customer) => {
+            const revenuePurchases = customersToDisplay?.map((customer) => {
                 return {
                     name: customer.firstName + ' ' + customer.lastName,
-                    value: customer.otherData.reduce((sum, next) => sum + next.price, 0)
+                    value: customer?.otherData?.reduce((sum, next) => sum + next.price, 0)
                 }
             });
             const maxRevenue = revenuePurchases.map((price) => price['value']);
@@ -145,15 +144,8 @@ function CustomersPageComp() {
         }
     }, [location['pathname']]);
 
-    useEffect(() => {
-        if (!userLogin) {
-            navigate('/login')
-        }
-    }, []);
-
     return (
         <Box width={'100%'}>
-            {console.log('Customers page')}
             {
                 customersLoad
                 &&
@@ -223,7 +215,7 @@ function CustomersPageComp() {
                                         <RevenueCardComp
                                             primary="Number Of Customers"
                                             secondary={customers.length}
-                                            content="20% Increase in the last month"
+                                            content={"Customers that bought certain product"}
                                             iconPrimary={CategoryIcon}
                                             color={theme.palette.warning.main}
                                         />
@@ -231,7 +223,7 @@ function CustomersPageComp() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     {
-                                        userLogin.role === 'admin'
+                                        userLogin?.role === 'admin'
                                         &&
                                         <Icon onClick={() => navigate('/customers/new-customer')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>
                                     }
@@ -239,7 +231,7 @@ function CustomersPageComp() {
                                 </Grid>
                                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center', p: 2 }}>
                                     <AutoCompleteComp
-                                        callbackLabelInput={handleSearchCustomer}
+                                        callbackLabelCustomerInput={handleSearchCustomer}
                                         modelTarget={'customers'}
                                         data={customers}
                                     />
@@ -268,7 +260,7 @@ function CustomersPageComp() {
                                                 <TableCell align="center" width='20%'> Name </TableCell>
                                                 <TableCell align="center" width='30%'> City </TableCell>
                                                 {
-                                                    userLogin.role === 'admin'
+                                                    userLogin?.role === 'admin'
                                                     &&
                                                     <TableCell align="center" width='20%'> Add Product </TableCell>
                                                 }

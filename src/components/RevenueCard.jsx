@@ -13,7 +13,6 @@ function RevenueCardComp({ primary, secondary, content, iconPrimary, color, coin
     return (
         <>
             <Card sx={{ background: color, position: 'relative', color: '#fff', m: 2}}>
-            {console.log('RevenueCardComp page')}
                 <CardContent>
                     <Typography
                         variant="body2"

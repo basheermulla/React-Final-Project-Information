@@ -56,6 +56,7 @@ function SamplePrevArrow(props) {
 }
 
 const SliderComp = ({ productsToSlide, sourcePage }) => {
+
     const settings = {
         autoplay: true,
         nextArrow: <SampleNextArrow />,
@@ -88,18 +89,22 @@ const SliderComp = ({ productsToSlide, sourcePage }) => {
         ]
     }
 
-
     return (
         <>
             <Slider {...settings} style={{ display: 'flex' }}>
-                {console.log('Slider page')}
                 {
                     productsToSlide.map((product, i) => {
-                        return <Grid key={i} container direction="column" alignItems="center" spacing={gridSpacing} textAlign="center">
-                            <Grid item >
-                                <ProductCardComp key={product.id} product={product} sourcePage={sourcePage} />
+                        return (
+                            <Grid key={i} container direction="column" alignItems="center" spacing={gridSpacing} textAlign="center">
+                                <Grid item >
+                                    <ProductCardComp
+                                        key={product.id}
+                                        product={product}
+                                        sourcePage={sourcePage}
+                                    />
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        )
                     })
                 }
             </Slider>

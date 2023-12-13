@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Container, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import shopLogo from '../assets/sw-open-shop-3.jpg';
@@ -40,6 +40,8 @@ function HeaderComp() {
     const [pagesToDiaplay, setPagesToDiaplay] = useState([]);
 
     const navigate = useNavigate();
+    const location = useLocation();
+
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -49,7 +51,6 @@ function HeaderComp() {
     };
 
     const handleCloseNavMenu = (path, index) => {
-
         setAnchorElNav(null);
         setFlagColor(index);
         navigate(path);
@@ -61,7 +62,8 @@ function HeaderComp() {
 
     const handleClickSetting = (e, path) => {
         if (e.target.innerText === 'Logout') {
-            setAnchorElLogin(false)
+            setAnchorElLogin(false);
+            setFlagColor(0);
             dispatch(logout());
             navigate(`${path}`);
         }
@@ -72,6 +74,7 @@ function HeaderComp() {
             switch (userLogin.role) {
                 case 'admin':
                     const showAllPagesItem = pages['pages-Links'];
+                    console.log(location);
                     setPagesToDiaplay(showAllPagesItem)
                     break;
                 case 'regular':
@@ -84,6 +87,27 @@ function HeaderComp() {
                     break;
             }
             setAnchorElLogin(true);
+
+            switch (location.pathname) {
+                case "/":
+                    setFlagColor(0);
+                    break;
+                case "/products":
+                    setFlagColor(1);
+                    break;
+                case "/customers":
+                    setFlagColor(2);
+                    break;
+                case "/purchases":
+                    setFlagColor(3);
+                    break;
+                case "/users":
+                    setFlagColor(4);
+                    break;
+                default:
+                    setFlagColor(0);
+                    break;
+            }
         } else {
             setAnchorElLogin(false)
         }
@@ -213,7 +237,6 @@ function HeaderComp() {
 
     return (
         <Box width={'100%'}>
-            {console.log('Header')}
             <ThemeProvider theme={theme}>
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
@@ -235,7 +258,7 @@ function HeaderComp() {
                                 >
                                     {
                                         pagesToDiaplay.map((page, index) => (
-                                            <MenuItem key={index} onClick={handleCloseNavMenu/*handleCloseNavMenu(page.link, index)*/}>
+                                            <MenuItem key={index} onClick={() => handleCloseNavMenu(page.link, index)}>
                                                 <Typography textAlign="center">{page.pagename}</Typography>
                                             </MenuItem>
                                         ))}

@@ -111,9 +111,7 @@ function EditCustomerNestedPageComp() {
         )
         const res_All = [res_DeleteCustomer, res_DeletePurchases]
         const isPromiseRejected = res_All.find((promise) => promise.status === 'rejected');
-        console.log(isPromiseRejected);
         if (!isPromiseRejected) {
-            console.log(res_DeleteCustomer);
             dispatch(deleteCustomerSuccess(customerID));
 
             // Delete customer's related data from the "Purchased" table in purchaseReducer
@@ -124,7 +122,6 @@ function EditCustomerNestedPageComp() {
             dispatch(deletePurchaseSuccess(arr_purchaseID));
             navigate(-1);
         } else if (res_DeleteCustomer.status === 'fulfilled') {
-            console.log(res_All);
             // We add the customer again after deleting him, 
             // Due to the fact that the Promise.allSettled fell through
             const addCustomerDB = { ...customer };
@@ -133,7 +130,6 @@ function EditCustomerNestedPageComp() {
             dispatch(deleteCustomerFail(isPromiseRejected.reason));
             // dispatch(deletePurchaseFail(isPromiseRejected.reason));
         } else if (res_DeletePurchases.status === 'fulfilled') {
-            console.log(res_All);
             // We add  the customer purchases after deleting them,  
             // Due to the fact that the Promise.allSettled fell through
             toDelete_purchases.forEach(async (purchase) => {
@@ -173,7 +169,6 @@ function EditCustomerNestedPageComp() {
 
     return (
         <Box sx={{ width: '100%', mr: 1, ml: 1 }}>
-            {console.log('EditCustomerNestedPageComp page')}
             {
                 loading
                 &&
@@ -211,7 +206,7 @@ function EditCustomerNestedPageComp() {
             {
                 !showError_UpdateCustomer
                 &&
-                <Grid container component={Paper} elevation={1} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
+                <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
                     <TableContainer sx={{ display: 'flex', justifyContent: "right" }}>
                         <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                     </TableContainer>

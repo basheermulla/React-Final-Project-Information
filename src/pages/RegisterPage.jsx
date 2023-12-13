@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Avatar, Button, TextField, Paper, Box, Grid, Typography, Container, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -8,12 +8,13 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
 import { signUpSuccess, signUpError, signUpRequest } from '../redux/actions/userActions';
+import { utilUserRegister } from '../utils/userAuthAndLogin';
 
 const defaultTheme = createTheme();
 
 function RegisterPageComp() {
-  const [user, setUser] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'regular' });
-
+  const [userInput, setUserInput] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'regular' });
+  const { userLogin } = useSelector((state) => state.userLoginReducer);
   const { loading, authError } = useSelector((state) => state.userRegisterReducer);
 
   const dispatch = useDispatch();
@@ -21,36 +22,34 @@ function RegisterPageComp() {
 
   const handleInput = (event) => {
     let { name, value } = event.target
-    setUser({ ...user, [name]: value });
+    setUserInput({ ...userInput, [name]: value });
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     dispatch(signUpRequest());
+    const { user, error } = await utilUserRegister(data, userInput.role);
+    console.log(user, error);
+    if (error) {
+      dispatch(signUpError(error));
+    } else {
+      dispatch(signUpSuccess());
+      navigate('/login')
+    }
 
-    createUserWithEmailAndPassword(auth, data.get('email'), data.get('password')) // Signed up 
-      .then(async (userCredential) => {
-        const obj = {
-          firstName: data.get('firstName'),
-          lastName: data.get('lastName'),
-          email: data.get('email'),
-          role: user.role
-        };
-        console.log(userCredential);
-        await setDoc(doc(db, "users", userCredential.user.uid), obj); // Add a new document in collection "users"
-        dispatch(signUpSuccess());
-        navigate('/login')
-      }).catch((error) => {
-        dispatch(signUpError(error));
-
-      });
   };
+
+  useEffect(() => {
+    console.log('userLogin = ', userLogin);
+    if (userLogin) {
+      navigate('/');
+    }
+  }, []);
 
   return (
     <Box width={'100%'}>
-      {console.log('Register page')}
       <ThemeProvider theme={defaultTheme}>
         <Grid container component={Paper} elevation={6} sx={{ height: '100vh' }}>
           <Container component="main" maxWidth="xs">
