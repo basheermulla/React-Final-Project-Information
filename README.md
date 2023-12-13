@@ -25,6 +25,27 @@ Currently, two official plugins are available:
 
 ![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/dbd5caa9-ffa6-4467-bd3a-472ba2805795)
 
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/a3f593d9-c67e-4ee5-b0aa-884d00bbe156)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/1324e51c-d117-4540-95ea-dc61673bc75c)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/3ea4f8e9-df32-468f-acaa-31750fdf9396)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/67795b72-8864-47bf-a134-7e0968391bf2)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/c319106e-3ec9-45ef-9282-3728700db373)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/4d10ad4a-ef86-4187-9e1d-96314660e3ab)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/67e7968a-158e-420f-a038-fc14a6003eae)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/e7a382d0-3a52-4bd3-ab8f-2d6e15b97a91)
+
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/2d48cb92-fcd6-46a8-9173-b368ccdee1dd)
+
+
+
+
 
 
 
