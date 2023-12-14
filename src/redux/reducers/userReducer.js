@@ -9,6 +9,7 @@ import {
     USER_SIGNUP_ERROR,
 
     LOAD_USERS_REQUEST,
+    LOAD_USERS_DISABLE_REQUEST,
     LOAD_USERS_SECCESS,
     LOAD_USERS_FAIL,
 
@@ -122,6 +123,9 @@ export const userReducer = (state = initialUsersState, action) => {
         case LOAD_USERS_REQUEST:
             console.log('LOAD_USERS_REQUEST = ', action.payload);
             return { ...state, loading: true };
+        case LOAD_USERS_DISABLE_REQUEST:
+            console.log('LOAD_USERS_DISABLE_REQUEST = ', action.payload);
+            return { ...state, loading: false };
         case LOAD_USERS_SECCESS:
             console.log('LOAD_USERS_SECCESS = ', action.payload);
             return { ...state, loading: false, error: null, users: action.payload };

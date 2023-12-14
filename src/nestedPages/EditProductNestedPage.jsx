@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress,
-    Alert, AlertTitle, Dialog, DialogTitle, DialogActions, Snackbar
+    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, Dialog, DialogTitle, DialogActions
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
@@ -21,6 +20,9 @@ import { deletePurchaseSuccess } from '../redux/actions/purchaseActions';
 import UpdateIcon from '@mui/icons-material/Update';
 import BasicTableComp from '../components/BasicTable';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
+import AlertErrorComp from '../components/AlertError';
+import LinearProgressComp from '../components/LinearProgress';
+import SnackbarAlertComp from '../components/SnackbarAlert';
 
 function EditProductNestedPageComp() {
     const customers = useSelector((state => state.customerReducer.customers));
@@ -176,35 +178,11 @@ function EditProductNestedPageComp() {
             {
                 loading
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }{
                 showError_UpdateProduct
                 &&
-                <Grid container sx={{ mt: 3 }}>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                        <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                            <Grid item xs={12}>
-                                <AlertTitle sx={{ textAlign: 'left' }}>
-                                    <strong>Edit Product Error</strong>
-                                </AlertTitle>
-                            </Grid>
-                            <strong>{showError_UpdateProduct}</strong>
-                            <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                <Button
-                                    type="button"
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ m: 1, mt: 3 }}
-                                    onClick={() => handleSubmitError()}
-                                >
-                                    Return
-                                </Button>
-                            </Grid>
-                        </Alert>
-                    </Grid>
-                </Grid>
+                <AlertErrorComp title={'Edit Product Error'} content={showError_UpdateProduct} callbackSubmitError={handleSubmitError} />
             }{
                 !showError_UpdateProduct
                 &&
@@ -340,11 +318,11 @@ function EditProductNestedPageComp() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
-                            The information was updated successfully !
-                        </Alert>
-                    </Snackbar>
+                    <SnackbarAlertComp
+                        openSnackbar={openSnackbar}
+                        content={'The information was updated successfully !'}
+                        callbackHandleSnackClose={handleSnackClose} cover={'success'}
+                    />
                     <Grid item xs={12} sm={8}>
                         <Box sx={{ display: 'flex', justifyContent: "center", mb: 3 }} >
                             <BasicTableComp

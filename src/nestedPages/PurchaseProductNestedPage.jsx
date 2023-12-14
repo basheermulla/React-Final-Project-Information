@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, AlertTitle, Avatar, Box, Button, Grid, LinearProgress, Paper, Snackbar, TableContainer, Typography } from '@mui/material';
+import { Avatar, Box, Button, Grid, Paper, TableContainer, Typography } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import AutoCompleteComp from '../components/AutoComplete';
@@ -10,6 +10,9 @@ import { db } from '../firebase/firebase';
 import { AddPurchaseRequest, AddPurchaseSuccess, AddPurchaseFail, submitAddPurchaseFail } from '../redux/actions/purchaseActions';
 import { updateProductQuantitySuccess } from '../redux/actions/productActions';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
+import AlertErrorComp from '../components/AlertError';
+import LinearProgressComp from '../components/LinearProgress';
+import SnackbarAlertComp from '../components/SnackbarAlert';
 
 function PurchaseProductNestedPageComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -157,35 +160,11 @@ function PurchaseProductNestedPageComp() {
             {
                 loading
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }{
                 showError_Addpurchase
                 &&
-                <Grid container sx={{ mt: 3 }}>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                        <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                            <Grid item xs={12}>
-                                <AlertTitle sx={{ textAlign: 'left' }}>
-                                    <strong>Add Purchase Error</strong>
-                                </AlertTitle>
-                            </Grid>
-                            <strong>{showError_Addpurchase}</strong>
-                            <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                <Button
-                                    type="button"
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ m: 1, mt: 3 }}
-                                    onClick={() => handleSubmitError()}
-                                >
-                                    Return
-                                </Button>
-                            </Grid>
-                        </Alert>
-                    </Grid>
-                </Grid>
+                <AlertErrorComp title={'Add Purchase Error'} content={showError_Addpurchase} callbackSubmitError={handleSubmitError} />
             }{
                 !showError_Addpurchase
                 &&
@@ -243,11 +222,11 @@ function PurchaseProductNestedPageComp() {
                                 </Button>
                             </Grid>
                         </Box>
-                        <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-                            <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
-                                Your Purchase Was Successful! !
-                            </Alert>
-                        </Snackbar>
+                        <SnackbarAlertComp
+                            openSnackbar={openSnackbar}
+                            content={'Your Purchase Was Successful! !'}
+                            callbackHandleSnackClose={handleSnackClose} cover={'success'}
+                        />
                     </Grid>
                 </Grid>
             }

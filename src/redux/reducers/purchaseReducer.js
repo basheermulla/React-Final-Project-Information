@@ -26,7 +26,7 @@ const purchaseReducer = (state = initialState, action) => {
         // ---------------- Load ----------------------
         case LOAD_PURCHASES_REQUEST:
             console.log('LOAD_PURCHASES_REQUEST = ', action.payload);
-            return { ...state, purchases: action.payload };
+            return { ...state, loading: true };
         case LOAD_PURCHASES_SECCESS:
             console.log('LOAD_PURCHASES_SECCESS = ', action.payload);
             return { ...state, loading: false, error: null, purchases: action.payload };
@@ -49,10 +49,10 @@ const purchaseReducer = (state = initialState, action) => {
             let str_add = new String(action.payload);
             const messege_add = str_add.valueOf();
             const show_messege_add = messege_add
-                .substring(messege_add.indexOf('Function'), messege_add.indexOf('purchases/'))
+                .substring(messege_add.indexOf('Missing'), messege_add.indexOf('.'))
                 // .replaceAll('-', ' ');
                 console.log(show_messege_add);
-            return { ...state, loading: false, error_add_purchase: show_messege_add + ')' };
+            return { ...state, loading: false, error_add_purchase: show_messege_add };
 
         // ---------------- Delete ----------------------
         case DELETE_PURCHASE_REQUEST:

@@ -11,7 +11,7 @@ import { db } from '../firebase/firebase';
 import { loadProductsRequest, loadProductsSuccess, loadProductsFail } from '../redux/actions/productActions';
 import { loadCustomersRequest, loadCustomersSuccess, loadCustomersFail } from '../redux/actions/customerActions';
 import { loadPurchasesRequest, loadPurchasesSuccess, loadPurchasesFail } from '../redux/actions/purchaseActions';
-import { loadUsersRequest, loadUsersSuccess, loadUsersFail } from '../redux/actions/userActions';
+import { loadUsersRequest, loadUsersDisableRequest, loadUsersSuccess, loadUsersFail } from '../redux/actions/userActions';
 import { blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { logout } from '../redux/actions/userActions';
@@ -117,6 +117,7 @@ function HeaderComp() {
         dispatch(loadProductsRequest());
         dispatch(loadCustomersRequest());
         dispatch(loadPurchasesRequest());
+        dispatch(loadUsersRequest());
         if (userLogin?.role) { dispatch(loadUsersRequest()); }
         const fetchProducts = async () => {
             let products = [];
@@ -206,6 +207,7 @@ function HeaderComp() {
             } else {
                 const getData = async () => {
                     const [Products, Customers, Purchases] = await Promise.allSettled([fetchProducts(), fetchCustomers(), fetchPurchases()])
+                    dispatch(loadUsersDisableRequest());
                     if (Products.status === 'fulfilled') {
                         dispatch(loadProductsSuccess(Products.value));
                     } else {
@@ -240,26 +242,30 @@ function HeaderComp() {
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
                         <Toolbar disableGutters sx={{ justifyContent: 'space-between', bgcolor: 'primary.dark' }}>
-                            <IconButton
-                                onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }}
-                                sx={{ p: 1, mr: 0, "&:focus": { outline: 'none' } }}
-                            >
-                                <Avatar alt="Remy Sharp" src={shopLogo} />
-                            </IconButton>
-                            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                            <Tooltip title="Home">
                                 <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleOpenNavMenu}
-                                    color="inherit"
-                                    sx={{
-                                        "&:focus": { outline: 'none' },
-                                    }}
+                                    onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }}
+                                    sx={{ p: 1, mr: 0, "&:focus": { outline: 'none' } }}
                                 >
-                                    <MenuIcon />
+                                    <Avatar alt="Remy Sharp" src={shopLogo} />
                                 </IconButton>
+                            </Tooltip>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                                <Tooltip title="Menu-Appbar">
+                                    <IconButton
+                                        size="large"
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        onClick={handleOpenNavMenu}
+                                        color="inherit"
+                                        sx={{
+                                            "&:focus": { outline: 'none' },
+                                        }}
+                                    >
+                                        <MenuIcon />
+                                    </IconButton>
+                                </Tooltip>
                                 <Menu
                                     id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
                                     keepMounted transformOrigin={{ vertical: 'top', horizontal: 'left', }}
@@ -363,7 +369,7 @@ function HeaderComp() {
                     </AppBar>
                 </Grid>
             </ThemeProvider>
-        </Box>
+        </Box >
     )
 }
 

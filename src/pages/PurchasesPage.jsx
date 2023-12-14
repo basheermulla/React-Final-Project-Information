@@ -6,6 +6,7 @@ import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
+import LinearProgressComp from '../components/LinearProgress';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -26,7 +27,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function PurchasesPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const customers = useSelector((state => state.customerReducer.customers));
-    const purchases = useSelector((state => state.purchaseReducer.purchases));
+    const { loading: purchasesLoad, error: purchasesError, purchases } = useSelector((state) => state.purchaseReducer);
 
     const [originPurchasrs, setOriginPurchasrs] = useState([]);
     const [localPurchases, setLocalPurchases] = useState([]);
@@ -57,9 +58,9 @@ function PurchasesPageComp() {
         (dateInput) => {
             setInputValue({ ...inputValue, dateInput });
         },
-      [inputValue]
+        [inputValue]
     )
-    
+
     const handleSearch = () => {
         console.log('inputValue = ', inputValue);
         let filterTable = originPurchasrs;
@@ -96,6 +97,11 @@ function PurchasesPageComp() {
 
     return (
         <Box width={'100%'}>
+            {
+                purchasesLoad
+                &&
+                <LinearProgressComp />
+            }
             <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', pb: 5, p: 2 }}>
                 <Grid container justifyContent="center" alignItems="center">
                     <AutoCompleteComp callbackLabelProductInput={handleSearchProduct} modelTarget={'products'} data={products} />

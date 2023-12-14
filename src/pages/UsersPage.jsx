@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import {
-    Box, Grid, Paper, LinearProgress, Table, TableHead, TableRow, TableBody,
-    Avatar, styled, TableContainer, Snackbar, Alert, Stack
+    Box, Grid, Paper, Table, TableHead, TableRow, TableBody, Avatar, styled, TableContainer, Stack
 } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { blue } from '@mui/material/colors';
 import { setRole } from '../redux/actions/userActions';
 import RowTableUser from '../components/RowTableUser';
+import LinearProgressComp from '../components/LinearProgress';
+import SnackbarAlertComp from '../components/SnackbarAlert';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -48,7 +48,7 @@ const defaultTheme = createTheme({
 });
 
 function UsersPageComp() {
-    const { users } = useSelector((state) => state.userReducer);
+    const { loading: usersLoad, error: usersError, users } = useSelector((state) => state.userReducer);
     const dispatch = useDispatch();
 
     const [openSnackbarAdmin, setOpenSnackbarAdmin] = useState(false);
@@ -99,6 +99,11 @@ function UsersPageComp() {
 
     return (
         <Box width={'100%'}>
+            {
+                usersLoad
+                &&
+                <LinearProgressComp />
+            }
             <ThemeProvider theme={defaultTheme}>
                 <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', pb: 5 }}>
                     <Grid item sx={{ display: 'flex', justifyContent: "center" }}>
@@ -139,16 +144,16 @@ function UsersPageComp() {
                     </Grid>
                 </Grid>
                 <Stack sx={{ width: '100%' }}>
-                    <Snackbar open={openSnackbarAdmin} autoHideDuration={5000} onClose={handleSnackbarAdminClose} sx={{ pl: 65 }}>
-                        <Alert onClose={handleSnackbarAdminClose} variant="filled" severity="success" sx={{ width: '100%' }}>
-                            You gave <strong>{alertName}</strong> admin role !
-                        </Alert>
-                    </Snackbar>
-                    <Snackbar open={openSnackbarRegular} autoHideDuration={5000} onClose={handleSnackbarRegularClose} sx={{ pl: 65 }}>
-                        <Alert onClose={handleSnackbarRegularClose} variant="filled" severity="error" sx={{ width: '100%' }}>
-                            You gave <strong>{alertName}</strong> regular role !
-                        </Alert>
-                    </Snackbar>
+                    <SnackbarAlertComp
+                        openSnackbar={openSnackbarAdmin}
+                        content={`You gave ${alertName} admin role !`}
+                        callbackHandleSnackClose={handleSnackbarAdminClose} cover={'success'}
+                    />
+                    <SnackbarAlertComp
+                        openSnackbar={openSnackbarRegular}
+                        content={`You gave ${alertName} regular role !`}
+                        callbackHandleSnackClose={handleSnackbarRegularClose} cover={'error'}
+                    />
                 </Stack>
             </ThemeProvider>
         </Box >
