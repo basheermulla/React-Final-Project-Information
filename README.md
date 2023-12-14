@@ -45,7 +45,7 @@ Currently, two official plugins are available:
 
 ### Component Diagram - Hierarchy (Public Pages)
 
-![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/76232e7e-f406-4e2d-b9a8-253315ff11cf)
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/c346f3ea-e059-428a-b9d9-4a4bc1460fa4)
 
 ### Component Diagram - Hierarchy (Private Pages)
 
