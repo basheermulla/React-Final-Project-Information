@@ -43,10 +43,10 @@ Currently, two official plugins are available:
 
 ![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/2d48cb92-fcd6-46a8-9173-b368ccdee1dd)
 
-### Component Diagram - Hierarchy
+### Component Diagram - Hierarchy (Public Pages)
 
-![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/5cc37e6e-45e8-49dd-b250-9a0eb206f4ea)
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/76232e7e-f406-4e2d-b9a8-253315ff11cf)
 
+### Component Diagram - Hierarchy (Private Pages)
 
-
-
+![image](https://github.com/basheermulla/React-Final-Project-Information/assets/11898943/3e5b1f27-0493-4d9f-9024-aabe02f5960d)
