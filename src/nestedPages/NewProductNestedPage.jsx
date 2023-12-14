@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, Alert, AlertTitle, Snackbar } from '@mui/material';
+import {
+    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, Alert,
+    AlertTitle, Snackbar
+} from '@mui/material';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { addProductRequest, addProductSuccess, addProductFail, submitProductFail } from '../redux/actions/productActions';
 import Icon from '@mui/material/Icon';
@@ -93,8 +96,7 @@ function NewProductNestedPageComp() {
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress />
                 </Box>
-            }
-            {
+            }{
                 showError_AddProduct
                 &&
                 <Grid container sx={{ mt: 3 }}>
@@ -120,8 +122,7 @@ function NewProductNestedPageComp() {
                         </Alert>
                     </Grid>
                 </Grid>
-            }
-            {
+            }{
                 !showError_AddProduct
                 &&
                 <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>

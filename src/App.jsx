@@ -18,7 +18,6 @@ import ErrorPageComp from './pages/ErrorPage';
 import PrivateRoutesLayoutComp from './nestedPages/PrivateRoutesLayout';
 import { useSelector } from "react-redux";
 
-
 function App() {
   const { userLogin } = useSelector((state) => state.userLoginReducer);
 

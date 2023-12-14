@@ -1,16 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
-    Box, Typography, Grid, Paper, LinearProgress, Table, TableHead, TableRow, TableBody,
-    TableSortLabel, Avatar, styled, Checkbox, TableContainer, Snackbar, Alert, Stack
+    Box, Grid, Paper, LinearProgress, Table, TableHead, TableRow, TableBody,
+    Avatar, styled, TableContainer, Snackbar, Alert, Stack
 } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { blue } from '@mui/material/colors';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { setRole } from '../redux/actions/userActions';
 import RowTableUser from '../components/RowTableUser';
 
@@ -49,16 +48,12 @@ const defaultTheme = createTheme({
 });
 
 function UsersPageComp() {
-    const { userLogin } = useSelector((state) => state.userLoginReducer);
     const { users } = useSelector((state) => state.userReducer);
     const dispatch = useDispatch();
 
-    const [progress, setProgress] = useState(false)
     const [openSnackbarAdmin, setOpenSnackbarAdmin] = useState(false);
     const [openSnackbarRegular, setOpenSnackbarRegular] = useState(false);
     const [alertName, setAlertName] = useState("")
-
-    const navigate = useNavigate();
 
     const handleSnackbarAdminOpen = () => {
         setOpenSnackbarAdmin(true);
@@ -104,13 +99,6 @@ function UsersPageComp() {
 
     return (
         <Box width={'100%'}>
-            {
-                progress
-                &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
-            }
             <ThemeProvider theme={defaultTheme}>
                 <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', pb: 5 }}>
                     <Grid item sx={{ display: 'flex', justifyContent: "center" }}>

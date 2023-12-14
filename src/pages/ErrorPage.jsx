@@ -1,6 +1,5 @@
 import { Box, Typography, Grid, Paper, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { blue, red } from '@mui/material/colors';
 
 const defaultTheme = createTheme();
 

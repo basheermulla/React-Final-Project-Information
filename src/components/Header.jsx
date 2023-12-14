@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Container, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid } from '@mui/material';
+import { Button, Box, AppBar, Toolbar, IconButton, Typography, Paper, Menu, MenuItem, Tooltip, Avatar, Grid } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import shopLogo from '../assets/sw-open-shop-3.jpg';
 import pages from '../utils/nav-list-pages.json';
@@ -230,7 +230,6 @@ function HeaderComp() {
 
                 getData();
             }
-
         }
 
     }, [userLogin]);
@@ -241,12 +240,23 @@ function HeaderComp() {
                 <Grid container component={Paper} elevation={6}>
                     <AppBar position="static">
                         <Toolbar disableGutters sx={{ justifyContent: 'space-between', bgcolor: 'primary.dark' }}>
-                            <IconButton onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }} sx={{ p: 1, mr: 0 }}>
+                            <IconButton
+                                onClick={(e) => { if (userLogin) { navigate('/'), setFlagColor(0) } }}
+                                sx={{ p: 1, mr: 0, "&:focus": { outline: 'none' } }}
+                            >
                                 <Avatar alt="Remy Sharp" src={shopLogo} />
                             </IconButton>
                             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                                <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar"
-                                    aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit"
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleOpenNavMenu}
+                                    color="inherit"
+                                    sx={{
+                                        "&:focus": { outline: 'none' },
+                                    }}
                                 >
                                     <MenuIcon />
                                 </IconButton>
@@ -307,12 +317,16 @@ function HeaderComp() {
                                             variant="p"
                                         > Hello, {userLogin?.firstName + ' ' + userLogin?.lastName}
                                         </Typography>
-                                    }
-                                    {
+                                    }{
                                         anchorElLogin
                                         &&
                                         <Tooltip title="Open settings">
-                                            <IconButton onClick={handleOpenUserMenu} >
+                                            <IconButton
+                                                onClick={handleOpenUserMenu}
+                                                sx={{
+                                                    "&:focus": { outline: 'none' },
+                                                }}
+                                            >
                                                 <Avatar
                                                     alt="Remy Sharp"
                                                     sx={{
@@ -323,8 +337,8 @@ function HeaderComp() {
                                                     }}
                                                 />
                                             </IconButton>
-                                        </Tooltip>}
-
+                                        </Tooltip>
+                                    }
                                     <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser}
                                         anchorOrigin={{ vertical: 'top', horizontal: 'right', }} keepMounted
                                         transformOrigin={{ vertical: 'top', horizontal: 'right', }}
@@ -333,7 +347,12 @@ function HeaderComp() {
                                         {
                                             settings['settings-Links'].map((setting, index) => (
                                                 <MenuItem key={index} onClick={handleCloseUserMenu}>
-                                                    <Typography textAlign="center" onClick={(e) => handleClickSetting(e, setting.link)}>{setting.settingname}</Typography>
+                                                    <Typography
+                                                        textAlign="center"
+                                                        onClick={(e) => handleClickSetting(e, setting.link)}
+                                                    >
+                                                        {setting.settingname}
+                                                    </Typography>
                                                 </MenuItem>
                                             ))
                                         }

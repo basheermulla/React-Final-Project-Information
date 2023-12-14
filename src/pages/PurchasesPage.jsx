@@ -6,7 +6,6 @@ import DateFieldComp from '../components/DateField';
 import { cyan, blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -28,13 +27,10 @@ function PurchasesPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const customers = useSelector((state => state.customerReducer.customers));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
-    const { userLogin } = useSelector((state) => state.userLoginReducer);
 
     const [originPurchasrs, setOriginPurchasrs] = useState([]);
     const [localPurchases, setLocalPurchases] = useState([]);
     const [inputValue, setInputValue] = useState({ productName: '', customerName: '', dateInput: '' });
-
-    const navigate = useNavigate();
 
     const handleSearchProduct = useCallback(
         (value) => {
@@ -67,13 +63,10 @@ function PurchasesPageComp() {
     const handleSearch = () => {
         console.log('inputValue = ', inputValue);
         let filterTable = originPurchasrs;
-        if (inputValue.dateInput === null) {
-            setInputValue({ ...inputValue, dateInput: '' })
-        }
         if (inputValue.productName !== '' || inputValue.customerName !== '' || inputValue.dateInput) {
             filterTable = originPurchasrs.filter((purchase) => {
                 const purchaseDate = moment(new Date(purchase.date)).format('DD/MM/YYYY');
-                const inputDate = moment(new Date(inputValue.dateInput['$d'])).format('DD/MM/YYYY');
+                const inputDate = moment(new Date(inputValue?.dateInput['$d'] || '')).format('DD/MM/YYYY');
                 return purchase.productName === inputValue.productName ||
                     purchase.customerName === inputValue.customerName ||
                     purchaseDate === inputDate
@@ -156,7 +149,6 @@ function PurchasesPageComp() {
                         </Box>
                     </Box>
                 </Grid>
-
             </Grid>
         </Box>
     )

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo } from 'react'
+import { useState, memo } from 'react'
 import {
     Box, Typography, Button, IconButton, Table, TableHead, TableRow, TableCell, TableBody,
     Collapse, Avatar
@@ -44,21 +44,22 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                     />
                 </TableCell>
                 <TableCell align="center">
-                    {modelTarget === 'customers' ?
-                        userLogin.role === 'admin' ?
+                    {
+                        modelTarget === 'customers' ?
+                            userLogin.role === 'admin' ?
+                                <LinkRouter
+                                    to={'/customers/edit-customer'} state={{ customerID: customer.id }}
+                                >
+                                    {customer?.firstName + ' ' + customer?.lastName}
+                                </LinkRouter>
+                                :
+                                customer?.firstName + ' ' + customer?.lastName
+                            :
                             <LinkRouter
-                                to={'/customers/edit-customer'} state={{ customerID: customer.id }}
+                                to={'/products/edit-customer'} state={{ customerID: customer?.id }}
                             >
                                 {customer?.firstName + ' ' + customer?.lastName}
                             </LinkRouter>
-                            :
-                            customer?.firstName + ' ' + customer?.lastName
-                        :
-                        <LinkRouter
-                            to={'/products/edit-customer'} state={{ customerID: customer?.id }}
-                        >
-                            {customer?.firstName + ' ' + customer?.lastName}
-                        </LinkRouter>
                     }
                 </TableCell>
                 <TableCell align="center"> {customer?.city} </TableCell>
@@ -106,39 +107,41 @@ function RowCollapsibleTableComp({ ID, customer, modelTarget }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {customer?.otherData?.map((otherDataCustomer, index) => (
-                                        <TableRow key={index} sx={{ '& > *': { fontSize: 14 } }}>
-                                            <TableCell align="center">
-                                                {otherDataCustomer.orderNumber}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {
-                                                    modelTarget === 'customers' ?
-                                                        userLogin.role === 'admin' ?
+                                    {
+                                        customer?.otherData?.map((otherDataCustomer, index) => (
+                                            <TableRow key={index} sx={{ '& > *': { fontSize: 14 } }}>
+                                                <TableCell align="center">
+                                                    {otherDataCustomer.orderNumber}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {
+                                                        modelTarget === 'customers' ?
+                                                            userLogin.role === 'admin' ?
+                                                                <LinkRouter
+                                                                    to={'/customers/edit-product'} state={{
+                                                                        productID: otherDataCustomer.productID
+                                                                    }}
+                                                                >
+                                                                    {otherDataCustomer.productName}
+                                                                </LinkRouter>
+                                                                :
+                                                                otherDataCustomer.productName
+                                                            :
                                                             <LinkRouter
-                                                                to={'/customers/edit-product'} state={{
+                                                                to={'/products/edit-product'} state={{
                                                                     productID: otherDataCustomer.productID
                                                                 }}
                                                             >
                                                                 {otherDataCustomer.productName}
                                                             </LinkRouter>
-                                                            :
-                                                            otherDataCustomer.productName
-                                                        :
-                                                        <LinkRouter
-                                                            to={'/products/edit-product'} state={{
-                                                                productID: otherDataCustomer.productID
-                                                            }}
-                                                        >
-                                                            {otherDataCustomer.productName}
-                                                        </LinkRouter>
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {moment(new Date(otherDataCustomer.date)).format('DD/MM/YYYY')}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                                    }
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {moment(new Date(otherDataCustomer.date)).format('DD/MM/YYYY')}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
                                 </TableBody>
                             </Table>
                         </Box>

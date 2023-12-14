@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, memo, useMemo } from 'react'
+import { memo } from 'react'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductCardComp from './ProductCard';
-import { Box, Grid, IconButton, Paper } from '@mui/material';
+import { Box, Grid, IconButton } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -23,7 +23,6 @@ const styleObj = {
     backgroundColor: blue[100],
     color: 'black'
 };
-
 
 function SampleNextArrow(props) {
     const { className, style, onClick } = props;

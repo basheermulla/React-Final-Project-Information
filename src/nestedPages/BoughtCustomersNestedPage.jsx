@@ -11,7 +11,7 @@ function BoughtCustomersNestedPageComp() {
     const products = useSelector((state => state.productReducer.products));
     const purchases = useSelector((state => state.purchaseReducer.purchases));
     const { userLogin } = useSelector((state) => state.userLoginReducer);
-    
+
     const [productID, setProductID] = useState()
     const [customersWithOtherData, setCustomersWithOtherData] = useState([]);
 
@@ -30,7 +30,7 @@ function BoughtCustomersNestedPageComp() {
         // Filter purchases By productID 
         // Then, Map Purchases with Product Name and Group the Purchases based on their customerID filterMapReduceToGroupPurchasesByCustomerID
         const filterMapReduceToGroupPurchasesByCustomerID = purchases
-            .filter((purchase) => purchase.productID === productID)
+            ?.filter((purchase) => purchase.productID === productID)
             .map((purchase) => { return { ...purchase, productName: products.find(prod => prod.id === purchase.productID).name } })
             .reduce((acc, current) => {
                 acc[current.customerID] = acc[current.customerID] ? [...acc[current.customerID], current] : [current];
@@ -39,7 +39,7 @@ function BoughtCustomersNestedPageComp() {
 
         // Map customers with the otherData array [products purchsed, product Name]
         const readyDataToDisplay = customers
-            .filter((customer) => purchases.find(purchase =>
+            ?.filter((customer) => purchases?.find(purchase =>
                 purchase.customerID === customer.id &&
                 purchase.productID === productID))
             .map((customer) => {
@@ -55,7 +55,7 @@ function BoughtCustomersNestedPageComp() {
     useEffect(() => {
         if (!userLogin) {
             navigate('/login')
-         }
+        }
     }, [])
 
     return (
@@ -65,12 +65,32 @@ function BoughtCustomersNestedPageComp() {
                     <DisabledByDefaultIcon color="error" cursor='pointer' onClick={(e) => handleClose(e)} />
                 </TableContainer>
                 <Stack direction="row" spacing={2} m={3}>
-                    <Avatar sx={{ bgcolor: blue[200], color: 'black', width: 400, height: 60, fontSize: 18, fontWeight: 'bold' }} variant='square'>Customers who bought the product</Avatar>
+                    <Avatar
+                        sx={{
+                            bgcolor: blue[200],
+                            color: 'black',
+                            width: 400,
+                            height: 60,
+                            fontSize: 18,
+                            fontWeight: 'bold'
+                        }}
+                        variant='square'
+                    >
+                        Customers who bought the product
+                    </Avatar>
                 </Stack>
                 <TableContainer sx={{ display: 'flex', justifyContent: "center", m: 2 }} >
                     <Table aria-label="collapsible table" sx={{ border: 0 }}>
                         <TableHead>
-                            <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: blue[100], fontSize: 15, fontWeight: 'bold' } }}>
+                            <TableRow
+                                sx={{
+                                    '& > *': {
+                                        borderBottom: 0,
+                                        bgcolor: blue[100],
+                                        fontSize: 15,
+                                        fontWeight: 'bold'
+                                    }
+                                }}>
                                 <TableCell component="th" scope="row" width='5%' />
                                 <TableCell align="center" width='5%' > ID </TableCell>
                                 <TableCell align="center" width='10%'> Icon </TableCell>
@@ -80,9 +100,15 @@ function BoughtCustomersNestedPageComp() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {customersWithOtherData.map((customer, index) => (
-                                <RowCollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} />
-                            ))}
+                            {
+                                customersWithOtherData.map((customer, index) => (
+                                    <RowCollapsibleTableComp
+                                        key={customer.id}
+                                        ID={index + 1}
+                                        customer={customer}
+                                    />
+                                ))
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>

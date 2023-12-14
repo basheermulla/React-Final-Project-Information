@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, CircularProgress, Alert, AlertTitle, Dialog, DialogTitle, DialogActions, Snackbar } from '@mui/material';
+import {
+    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress,
+    Alert, AlertTitle, Dialog, DialogTitle, DialogActions, Snackbar
+} from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blue } from '@mui/material/colors';
 import { deleteDoc, doc, updateDoc, setDoc } from 'firebase/firestore';
@@ -30,7 +33,7 @@ function EditProductNestedPageComp() {
     const [product, setProduct] = useState({});
     const [open, setOpen] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -79,7 +82,7 @@ function EditProductNestedPageComp() {
         if (result.status === 'fulfilled') {
             console.log(result);
             handleSnackOpen();
-            dispatch(updateProductSuccess(product));            
+            dispatch(updateProductSuccess(product));
         } else {
             console.log(result.reason);
             dispatch(updateProductFail(result.reason));
@@ -176,8 +179,7 @@ function EditProductNestedPageComp() {
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress />
                 </Box>
-            }
-            {
+            }{
                 showError_UpdateProduct
                 &&
                 <Grid container sx={{ mt: 3 }}>
@@ -203,8 +205,7 @@ function EditProductNestedPageComp() {
                         </Alert>
                     </Grid>
                 </Grid>
-            }
-            {
+            }{
                 !showError_UpdateProduct
                 &&
                 <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
@@ -354,7 +355,6 @@ function EditProductNestedPageComp() {
                                             purchase.customerID === customer.id
                                         ))
                                 }
-
                                 modelTarget={location.pathname === '/products/edit-product' ? 'products' : 'customers'}
                             />
                         </Box>
