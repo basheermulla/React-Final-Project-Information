@@ -9,6 +9,7 @@ import {
     USER_SIGNUP_ERROR,
 
     LOAD_USERS_REQUEST,
+    LOAD_USERS_DISABLE_REQUEST,
     LOAD_USERS_SECCESS,
     LOAD_USERS_FAIL,
 
@@ -64,6 +65,10 @@ export const logout = () => (dispatch) => {
 
 export const loadUsersRequest = () => (dispatch) => {
     dispatch({ type: LOAD_USERS_REQUEST });
+}
+
+export const loadUsersDisableRequest = () => (dispatch) => {
+    dispatch({ type: LOAD_USERS_DISABLE_REQUEST });
 }
 
 export const loadUsersSuccess = (users) => (dispatch) => {

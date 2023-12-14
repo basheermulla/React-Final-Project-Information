@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Alert, AlertTitle, Box, Button, Grid, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import PageTitleComp from '../components/PageTitle';
@@ -7,6 +7,9 @@ import SliderComp from '../components/Slider';
 import { submitProductFail } from '../redux/actions/productActions';
 import { submitCustomerFail } from '../redux/actions/customerActions';
 import { submitPurchaseFail } from '../redux/actions/purchaseActions';
+import LinearProgressComp from '../components/LinearProgress';
+import AlertErrorComp from '../components/AlertError';
+import { logout } from '../redux/actions/userActions';
 
 function HomePageComp() {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
@@ -14,6 +17,7 @@ function HomePageComp() {
     const { loading: productsLoad, error: productsError, products } = useSelector((state) => state.productReducer);
     const { loading: customersLoad, error: customersError, customers } = useSelector((state) => state.customerReducer);
     const { loading: purchasesLoad, error: purchasesError, purchases } = useSelector((state) => state.purchaseReducer);
+    const { loading: usersLoad, error: usersError, users } = useSelector((state) => state.userReducer);
     const dispatch = useDispatch();
 
     const [detectRender, setDetectRender] = useState(true);
@@ -25,7 +29,7 @@ function HomePageComp() {
         dispatch(submitProductFail());
         dispatch(submitCustomerFail());
         dispatch(submitPurchaseFail());
-        navigate('/');
+        dispatch(logout());
     }
     // Sorte By New Products 
     const new_products = useMemo(() => {
@@ -72,40 +76,16 @@ function HomePageComp() {
     return (
         <Box width={'100%'}>
             {
-                (productsLoad || customersLoad || purchasesLoad)
+                (productsLoad || customersLoad || purchasesLoad || usersLoad)
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }
-            <Grid container component={Paper} elevation={6} sx={{ display: 'flex', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
+            <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
                 <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
                     {
-                        (productsError || customersError || purchasesError)
+                        (productsError || customersError || purchasesError || usersError)
                         &&
-                        <Grid container sx={{ mt: 3 }}>
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                                <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                                    <Grid item xs={12}>
-                                        <AlertTitle sx={{ textAlign: 'left' }}>
-                                            <strong>Home Page Error</strong>
-                                        </AlertTitle>
-                                    </Grid>
-                                    <strong>{productsError || customersError || purchasesError}</strong>
-                                    <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                        <Button
-                                            type="button"
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ m: 1, mt: 3 }}
-                                            onClick={() => handleSubmitError()}
-                                        >
-                                            Return
-                                        </Button>
-                                    </Grid>
-                                </Alert>
-                            </Grid>
-                        </Grid>
+                        <AlertErrorComp title={'Home Page Error'} content={productsError || customersError || purchasesError || usersError} callbackSubmitError={handleSubmitError} />
                     }{
                         !detectRender
                         &&
@@ -114,6 +94,8 @@ function HomePageComp() {
                         !customersError
                         &&
                         !purchasesError
+                        &&
+                        !usersError
                         &&
                         <>
                             <Grid container sx={{ width: '95%' }}>

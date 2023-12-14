@@ -15,7 +15,7 @@ import {
     SUBMIT_ADD_PURCHASE_FAIL
 } from '../constants/purchaseConstants';
 
-//------------------ Get[load] All Customers Actions ------------------------------
+//------------------ Get[load] All Purchases Actions ------------------------------
 
 export const loadPurchasesRequest = () => (dispatch) => {
     dispatch({ type: LOAD_PURCHASES_REQUEST });
@@ -29,7 +29,7 @@ export const loadPurchasesFail = (message) => (dispatch) => {
     dispatch({ type: LOAD_PURCHASES_FAIL, payload: message });
 }
 
-//------------------ Add Customer Actions -----------------------------------------
+//------------------ Add Purchase Actions -----------------------------------------
 
 export const AddPurchaseRequest = () => (dispatch) => {
     dispatch({ type: ADD_PURCHASE_REQUEST });
@@ -43,7 +43,7 @@ export const AddPurchaseFail = (message) => (dispatch) => {
     dispatch({ type: ADD_PURCHASE_FAIL, payload: message });
 }
 
-//------------------ Delete Customer Actions -----------------------------------------
+//------------------ Delete Purchase Actions -----------------------------------------
 
 export const deletePurchaseRequest = () => (dispatch) => {
     dispatch({ type: DELETE_PURCHASE_REQUEST });
@@ -56,7 +56,7 @@ export const deletePurchaseFail = (message) => (dispatch) => {
     dispatch({ type: DELETE_PURCHASE_FAIL, payload: message });
 }
 
-//------------------ Submit Edit Product Action Error ------------------------------
+//------------------ Submit Edit Purchase Action Error ------------------------------
 
 export const submitPurchaseFail = () => (dispatch) => {
     dispatch({ type: SUBMIT_PURCHASE_FAIL });

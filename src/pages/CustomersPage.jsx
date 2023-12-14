@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Box, LinearProgress,
-    Alert, AlertTitle, Button, useMediaQuery
+    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Box, Button, useMediaQuery
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,8 @@ import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone
 import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
 import { useTheme } from '@mui/material/styles';
+import LinearProgressComp from '../components/LinearProgress';
+import AlertErrorComp from '../components/AlertError';
 
 function CustomersPageComp() {
     const products = useSelector((state => state.productReducer.products));
@@ -27,7 +28,6 @@ function CustomersPageComp() {
     const [detectRender, setDetectRender] = useState(true);
     const [inputValue, setInputValue] = useState({ customerName: '' });
     const [search, setSearch] = useState("");
-    const [countS, setCountS] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -62,10 +62,6 @@ function CustomersPageComp() {
         [inputValue.customerName]
     )
 
-    const handleCount = () => {
-        setCountS(countS + 1)
-    }
-
     const customersToDisplay = useMemo(() => {
         // Map Purchases with Product Name and Group the Purchases based on their customerID
         let mapReduceToGroupPurchasesByCustomerID = [];
@@ -99,7 +95,6 @@ function CustomersPageComp() {
                             otherData: mapReduceToGroupPurchasesByCustomerID[customer.id]
                         }
                     })
-
             return readyDataToDisplay
         }
         highestAmountSale
@@ -109,23 +104,27 @@ function CustomersPageComp() {
     useEffect(() => {
         if (customers && customersToDisplay) {// Set data for Revenue Cards - [totalHighestPurchased] [highestAmountSale]
 
-            const numOfPurchases = customersToDisplay.map((customer) => {
-                return {
-                    name: customer.firstName + ' ' + customer.lastName,
-                    value: customer.otherData?.length
-                }
-            });
+            const numOfPurchases = customersToDisplay
+                ?.filter((customer) => customer.otherData)
+                ?.map((customer) => {
+                    return {
+                        name: customer.firstName + ' ' + customer.lastName,
+                        value: customer.otherData?.length
+                    }
+                });
             const maxPurchases = numOfPurchases.map((price) => price['value']);
             const max_1 = Math.max(...maxPurchases)
             const getMaxPurchasesCustomer = numOfPurchases.filter((customer) => customer.value === max_1)
             setTotalHighestPurchased(...getMaxPurchasesCustomer)
 
-            const revenuePurchases = customersToDisplay?.map((customer) => {
-                return {
-                    name: customer.firstName + ' ' + customer.lastName,
-                    value: customer?.otherData?.reduce((sum, next) => sum + next.price, 0)
-                }
-            });
+            const revenuePurchases = customersToDisplay
+                ?.filter((customer) => customer.otherData)
+                ?.map((customer) => {
+                    return {
+                        name: customer.firstName + ' ' + customer.lastName,
+                        value: customer?.otherData?.reduce((sum, next) => sum + next.price, 0)
+                    }
+                });
             const maxRevenue = revenuePurchases.map((price) => price['value']);
             const max_2 = Math.max(...maxRevenue)
             const getMaxRevenueCustomer = revenuePurchases.filter((customer) => +customer.value === +max_2)
@@ -146,9 +145,7 @@ function CustomersPageComp() {
             {
                 customersLoad
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }
             <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
                 <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
@@ -157,29 +154,7 @@ function CustomersPageComp() {
                         &&
                         location['pathname'] === '/customers'
                         &&
-                        <Grid container sx={{ mt: 3 }}>
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                                <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                                    <Grid item xs={12}>
-                                        <AlertTitle sx={{ textAlign: 'left' }}>
-                                            <strong>Customers Error</strong>
-                                        </AlertTitle>
-                                    </Grid>
-                                    <strong>{customersError}</strong>
-                                    <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                        <Button
-                                            type="button"
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ m: 1, mt: 3 }}
-                                            onClick={() => handleSubmitError()}
-                                        >
-                                            Return
-                                        </Button>
-                                    </Grid>
-                                </Alert>
-                            </Grid>
-                        </Grid>
+                        <AlertErrorComp title={'Customers Error'} content={customersError} callbackSubmitError={handleSubmitError} />
                     }{
                         !detectRender
                         &&
@@ -243,31 +218,31 @@ function CustomersPageComp() {
                                     </Button>
                                 </Grid>
                                 <Container>
-                                <Grid item xs={12} sx={{ display: 'flow', justifyContent: "center", p: 2 }}>
-                                    <Table aria-label="collapsible table">
-                                        <TableHead>
-                                            <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: blue[100], fontSize: 16, fontWeight: 'bold' } }}>
-                                                <TableCell component="th" scope="row" width='5%' />
-                                                <TableCell align="center" width='5%' > ID </TableCell>
-                                                <TableCell align="center" width='10%'> Icon </TableCell>
-                                                <TableCell align="center" width='20%'> Name </TableCell>
-                                                <TableCell align="center" width='30%'> City </TableCell>
+                                    <Grid item xs={12} sx={{ display: 'flow', justifyContent: "center", p: 2 }}>
+                                        <Table aria-label="collapsible table">
+                                            <TableHead>
+                                                <TableRow sx={{ '& > *': { borderBottom: 0, bgcolor: blue[100], fontSize: 16, fontWeight: 'bold' } }}>
+                                                    <TableCell component="th" scope="row" width='5%' />
+                                                    <TableCell align="center" width='5%' > ID </TableCell>
+                                                    <TableCell align="center" width='10%'> Icon </TableCell>
+                                                    <TableCell align="center" width='20%'> Name </TableCell>
+                                                    <TableCell align="center" width='30%'> City </TableCell>
+                                                    {
+                                                        userLogin?.role === 'admin'
+                                                        &&
+                                                        <TableCell align="center" width='20%'> Add Product </TableCell>
+                                                    }
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
                                                 {
-                                                    userLogin?.role === 'admin'
-                                                    &&
-                                                    <TableCell align="center" width='20%'> Add Product </TableCell>
+                                                    customersToDisplay.map((customer, index) => (
+                                                        <RowCollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} modelTarget={'customers'} />
+                                                    ))
                                                 }
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {
-                                                customersToDisplay.map((customer, index) => (
-                                                    <RowCollapsibleTableComp key={customer.id} ID={index + 1} customer={customer} modelTarget={'customers'} />
-                                                ))
-                                            }
-                                        </TableBody>
-                                    </Table>
-                                </Grid>
+                                            </TableBody>
+                                        </Table>
+                                    </Grid>
                                 </Container>
                             </Grid >
                         </>

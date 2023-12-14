@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
-import {
-    Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert,
-    AlertTitle, Snackbar
-} from '@mui/material';
+import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useNavigate } from 'react-router-dom';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import Icon from '@mui/material/Icon';
 import { addCustomerRequest, addCustomerSuccess, addCustomerFail, submitCustomerFail } from '../redux/actions/customerActions';
+import AlertErrorComp from '../components/AlertError';
+import LinearProgressComp from '../components/LinearProgress';
+import SnackbarAlertComp from '../components/SnackbarAlert';
 
 function NewCustomerNestedPageComp() {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
@@ -91,35 +91,11 @@ function NewCustomerNestedPageComp() {
             {
                 loading
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }{
                 showError_AddCustomer
                 &&
-                <Grid container sx={{ mt: 3 }}>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                        <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                            <Grid item xs={12}>
-                                <AlertTitle sx={{ textAlign: 'left' }}>
-                                    <strong>Add Customer Error</strong>
-                                </AlertTitle>
-                            </Grid>
-                            <strong>{showError_AddCustomer}</strong>
-                            <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                <Button
-                                    type="button"
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ m: 1, mt: 3 }}
-                                    onClick={() => handleSubmitError()}
-                                >
-                                    Return
-                                </Button>
-                            </Grid>
-                        </Alert>
-                    </Grid>
-                </Grid>
+                <AlertErrorComp title={'Add Customer Error'} content={showError_AddCustomer} callbackSubmitError={handleSubmitError} />
             }{
                 !showError_AddCustomer
                 &&
@@ -215,11 +191,11 @@ function NewCustomerNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
-                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
-                            The customer was added successfully !
-                        </Alert>
-                    </Snackbar>
+                    <SnackbarAlertComp
+                        openSnackbar={openSnackbar}
+                        content={'The customer was added successfully !'}
+                        callbackHandleSnackClose={handleSnackClose} cover={'success'}
+                    />
                 </Grid>
             }
         </Box>

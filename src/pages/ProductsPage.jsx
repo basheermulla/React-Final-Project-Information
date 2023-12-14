@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Grid, Paper, Icon, useMediaQuery, Box, LinearProgress, Alert, AlertTitle, Button } from '@mui/material';
+import { Grid, Paper, Icon, useMediaQuery, Box } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import SliderComp from '../components/Slider';
@@ -10,6 +10,8 @@ import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone
 import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
 import { submitProductFail } from '../redux/actions/productActions';
+import LinearProgressComp from '../components/LinearProgress';
+import AlertErrorComp from '../components/AlertError';
 
 function ProductsPageComp() {
     const purchases = useSelector((state => state.purchaseReducer.purchases));
@@ -21,7 +23,6 @@ function ProductsPageComp() {
     const [totalPurchased, setTotalPurchased] = useState(0);
     const [amountSale, setAmountSale] = useState(0);
     const [detectRender, setDetectRender] = useState(true);
-    const [countS, setCountS] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -43,10 +44,6 @@ function ProductsPageComp() {
         } else {
             navigate('/products');
         }
-    }
-
-    const handleCount = () => {
-        setCountS(countS + 1)
     }
 
     useEffect(() => {
@@ -77,9 +74,7 @@ function ProductsPageComp() {
             {
                 productsLoad
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }
             <Grid container component={Paper} elevation={6} sx={{ display: 'flow', justifyContent: "center", height: 'auto', minHeight: '100vh', p: 0, pb: 5 }}>
                 <Grid container sx={{ display: 'flex', justifyContent: "center", p: 0 }}>
@@ -88,29 +83,7 @@ function ProductsPageComp() {
                         &&
                         location['pathname'] === '/products'
                         &&
-                        <Grid container sx={{ mt: 3 }}>
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                                <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                                    <Grid item xs={12}>
-                                        <AlertTitle sx={{ textAlign: 'left' }}>
-                                            <strong>Products Error</strong>
-                                        </AlertTitle>
-                                    </Grid>
-                                    <strong>{productsError}</strong>
-                                    <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                        <Button
-                                            type="button"
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ m: 1, mt: 3 }}
-                                            onClick={() => handleSubmitError()}
-                                        >
-                                            Return
-                                        </Button>
-                                    </Grid>
-                                </Alert>
-                            </Grid>
-                        </Grid>
+                        <AlertErrorComp title={'Products Error'} content={productsError} callbackSubmitError={handleSubmitError} />
                     }{
                         !detectRender
                         &&

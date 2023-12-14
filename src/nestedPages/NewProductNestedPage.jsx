@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-    Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer, LinearProgress, Alert,
-    AlertTitle, Snackbar
-} from '@mui/material';
+import { Box, Grid, TextField, Button, Paper, Stack, Avatar, TableContainer } from '@mui/material';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +8,9 @@ import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { addProductRequest, addProductSuccess, addProductFail, submitProductFail } from '../redux/actions/productActions';
 import Icon from '@mui/material/Icon';
+import AlertErrorComp from '../components/AlertError';
+import LinearProgressComp from '../components/LinearProgress';
+import SnackbarAlertComp from '../components/SnackbarAlert';
 
 function NewProductNestedPageComp() {
     const { userLogin } = useSelector((state) => state.userLoginReducer);
@@ -93,35 +93,11 @@ function NewProductNestedPageComp() {
             {
                 loading
                 &&
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+                <LinearProgressComp />
             }{
                 showError_AddProduct
                 &&
-                <Grid container sx={{ mt: 3 }}>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
-                        <Alert severity="error" sx={{ width: '90%', display: 'flex', justifyContent: "center" }}>
-                            <Grid item xs={12}>
-                                <AlertTitle sx={{ textAlign: 'left' }}>
-                                    <strong>Add Product Error</strong>
-                                </AlertTitle>
-                            </Grid>
-                            <strong>{showError_AddProduct}</strong>
-                            <Grid item xs={12} sx={{ alignItems: 'center', display: 'flex', justifyContent: "center" }}>
-                                <Button
-                                    type="button"
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ m: 1, mt: 3 }}
-                                    onClick={() => handleSubmitError()}
-                                >
-                                    Return
-                                </Button>
-                            </Grid>
-                        </Alert>
-                    </Grid>
-                </Grid>
+                <AlertErrorComp title={'Add Product Error'} content={showError_AddProduct} callbackSubmitError={handleSubmitError} />
             }{
                 !showError_AddProduct
                 &&
@@ -232,11 +208,11 @@ function NewProductNestedPageComp() {
                             </Button>
                         </Grid>
                     </Box>
-                    <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleSnackClose} sx={{ pt: 9.5 }} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-                        <Alert onClose={handleSnackClose} variant="filled" severity="success" sx={{ width: '100%' }}>
-                            The product was added successfully !
-                        </Alert>
-                    </Snackbar>
+                    <SnackbarAlertComp
+                        openSnackbar={openSnackbar}
+                        content={'The product was added successfully !'}
+                        callbackHandleSnackClose={handleSnackClose} cover={'success'}
+                    />
                 </Grid>
             }
         </Box>
