@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Snackbar } from '@mui/material';
+import { 
+    Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, 
+    Alert, AlertTitle, Dialog, DialogTitle, DialogActions, Snackbar 
+} from '@mui/material';
 import { blue } from '@mui/material/colors';
-import { doc, updateDoc, deleteDoc, addDoc, setDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
@@ -175,8 +178,7 @@ function EditCustomerNestedPageComp() {
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress />
                 </Box>
-            }
-            {
+            }{
                 showError_UpdateCustomer
                 &&
                 <Grid container sx={{ mt: 3 }}>
@@ -202,8 +204,7 @@ function EditCustomerNestedPageComp() {
                         </Alert>
                     </Grid>
                 </Grid>
-            }
-            {
+            }{
                 !showError_UpdateCustomer
                 &&
                 <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>
@@ -338,7 +339,6 @@ function EditCustomerNestedPageComp() {
                                             purchase.productID === product.id
                                         ))
                                 }
-
                                 modelTarget={location.pathname === '/customers/edit-customer' ? 'customers' : 'products'}
                             />
                         </Box>

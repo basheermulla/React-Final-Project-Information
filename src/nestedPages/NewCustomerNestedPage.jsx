@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert, AlertTitle, Snackbar } from '@mui/material';
+import {
+    Box, Grid, Paper, Stack, Avatar, TextField, Button, TableContainer, LinearProgress, Alert,
+    AlertTitle, Snackbar
+} from '@mui/material';
 import { blue } from '@mui/material/colors';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import { useSelector, useDispatch } from "react-redux";
@@ -77,7 +80,6 @@ function NewCustomerNestedPageComp() {
         navigate('/customers');
     }
 
-
     useEffect(() => {
         if (!userLogin) {
             navigate('/login')
@@ -92,8 +94,7 @@ function NewCustomerNestedPageComp() {
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress />
                 </Box>
-            }
-            {
+            }{
                 showError_AddCustomer
                 &&
                 <Grid container sx={{ mt: 3 }}>
@@ -119,8 +120,7 @@ function NewCustomerNestedPageComp() {
                         </Alert>
                     </Grid>
                 </Grid>
-            }
-            {
+            }{
                 !showError_AddCustomer
                 &&
                 <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", p: 1 }}>

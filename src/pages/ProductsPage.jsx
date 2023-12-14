@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Grid, Paper, Icon, useMediaQuery, Box, LinearProgress, Alert, AlertTitle, Button } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
@@ -9,9 +9,7 @@ import RevenueCardComp from '../components/RevenueCard';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
-import { gridSpacing } from '../utils/constant';
 import { submitProductFail } from '../redux/actions/productActions';
-
 
 function ProductsPageComp() {
     const purchases = useSelector((state => state.purchaseReducer.purchases));
@@ -113,8 +111,7 @@ function ProductsPageComp() {
                                 </Alert>
                             </Grid>
                         </Grid>
-                    }
-                    {
+                    }{
                         !detectRender
                         &&
                         !productsError
@@ -149,27 +146,23 @@ function ProductsPageComp() {
                                 />
                             </Grid>
                         </Grid>
-                    }
-                    {
+                    }{
                         !detectRender
                         &&
                         !productsError
                         &&
                         <Grid item xs={12}>
-                            {userLogin.role === 'admin' && <Icon onClick={() => navigate('/products/new-product')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>}
-                            <Grid item xs={12} sm={12} mt={1}>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick={() => handleCount()}
+                            {
+                                userLogin.role === 'admin'
+                                &&
+                                <Icon
+                                    onClick={() => navigate('/products/new-product')}
+                                    sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }}
                                 >
-                                    Check Memo Work
-                                </Button>
-                            </Grid>
+                                    add_circle
+                                </Icon>}
                         </Grid>
-                    }
-
-                    {
+                    }{
                         !detectRender
                         &&
                         !productsError
@@ -179,9 +172,7 @@ function ProductsPageComp() {
                                 <SliderComp productsToSlide={products} sourcePage={'products'} />
                             </Box>
                         </Grid>
-                    }
-
-                    {
+                    }{
                         detectRender
                         &&
                         userLogin?.role === 'admin'

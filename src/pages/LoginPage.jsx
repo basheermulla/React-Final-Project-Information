@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Grid, Paper, Avatar, TextField, Button, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { auth, db } from '../firebase/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useSelector, useDispatch } from "react-redux";
 import { login, signInError, signInRequest } from '../redux/actions/userActions';
 import { utilUserLogin } from '../utils/userAuthAndLogin';
@@ -101,8 +98,7 @@ function LoginPageComp() {
                                     loading && <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                         <CircularProgress />
                                     </Box>
-                                }
-                                {
+                                }{
                                     error && <Alert severity="error"> <AlertTitle >{error}</AlertTitle> </Alert>
                                 }
                             </Box>

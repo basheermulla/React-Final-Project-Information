@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { Avatar, Button, TextField, Paper, Box, Grid, Typography, Container, Alert, AlertTitle, CircularProgress } from '@mui/material';
+import {
+  Avatar, Button, TextField, Paper, Box, Grid, Typography, Container, Alert, AlertTitle,
+  CircularProgress
+} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { auth, db } from '../firebase/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
 import { signUpSuccess, signUpError, signUpRequest } from '../redux/actions/userActions';
 import { utilUserRegister } from '../utils/userAuthAndLogin';
@@ -103,7 +103,6 @@ function RegisterPageComp() {
                       autoComplete="email"
                       onChange={(e) => handleInput(e)}
                     />
-
                   </Grid>
                   <Grid item xs={12}>
                     <TextField

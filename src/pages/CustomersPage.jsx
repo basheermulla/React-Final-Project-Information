@@ -1,13 +1,12 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Stack, Box, LinearProgress,
+    Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Container, Icon, Box, LinearProgress,
     Alert, AlertTitle, Button, useMediaQuery
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import RowCollapsibleTableComp from '../components/RowCollapsibleTable';
 import { blue, red } from '@mui/material/colors';
-import { gridSpacing } from '../utils/constant';
 import { submitCustomerFail } from '../redux/actions/customerActions';
 import AutoCompleteComp from '../components/AutoComplete';
 import RevenueCardComp from '../components/RevenueCard';
@@ -42,7 +41,6 @@ function CustomersPageComp() {
         borderLeftColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],
         borderBottomColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200]
     };
-
 
     const handleSubmitError = () => {
         dispatch(submitCustomerFail());
@@ -135,7 +133,6 @@ function CustomersPageComp() {
         }
     }, [customersToDisplay])
 
-
     useEffect(() => {
         if (location['pathname'] === '/customers') {
             setDetectRender(false);
@@ -183,13 +180,12 @@ function CustomersPageComp() {
                                 </Alert>
                             </Grid>
                         </Grid>
-                    }
-                    {
+                    }{
                         !detectRender
                         &&
                         !customersError
                         &&
-                        <Container>
+                        <>
                             <Grid container sx={{ display: 'flow', justifyContent: "center", p: 2 }}>
                                 <Grid container sx={{ display: 'flex', justifyContent: "center", mt: 1, pl: 3, pr: 3 }}>
                                     <Grid item xs={12} lg={4} textAlign={'left'}>
@@ -225,9 +221,13 @@ function CustomersPageComp() {
                                     {
                                         userLogin?.role === 'admin'
                                         &&
-                                        <Icon onClick={() => navigate('/customers/new-customer')} sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }} >add_circle</Icon>
+                                        <Icon
+                                            onClick={() => navigate('/customers/new-customer')}
+                                            sx={{ color: red[500], fontSize: 30, cursor: 'pointer' }}
+                                        >
+                                            add_circle
+                                        </Icon>
                                     }
-
                                 </Grid>
                                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: "center", alignItems: 'center', p: 2 }}>
                                     <AutoCompleteComp
@@ -241,15 +241,8 @@ function CustomersPageComp() {
                                         onClick={() => setSearch(inputValue.customerName)}>
                                         Search
                                     </Button>
-                                    {' - '}
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        onClick={() => handleCount()}
-                                    >
-                                        Check Memo Work
-                                    </Button>
                                 </Grid>
+                                <Container>
                                 <Grid item xs={12} sx={{ display: 'flow', justifyContent: "center", p: 2 }}>
                                     <Table aria-label="collapsible table">
                                         <TableHead>
@@ -275,12 +268,10 @@ function CustomersPageComp() {
                                         </TableBody>
                                     </Table>
                                 </Grid>
-
-
+                                </Container>
                             </Grid >
-                        </Container>
-                    }
-                    {
+                        </>
+                    }{
                         detectRender
                         &&
                         userLogin?.role === 'admin'

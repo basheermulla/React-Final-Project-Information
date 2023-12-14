@@ -1,6 +1,4 @@
-import {
-    Box, Typography, Grid, Paper
-} from '@mui/material';
+import { Box, Typography, Grid, Paper } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 

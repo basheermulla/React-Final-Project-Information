@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, AlertTitle, Avatar, Box, Button, CardContent, Container, Grid, LinearProgress, Paper, Snackbar, Stack, TableContainer, Typography } from '@mui/material';
+import { Alert, AlertTitle, Avatar, Box, Button, Grid, LinearProgress, Paper, Snackbar, TableContainer, Typography } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import AutoCompleteComp from '../components/AutoComplete';
@@ -107,9 +107,7 @@ function PurchaseProductNestedPageComp() {
 
             // If the purchase added to firebase ,but fail to update the product quentity ---> then delete the purchase from firebase
         } else if (res_AddPurchase.status === 'fulfilled') {
-
             // Delete Purchase
-
             dispatch(AddPurchaseFail(isPromiseRejected.reason));
             // dispatch(updateProductQuantityFail(isPromiseRejected.reason));
         } else if (res_UpdateQuentityProduct.status === 'fulfilled') {
@@ -146,7 +144,6 @@ function PurchaseProductNestedPageComp() {
             const desire_Customer = customers.find((customer) => customer.id === state.customerID);
             setCurrentModel(desire_Customer);
         }
-
     }, [state]);
 
     useEffect(() => {
@@ -163,8 +160,7 @@ function PurchaseProductNestedPageComp() {
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress />
                 </Box>
-            }
-            {
+            }{
                 showError_Addpurchase
                 &&
                 <Grid container sx={{ mt: 3 }}>
@@ -190,8 +186,7 @@ function PurchaseProductNestedPageComp() {
                         </Alert>
                     </Grid>
                 </Grid>
-            }
-            {
+            }{
                 !showError_Addpurchase
                 &&
                 <Grid container component={Paper} elevation={0} sx={{ display: 'flex', justifyContent: "center", bgcolor: grey[0], p: 1, mt: 1 }}>
@@ -205,22 +200,24 @@ function PurchaseProductNestedPageComp() {
                             </Grid>
                             <Grid item xs={12} sm={12} sx={{ display: 'inline-flex', justifyContent: "center" }}>
                                 <Box sx={{ p: 2 }}>
-                                    {state.productID ?
-                                        <Typography>
-                                            Which customer do you want to sell <strong>{currentModel.name}</strong> for?
-                                        </Typography>
-                                        :
-                                        <Typography>
-                                            Hi <strong>{currentModel?.firstName + ' ' + currentModel?.lastName}</strong>, Which product do you want to buy?
-                                        </Typography>
+                                    {
+                                        state.productID ?
+                                            <Typography>
+                                                Which customer do you want to sell <strong>{currentModel?.name}</strong> for?
+                                            </Typography>
+                                            :
+                                            <Typography>
+                                                Hi <strong>{currentModel?.firstName + ' ' + currentModel?.lastName}</strong>, Which product do you want to buy?
+                                            </Typography>
                                     }
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} sx={{ display: 'inline-flex', justifyContent: "center" }}>
-                                {state.productID ?
-                                    <AutoCompleteComp callbackLabelCustomerInput={handleAddCustomer} modelTarget={'customers'} data={customers} />
-                                    :
-                                    <AutoCompleteComp callbackLabelProductInput ={handleAddProduct} modelTarget={'products'} data={products} />
+                                {
+                                    state.productID ?
+                                        <AutoCompleteComp callbackLabelCustomerInput={handleAddCustomer} modelTarget={'customers'} data={customers} />
+                                        :
+                                        <AutoCompleteComp callbackLabelProductInput={handleAddProduct} modelTarget={'products'} data={products} />
                                 }
                             </Grid>
                             <Grid item xs={12} sm={8} sx={{ display: 'inline-flex', justifyContent: "center" }}>
